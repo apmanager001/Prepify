@@ -80,8 +80,8 @@ const Action = () => {
       id="getStarted"
     >
       {/* Blurred background text */}
-      <div className="relative inset-0 opacity-40 z-10">
-        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 max-w-4xl z-10">
+      <div className="relative inset-0 opacity-50 z-10">
+        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-full px-10 max-w-4xl z-10">
           <h2 className="text-white text-3xl font-bold mb-6 blur-sm select-none">
             Welcome to Prepify
           </h2>
@@ -132,14 +132,14 @@ const Action = () => {
                 <p className="animate-pulse">Loading study materials...</p>
               )}
               {progress >= 50 && progress < 75 && (
-                <p className="animate-pulse">Setting up your dashboard...</p>
+                <p className="animate-pulse">Sorting materials custom for you...</p>
               )}
               {progress >= 75 && progress < 100 && (
                 <p className="animate-pulse">Almost ready...</p>
               )}
               {progress === 100 && (
                 <button className="text-green-400 font-semibold">
-                  Lets Go!
+                  Your Study Guide is Ready!
                 </button>
               )}
             </div>
