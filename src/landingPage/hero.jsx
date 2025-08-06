@@ -1,91 +1,165 @@
 "use client";
+import Image from "next/image";
+
 const Hero = () => {
   return (
     <section
-      className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 mt-1"
+      className="relative bg-gradient-to-br from-base-100 via-base-50 to-primary/5 min-h-screen flex items-center"
       id="home"
     >
       {/* Background decoration */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-secondary/20 to-primary/20 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Animated Flying Bees */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Bee 1 */}
+        <div
+          className="absolute top-20 left-10 animate-bounce"
+          style={{ animationDuration: "3s", animationDelay: "0s" }}
+        >
+          <div className="w-8 h-8 bg-warning rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-6 h-6 bg-warning rounded-full border-2 border-base-100"></div>
+          </div>
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-base-100 rounded-full opacity-80"></div>
+          <div className="absolute -top-1 -left-1 w-3 h-3 bg-base-100 rounded-full opacity-80"></div>
+        </div>
+
+        {/* Bee 2 */}
+        <div
+          className="absolute top-32 right-20 animate-bounce"
+          style={{ animationDuration: "4s", animationDelay: "1s" }}
+        >
+          <div className="w-6 h-6 bg-warning rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-4 h-4 bg-warning rounded-full border-2 border-base-100"></div>
+          </div>
+          <div className="absolute -top-1 -right-1 w-2 h-2 bg-base-100 rounded-full opacity-80"></div>
+          <div className="absolute -top-1 -left-1 w-2 h-2 bg-base-100 rounded-full opacity-80"></div>
+        </div>
+
+        {/* Bee 3 - Flying across */}
+        <div
+          className="absolute top-1/2 left-0 animate-pulse"
+          style={{ animationDuration: "6s" }}
+        >
+          <div className="w-7 h-7 bg-warning rounded-full flex items-center justify-center shadow-lg transform rotate-12">
+            <div className="w-5 h-5 bg-warning rounded-full border-2 border-base-100"></div>
+          </div>
+          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-base-100 rounded-full opacity-80"></div>
+          <div className="absolute -top-1 -left-1 w-2.5 h-2.5 bg-base-100 rounded-full opacity-80"></div>
+        </div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-        <div className="text-center">
-          {/* Main headline */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Ace Your Prep
-            </span>
-          </h1>
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Text Content */}
+          <div className="text-center lg:text-left">
+            {/* Main headline */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-base-content mb-6">
+              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Ace Your Prep
+              </span>
+            </h1>
 
-          {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Master any exam with intelligent preparation tools.
-            <span className="font-semibold text-gray-800">
-              {" "}
-              Study smarter, not harder.
-            </span>
-          </p>
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-base-content/80 mb-8 max-w-3xl leading-relaxed">
+              Master any exam with intelligent preparation tools.
+              <span className="font-semibold text-base-content">
+                {" "}
+                Study smarter, not harder.
+              </span>
+            </p>
 
-          {/* Description */}
-          <p className="text-lg text-gray-500 mb-12 max-w-2xl mx-auto">
-            Join other students who have transformed their learning experience
-            with our comprehensive preparation platform.
-          </p>
+            {/* Description */}
+            <p className="text-lg text-base-content/70 mb-12 max-w-2xl">
+              Join other students who have transformed their learning experience
+              with our comprehensive preparation platform.
+            </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 relative z-10">
-            <button
-              onClick={() => {
-                const section = document.getElementById("getStarted");
-                if (section) {
-                  section.scrollIntoView({ behavior: "smooth" });
-                } else {
-                  console.warn("getStarted section not found");
-                }
-              }}
-              className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              Get Started
-            </button>
-          </div>
-        </div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center mb-16 relative z-10">
+              <button
+                onClick={() => {
+                  const section = document.getElementById("getStarted");
+                  if (section) {
+                    section.scrollIntoView({ behavior: "smooth" });
+                  } else {
+                    console.warn("getStarted section not found");
+                  }
+                }}
+                className="btn btn-primary btn-lg text-lg px-8 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              >
+                Get Started
+              </button>
 
-        {/* Hero Image/Illustration
-        <div className="mt-16 lg:mt-20 flex justify-center">
-          <div className="relative">
-            <div className="max-w-4xl h-64 md:h-80 w-96 bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                    />
-                  </svg>
-                </div>
-                <p className="text-gray-500 font-medium">Ace Your Prep</p>
-                <p className="text-sm text-gray-400">
-                  Start learning with Prepify
-                </p>
-              </div>
+              <button className="btn btn-outline btn-lg text-lg px-8 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                Learn More
+              </button>
             </div>
 
-            <div className="absolute -top-4 -left-4 w-8 h-8 bg-yellow-400 rounded-full animate-bounce"></div>
-            <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-green-400 rounded-full animate-pulse"></div>
-            <div className="absolute top-1/2 -right-8 w-4 h-4 bg-red-400 rounded-full animate-ping"></div>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">10K+</div>
+                <div className="text-sm text-base-content/70">Students</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-secondary">95%</div>
+                <div className="text-sm text-base-content/70">Success Rate</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-accent">50+</div>
+                <div className="text-sm text-base-content/70">Exams</div>
+              </div>
+            </div>
           </div>
-        </div> */}
+
+          {/* Right Column - Bee Image */}
+          <div className="relative flex justify-center lg:justify-end">
+            <div className="relative">
+              {/* Main Bee Image */}
+              <div className="relative w-80 h-80 lg:w-96 lg:h-96">
+                <Image
+                  src="/bee.webp"
+                  alt="Bee mascot for Prepify"
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  priority
+                />
+
+                {/* Glow effect behind bee */}
+                <div className="absolute inset-0 bg-gradient-to-r from-warning/30 to-warning/10 rounded-full blur-3xl scale-110"></div>
+              </div>
+
+              {/* Floating elements around bee */}
+              <div className="absolute -top-4 -right-4 w-16 h-16 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
+              <div
+                className="absolute -bottom-4 -left-4 w-20 h-20 bg-secondary/20 rounded-full blur-xl animate-pulse"
+                style={{ animationDelay: "1s" }}
+              ></div>
+
+              {/* Small decorative bees */}
+              <div
+                className="absolute top-8 -left-8 w-6 h-6 bg-warning rounded-full animate-bounce"
+                style={{ animationDuration: "2s" }}
+              >
+                <div className="w-4 h-4 bg-warning rounded-full border border-base-100"></div>
+              </div>
+              <div
+                className="absolute bottom-8 -right-8 w-5 h-5 bg-warning rounded-full animate-bounce"
+                style={{ animationDuration: "2.5s", animationDelay: "0.5s" }}
+              >
+                <div className="w-3 h-3 bg-warning rounded-full border border-base-100"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Bottom wave decoration */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-base-200/50 to-transparent"></div>
     </section>
   );
 };

@@ -8,8 +8,8 @@ const Header = () => {
   // Navigation links array - single source of truth
   const navigationLinks = [
     { href: "#home", label: "Home" },
-    { href: "#mission", label: "Mission" },
     { href: "#getStarted", label: "Get Started" },
+    { href: "#mission", label: "Mission" },
     { href: "#faq", label: "FAQ" },
     { href: "#contact", label: "Contact" },
   ];
@@ -47,14 +47,9 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
-              {/* <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">P</span>
-              </div> */}
-              <img
-                className="h-16"
-                src={'/fox.webp'}
-
-              />
+              </div>
               <span className="ml-2 text-xl font-bold text-gray-900">
                 Prepify
               </span>
