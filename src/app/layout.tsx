@@ -27,18 +27,14 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Google Analytics Scripts */}
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-JF1V2EN1DM"
-          id="google-analytics"
-        />
-        <Script id="google-analytics-script">
-          {`window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-C6HN5KEJD0" id='google-analytics'></Script>
+          <Script id='google-analytics-script'>
+           {` window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-          gtag('config', 'G-JF1V2EN1DM');`}
-        </Script>
+            gtag('config', 'G-C6HN5KEJD0');`}
+          </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
