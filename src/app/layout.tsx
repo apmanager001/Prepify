@@ -25,21 +25,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <header>
-        {/* <!-- Google tag (gtag.js) --> */}
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-JF1V2EN1DM" id='google-analytics'></Script>
-        <Script id='google-analytics-script'>
+      <head>
+        {/* Google Analytics Scripts */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-JF1V2EN1DM"
+          id="google-analytics"
+        />
+        <Script id="google-analytics-script">
           {`window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
 
           gtag('config', 'G-JF1V2EN1DM');`}
         </Script>
-      </header>
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen w-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main className="flex-grow">{children}</main>
+        {children}
       </body>
     </html>
   );
