@@ -32,11 +32,11 @@ const Contact = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Get in Touch
+            Let&apos;s Talk
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Have questions or feedback? We'd love to hear from you. Send us a
-            message and we'll respond as soon as possible.
+            Have feedback, questions, or ideas? Send us a message — we&apos;d love to
+            hear from you.
           </p>
         </div>
 
@@ -140,7 +140,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Email</p>
-                    <p className="text-gray-600">hello@prepify.com</p>
+                    <p className="text-gray-600">hello@prepify.study</p>
                   </div>
                 </div>
               </div>

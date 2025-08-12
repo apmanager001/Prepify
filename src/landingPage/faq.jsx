@@ -7,34 +7,65 @@ const FAQ = () => {
 
   const faqData = [
     {
-      question: "What is Prepify and how does it work?",
-      answer:
-        "Prepify is an AI-powered preparation platform that creates personalized study plans based on your learning style and goals. Our system analyzes your performance, identifies weak areas, and adapts your study materials to maximize your efficiency and success rate.",
+      question: "What is Prepify?",
+      answer: (
+        <p>
+          <strong>Prepify</strong> is a free online platform that helps you
+          create personalized study plans, stay focused, and reduce academic
+          stress — whether you&apos;re in high school, college, or pursuing
+          further education.
+        </p>
+      ),
     },
     {
-      question: "What types of exams does Prepify support?",
-      answer:
-        "We support a wide range of exams including standardized tests (SAT, ACT, GRE, GMAT), professional certifications, academic exams, and more. Our platform continuously adds new exam types based on user demand.",
+      question: "Who is Prepify for?",
+      answer: (
+        <p>
+          Anyone preparing for exams, coursework, or professional certifications
+          — especially those who want structure and tools that actually fit
+          their life.
+        </p>
+      ),
     },
     {
-      question: "How much does Prepify cost?",
-      answer:
-        "Prepify is free to use. We are working on a premium plan that will be released soon.",
+      question: "What kinds of exams can Prepify help me prepare for?",
+      answer: (
+        <p>
+          <strong>Prepify</strong> is designed to support students preparing for
+          any type of exam by helping them stay organized, manage their study
+          time effectively, and reduce academic stress. Whether you&apos;re
+          taking the SAT, AP tests, college finals, or professional
+          certification exams, our tools help you stay focused and ready.
+        </p>
+      ),
     },
     {
-      question: "Can I use Prepify on my mobile device?",
-      answer:
-        "Yes! Prepify is fully responsive and works seamlessly on all devices including smartphones, tablets, and desktop computers. You can study anywhere, anytime with our mobile-optimized interface.",
+      question: "How much does it cost?",
+      answer: (
+        <p>
+          <strong>Prepify</strong> is completely <strong>FREE!</strong> Our goal
+          is to keep it that way for core tools.
+        </p>
+      ),
     },
     {
-      question: "How accurate are the practice questions?",
-      answer:
-        "Our practice questions are carefully curated by subject matter experts and regularly updated to reflect the latest exam formats and content. We maintain a high accuracy rate and provide detailed explanations for every answer.",
+      question: "Can I use Prepify on my phone?",
+      answer: (
+        <p>
+          Yes, — our site works on any device, so you can plan and track your
+          study sessions anywhere.
+        </p>
+      ),
     },
     {
-      question: "Do you offer customer support?",
-      answer:
-        "Absolutely! We provide 24/7 customer support through email and our comprehensive help center. Our support team is dedicated to helping you succeed and is available whenever you need assistance.",
+      question: "Is Prepify only for test prep?",
+      answer: (
+        <p>
+          No, — our tools are for everyday studying too. From organizing your
+          assignments to preparing for big tests, Prepify helps you stay on
+          track.
+        </p>
+      ),
     },
   ];
 
@@ -50,8 +81,7 @@ const FAQ = () => {
             Frequently Asked Questions
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Got questions? We've got answers. Here are the most common questions
-            about Prepify.
+            Got Questions? We&apos;ve Got You.
           </p>
         </div>
 
@@ -72,14 +102,12 @@ const FAQ = () => {
               </div>
               <div className="collapse-content bg-white">
                 <div className="px-6 pb-6">
-                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                  <div className="text-gray-600 leading-relaxed">{faq.answer}</div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-
-        
       </div>
     </section>
   );

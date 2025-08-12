@@ -65,17 +65,17 @@ const Hero = () => {
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-base-content/80 mb-8 max-w-3xl leading-relaxed">
-              Master any exam with intelligent preparation tools.
-              <span className="font-semibold text-base-content">
-                {" "}
-                Study smarter, not harder.
-              </span>
+              Personalized study plans, focus tools, and proven strategies — for
+              high school, college, and beyond.
             </p>
 
             {/* Description */}
             <p className="text-lg text-base-content/70 mb-12 max-w-2xl">
-              Join other students who have transformed their learning experience
-              with our comprehensive preparation platform.
+              Prepify is a student-led nonprofit platform dedicated to helping
+              anyone manage their time better, reduce study stress, and stay on
+              track — whether you’re in high school, college, or pursuing
+              professional certifications. We provide free, easy-to-use tools
+              that help you plan, focus, and build habits that last.
             </p>
 
             {/* CTA Buttons */}
@@ -102,16 +102,16 @@ const Hero = () => {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">10K+</div>
-                <div className="text-sm text-base-content/70">Students</div>
+                <div className="text-2xl font-bold text-primary">500+</div>
+                <div className="text-sm text-base-content/70">Students in our Early Community</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-secondary">95%</div>
-                <div className="text-sm text-base-content/70">Success Rate</div>
+                <div className="text-2xl font-bold text-secondary">87%</div>
+                <div className="text-sm text-base-content/70">Improved Focus and Better Study Habits</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-accent">50+</div>
-                <div className="text-sm text-base-content/70">Exams</div>
+                <div className="text-2xl font-bold text-accent">20+</div>
+                <div className="text-sm text-base-content/70">Schools Reached in our First Outreach</div>
               </div>
             </div>
           </div>

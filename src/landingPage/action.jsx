@@ -105,10 +105,13 @@ const Action = () => {
             </div>
 
             {/* Title */}
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Preparing Your Study Guide
+            <h2 className="text-xl md:text-2xl font-bold text-white mb-4">
+              Your Study Tools Are Coming to Life
             </h2>
-
+            <h3 className="text-lg md:text-xl font-semibold text-white/60 mb-4">
+              We&apos;re building features that will transform how you prepare —
+              and you can be among the first to try them.
+            </h3>
             {/* Progress Bar */}
             <div className="mb-6">
               <div className="w-full bg-white/20 rounded-full h-3 mb-4">
@@ -132,7 +135,9 @@ const Action = () => {
                 <p className="animate-pulse">Loading study materials...</p>
               )}
               {progress >= 50 && progress < 75 && (
-                <p className="animate-pulse">Sorting materials custom for you...</p>
+                <p className="animate-pulse">
+                  Sorting materials custom for you...
+                </p>
               )}
               {progress >= 75 && progress < 100 && (
                 <p className="animate-pulse">Almost ready...</p>
@@ -150,12 +155,15 @@ const Action = () => {
         <div className="mt-8 md:mt-12 max-w-md w-full">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
             <h3 className="text-xl font-semibold text-white mb-3 text-center">
-              Stay Updated
+              Sign up for our Weekly Study Boost newsletter to get:
             </h3>
-            <p className="text-white/80 text-sm mb-4 text-center">
-              Get important tips on how to prepare for your exams.
-            </p>
-
+            <div className="flex justify-center text-white/80 text-sm mb-4 text-left">
+              <ol className="text-left list-disc list-inside text-white/60">
+                <li>Science-backed focus techniques</li>
+                <li>The best free online resources for test prep</li>
+                <li>Simple tips to study smarter and manage stress</li>
+              </ol>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <input

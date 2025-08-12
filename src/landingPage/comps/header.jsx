@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +15,15 @@ const Header = () => {
     { href: "#faq", label: "FAQ" },
     { href: "#contact", label: "Contact" },
   ];
+
+  const loginLink = (
+    <Link
+      href="/login"
+      className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+    >
+      Login
+    </Link>
+  );
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -47,12 +58,13 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+              <Image src="/logoNoSlogan.webp" alt="Prepify" width={140} height={140} />
+              {/* <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">P</span>
               </div>
               <span className="ml-2 text-xl font-bold text-gray-900">
                 Prepify
-              </span>
+              </span> */}
             </div>
           </div>
 
@@ -68,6 +80,7 @@ const Header = () => {
                 {link.label}
               </a>
             ))}
+            {loginLink}
           </nav>
 
           {/* Mobile menu button */}
@@ -117,6 +130,7 @@ const Header = () => {
                   {link.label}
                 </a>
               ))}
+              {loginLink}
             </div>
           </div>
         )}

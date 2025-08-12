@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import QueryProvider from "../providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,19 +28,23 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Google Analytics Scripts */}
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-C6HN5KEJD0" id='google-analytics'></Script>
-          <Script id='google-analytics-script'>
-           {` window.dataLayer = window.dataLayer || [];
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-C6HN5KEJD0"
+          id="google-analytics"
+        ></Script>
+        <Script id="google-analytics-script">
+          {` window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
             gtag('config', 'G-C6HN5KEJD0');`}
-          </Script>
+        </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
