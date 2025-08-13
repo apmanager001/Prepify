@@ -80,7 +80,7 @@ const Header = () => {
                 {link.label}
               </a>
             ))}
-            {/* {loginLink} */}
+            {loginLink}
           </nav>
 
           {/* Mobile menu button */}
@@ -130,7 +130,7 @@ const Header = () => {
                   {link.label}
                 </a>
               ))}
-              {/* {loginLink} */}
+              {loginLink}
             </div>
           </div>
         )}
