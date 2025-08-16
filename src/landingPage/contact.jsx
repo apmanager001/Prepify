@@ -35,8 +35,8 @@ const Contact = () => {
             Let&apos;s Talk
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Have feedback, questions, or ideas? Send us a message — we&apos;d love to
-            hear from you.
+            Have feedback, questions, or ideas? Send us a message — we&apos;d
+            love to hear from you.
           </p>
         </div>
 
@@ -140,7 +140,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Email</p>
-                    <p className="text-gray-600">hello@prepify.study</p>
+                    <p className="text-gray-600">prepify.nonprofit@gmail.com</p>
                   </div>
                 </div>
               </div>
