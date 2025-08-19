@@ -1,0 +1,291 @@
+openapi: 3.1.0
+info:
+  title: Project Title
+  description: "Project Description"
+  version: 1.0.0
+servers:
+  - url: /
+paths:
+  /register:
+    summary: GET/POST registration
+    post:
+      tags:
+        - User
+      summary: Register a new user
+      description:
+        "Register a new user by posting a new username, an email address,
+        and a password. Check for unique username, send verification email, and
+        store password."
+      operationId: register_user
+      requestBody:
+        description: Submit a request to register a user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Register"
+            example:
+              {
+                "username": "EasterBunny",
+                "email": "EasterBunny@example.com",
+                "password": "12345678",
+              }
+      responses:
+        "201":
+          description: "If the registration is successful, return the users private profile information to indicate success."
+          content:
+            application/json:
+              example:
+                {
+                  "userId": "66ce0c8dc538303360039d01",
+                  "username": "EasterBunny",
+                  "email": "EasterBunny@example.com",
+                  "bio": "I haven't decided what to put in my bio yet.",
+                  "publishEmail": false,
+                  "darkMode": false,
+                  "emailVerified": false,
+                }
+        "400":
+          description: "If any of the fields are missing, too long, or too short, return an error."
+          content:
+            application/json:
+              examples:
+                missingPassword:
+                  value: { "error": "Missing password." }
+                shortPassword:
+                  value:
+                    { "error": "Password must be at least 6 characters long." }
+                missingUsername:
+                  value: { "error": "Missing username." }
+                longUsername:
+                  value:
+                    { error: "Username may not be longer than 20 characters." }
+                missingEmail:
+                  value: { "error": "Missing email." }
+        "409":
+          description: "username or Email are already in use."
+          content:
+            application/json:
+              examples:
+                duplicateUsername:
+                  value: { "error": "username already in use." }
+                duplicateEmail:
+                  value: { "error": "Email already in use." }
+        default:
+          description: Default error sample response
+  /login:
+    summary: POST login
+    post:
+      tags:
+        - User
+      summary: Login user
+      description:
+        "Post the username and password entered by the user, name may be either a username or an email,
+        username checked first. If the name matches a user and the password is correct for that user,
+        log them in."
+      operationId: login_user
+      requestBody:
+        description: Submit a request to login
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+            example: { "username": "EasterBunny", "password": "12345678" }
+      responses:
+        "200":
+          description: "If the login is successful, return the users private profile information to indicate success."
+          content:
+            application/json:
+              example:
+                {
+                  "userId": "66ce0c8dc538303360039d01",
+                  "username": "EasterBunny",
+                  "email": "EasterBunny@example.com",
+                  "admin": false,
+                  "moderator": false,
+                  "bio": "I haven't decided what to put in my bio yet.",
+                  "publishEmail": false,
+                  "darkMode": false,
+                  "locked": false,
+                  "emailVerified": true,
+                  "publishedChapters": [],
+                  "followedAuthors": [],
+                  "likedChapters": [],
+                  "bookmarkedChapters": [],
+                }
+        "400":
+          description: "Missing field."
+          content:
+            application/json:
+              examples:
+                missingName:
+                  value: { "error": "Missing name." }
+                missingPassword:
+                  value: { "error": "Missing password." }
+        "401":
+          description: "Login failed."
+          content:
+            application/json:
+              example: { "error": "Incorrect name or password." }
+        default:
+          description: Default error sample response
+  /logout:
+    summary: POST logout
+    post:
+      tags:
+        - User
+      summary: Logout the logged in user.
+      description:
+        "Logout the logged in user. Posted by a button on the users profile\
+        \ page, or from the user menu."
+      operationId: logout_user
+      responses:
+        "200":
+          description:
+            "Logout should always be successful. If user was logged in\
+            \ before request, the cookie will indicate the user to log out. If user\
+            \ was not logged in before request, user will still not be logged in,\
+            \ so we'll call that a success condition too."
+          content:
+            application/json:
+              example: { "message": "Logout successful." }
+        default:
+          description: Default error sample response
+  /newsletter:
+    summary: POST newsletter subscription
+    post:
+      tags:
+        - Newsletter
+      summary: Subscribe to newsletter
+      description:
+        "Subscribe an email address to the newsletter. Validates the email format\
+        \ and ensures the email is not already subscribed."
+      operationId: subscribe_newsletter
+      requestBody:
+        description: Submit an email address to subscribe to the newsletter
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsletterSubscription"
+            example: { "email": "user@example.com" }
+      responses:
+        "200":
+          description: "Successfully subscribed to newsletter."
+          content:
+            application/json:
+              example:
+                {
+                  "message": "Successfully subscribed to newsletter.",
+                  "email": "user@example.com",
+                }
+        "400":
+          description: "Missing email address or invalid email format."
+          content:
+            application/json:
+              examples:
+                missingEmail:
+                  value: { "error": "Missing email address." }
+                invalidEmail:
+                  value: { "error": "Invalid email format." }
+        "409":
+          description: "Email already subscribed to newsletter."
+          content:
+            application/json:
+              example: { "error": "Email already subscribed to newsletter." }
+        "500":
+          description: "Server error occurred while processing the request."
+          content:
+            application/json:
+              example:
+                {
+                  "error": "Failed to subscribe to newsletter. Please try again.",
+                }
+        default:
+          description: Default error sample response
+  /message:
+    summary: POST message submission
+    post:
+      tags:
+        - Message
+      summary: Submit a new message
+      description:
+        "Submit a new message with the sender's email, name, and message content.\
+        \ Validates the email format and ensures the message is not empty."
+      operationId: submit_message
+      requestBody:
+        description: Submit a message with email, name, and message content
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Message"
+            example:
+              {
+                "email": "john.doe@example.com",
+                "name": "John Doe",
+                "message": "Hello, I would like to inquire about your services.",
+              }
+      responses:
+        "201":
+          description: "Message successfully submitted."
+          content:
+            application/json:
+              example: { "message": "Message sent successfully." }
+        "400":
+          description: "Missing required fields or invalid data."
+          content:
+            application/json:
+              example: { "error": "Missing required fields." }
+        "500":
+          description: "Server error occurred while processing the request."
+          content:
+            application/json:
+              example:
+                { "error": "Failed to submit message. Please try again." }
+        default:
+          description: Default error sample response
+components:
+  schemas:
+    Register:
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Login:
+      required:
+        - username
+        - password
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+    NewsletterSubscription:
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: "Email address to subscribe to the newsletter"
+    Message:
+      required:
+        - email
+        - name
+        - message
+      properties:
+        email:
+          type: string
+          format: email
+          description: "Email address of the message sender"
+        name:
+          type: string
+          description: "Name of the message sender"
+        message:
+          type: string
+          description: "Content of the message"

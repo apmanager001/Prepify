@@ -4,7 +4,7 @@ const Donations = () => {
   return (
     <div
       id="donations"
-      className="bg-gradient-to-br from-primary/5 via-secondary/5 to-primary/10 py-16"
+      className="bg-gradient-to-br from-primary/5 via-secondary/5 to-primary/10 py-16 h-full"
     >
       <div className="container mx-auto px-4">
         {/* Header */}
@@ -25,6 +25,7 @@ const Donations = () => {
                 position: "relative",
                 overflow: "hidden",
                 minHeight: "600px",
+                minWidth: "100%",
                 width: "100%",
               }}
             >
