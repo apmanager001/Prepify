@@ -94,7 +94,14 @@ const Hero = () => {
                 Get Started
               </button>
 
-              <button className="btn btn-outline btn-lg text-lg px-8 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+              <button
+                onClick={() => {
+                  const section = document.getElementById("mission");
+                  if (section) {
+                    section.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="btn btn-outline btn-lg text-lg px-8 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
                 Learn More
               </button>
             </div>

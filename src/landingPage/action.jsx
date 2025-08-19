@@ -76,18 +76,25 @@ const Action = () => {
 
   return (
     <div
-      className="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 min-h-screen overflow-hidden"
+      className="bg-gradient-to-br from-primary/10 via-secondary/5 to-primary/15 min-h-screen overflow-hidden relative"
       id="getStarted"
     >
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
       {/* Blurred background text */}
-      <div className="relative inset-0 opacity-50 z-10">
+      <div className="relative inset-0 opacity-100 z-10 py-10">
         <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-full px-10 max-w-4xl z-10">
-          <h2 className="text-white text-3xl font-bold mb-6 blur-sm select-none">
+          <h2 className="text-primary/60 text-3xl font-bold mb-6 blur-sm select-none">
             Welcome to Prepify
           </h2>
-          <p className="text-white text-lg blur-sm select-none leading-[3.0rem]">
+          <p className="text-secondary/60 text-lg blur-sm select-none leading-[3.0rem]">
             {displayText}
-            <span className="animate-pulse">|</span>
+            <span className="animate-pulse text-primary/40">|</span>
           </p>
         </div>
       </div>
@@ -95,55 +102,69 @@ const Action = () => {
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
         {/* Progress Box */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 md:p-12 max-w-96 w-full h-96border border-white/20 shadow-2xl">
-          <div className="text-center">
-            {/* Logo */}
-            <div className="flex justify-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">P</span>
-              </div>
-            </div>
+        <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-8 md:p-12 max-w-96 w-full border border-white/30 shadow-2xl relative overflow-hidden group hover:shadow-primary/20 transition-all duration-500">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
+          <div className="text-center relative z-10">
             {/* Title */}
-            <h2 className="text-xl md:text-2xl font-bold text-white mb-4">
+            <h2 className="text-xl md:text-2xl font-bold text-primary mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Your Study Tools Are Coming to Life
             </h2>
-            <h3 className="text-lg md:text-xl font-semibold text-white/60 mb-4">
+            <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-6">
               We&apos;re building features that will transform how you prepare —
               and you can be among the first to try them.
             </h3>
+
             {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="w-full bg-white/20 rounded-full h-3 mb-4">
+            <div className="mb-8">
+              <div className="w-full bg-white/30 rounded-full h-4 mb-4 overflow-hidden shadow-inner">
                 <div
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300 ease-out"
+                  className="bg-gradient-to-r from-primary via-secondary to-primary h-4 rounded-full transition-all duration-500 ease-out shadow-lg relative overflow-hidden"
                   style={{ width: `${progress}%` }}
-                ></div>
+                >
+                  {/* Animated shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                </div>
               </div>
-              <div className="flex justify-between text-sm text-white/80">
-                <span>Loading...</span>
-                <span>{progress}%</span>
+              <div className="flex justify-between text-sm text-gray-600 font-medium">
+                <span className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                  Loading...
+                </span>
+                <span className="text-primary font-bold">{progress}%</span>
               </div>
             </div>
 
             {/* Status Messages */}
-            <div className="text-white/90 text-sm space-y-2">
+            <div className="text-gray-700 text-sm space-y-3">
               {progress < 25 && (
-                <p className="animate-pulse">Initializing application...</p>
+                <div className="animate-pulse flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  Initializing application...
+                </div>
               )}
               {progress >= 25 && progress < 50 && (
-                <p className="animate-pulse">Loading study materials...</p>
+                <div className="animate-pulse flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-secondary rounded-full"></div>
+                  Loading study materials...
+                </div>
               )}
               {progress >= 50 && progress < 75 && (
-                <p className="animate-pulse">
+                <div className="animate-pulse flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
                   Sorting materials custom for you...
-                </p>
+                </div>
               )}
               {progress >= 75 && progress < 100 && (
-                <p className="animate-pulse">Almost ready...</p>
+                <div className="animate-pulse flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-secondary rounded-full"></div>
+                  Almost ready...
+                </div>
               )}
               {progress === 100 && (
-                <button className="text-green-400 font-semibold">
+                <button className="text-green-500 font-bold flex items-center justify-center gap-2 mx-auto bg-green-100 px-4 py-2 rounded-full shadow-lg">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce"></div>
                   Your Study Guide is Ready!
                 </button>
               )}
@@ -152,38 +173,56 @@ const Action = () => {
         </div>
 
         {/* Newsletter Section */}
-        <div className="mt-8 md:mt-12 max-w-md w-full">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
-            <h3 className="text-xl font-semibold text-white mb-3 text-center">
-              Sign up for our Weekly Study Boost newsletter to get:
-            </h3>
-            <div className="flex justify-center text-white/80 text-sm mb-4 text-left">
-              <ol className="text-left list-disc list-inside text-white/60">
-                <li>Science-backed focus techniques</li>
-                <li>The best free online resources for test prep</li>
-                <li>Simple tips to study smarter and manage stress</li>
-              </ol>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                  required
-                  autoComplete="email"
-                />
+        <div className="my-8 md:my-12 max-w-md w-full">
+          <div className="bg-white/25 backdrop-blur-xl rounded-3xl p-8 border border-white/30 shadow-2xl relative overflow-hidden group hover:shadow-secondary/20 transition-all duration-500">
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold text-primary mb-4 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Sign up for our Weekly Study Boost newsletter to get:
+              </h3>
+              <div className="mb-6">
+                <ol className="text-left space-y-2 text-gray-700">
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Science-backed focus techniques</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-secondary rounded-full mt-2 flex-shrink-0"></div>
+                    <span>The best free online resources for test prep</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <span>Simple tips to study smarter and manage stress</span>
+                  </li>
+                </ol>
               </div>
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
-              >
-                Subscribe to Newsletter
-              </button>
-            </form>
+              <form onSubmit={handleSubmit} className="space-y-4 ">
+                <div className="relative">
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm transition-all duration-300 shadow-lg"
+                    required
+                    autoComplete="email"
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <div className="w-5 h-5 bg-gradient-to-r from-primary to-secondary rounded-full opacity-60"></div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 px-6 rounded-xl font-bold hover:from-primary/90 hover:to-secondary/90 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl relative overflow-hidden group"
+                >
+                  <span className="relative z-10">Subscribe to Newsletter</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

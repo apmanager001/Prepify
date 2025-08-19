@@ -13,6 +13,7 @@ const Header = () => {
     { href: "#getStarted", label: "Get Started" },
     { href: "#mission", label: "Mission" },
     { href: "#faq", label: "FAQ" },
+    { href: "#donations", label: "Donations" },
     { href: "#contact", label: "Contact" },
   ];
 

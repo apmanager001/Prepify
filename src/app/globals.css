@@ -3,3 +3,41 @@
   themes: bumblebee --default;
 }
 
+/* Section blending and transitions */
+.section-blend {
+  position: relative;
+  z-index: 10;
+}
+
+.section-blend::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1));
+  pointer-events: none;
+}
+
+.section-blend::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to top, transparent, rgba(255, 255, 255, 0.1));
+  pointer-events: none;
+}
+
+/* Smooth section transitions */
+.section-transition {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Enhanced shadow for depth */
+.section-depth {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 20px 20px;
+}
