@@ -81,7 +81,7 @@ const Header = () => {
                 {link.label}
               </a>
             ))}
-            {/* <div className="ml-2">{loginLink}</div> */}
+            <div className="ml-2">{loginLink}</div>
           </nav>
 
           {/* Tablet Navigation (simplified) */}
@@ -96,7 +96,7 @@ const Header = () => {
                 {link.label}
               </a>
             ))}
-            {/* <div className="ml-2">{loginLink}</div> */}
+            <div className="ml-2">{loginLink}</div>
           </nav>
 
           {/* Mobile menu button */}
@@ -146,7 +146,7 @@ const Header = () => {
                   {link.label}
                 </a>
               ))}
-              {/* <div className="pt-2">{loginLink}</div> */}
+              <div className="pt-2">{loginLink}</div>
             </div>
           </div>
         )}
