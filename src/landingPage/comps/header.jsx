@@ -13,14 +13,14 @@ const Header = () => {
     { href: "#getStarted", label: "Get Started" },
     { href: "#mission", label: "Mission" },
     { href: "#faq", label: "FAQ" },
-    { href: "#donations", label: "Donations" },
+    { href: "#donations", label: "Donate" },
     { href: "#contact", label: "Contact" },
   ];
 
   const loginLink = (
     <Link
       href="/login"
-      className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+      className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
     >
       Login
     </Link>
@@ -59,29 +59,44 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
-              <Image src="/logoNoSlogan.webp" alt="Prepify" width={140} height={140} />
-              {/* <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">P</span>
-              </div>
-              <span className="ml-2 text-xl font-bold text-gray-900">
-                Prepify
-              </span> */}
+              <Image
+                src="/logoNoSlogan.webp"
+                alt="Prepify"
+                width={140}
+                height={140}
+                className="w-24 h-24 lg:w-32 lg:h-32"
+              />
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6 2xl:space-x-8">
             {navigationLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleSmoothScroll(e, link.href)}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-xl font-bold transition-colors duration-200 cursor-pointer"
+                className="text-gray-700 hover:text-blue-600 px-2 py-2 text-sm xl:text-base 2xl:text-lg font-bold transition-colors duration-200 cursor-pointer whitespace-nowrap"
               >
                 {link.label}
               </a>
             ))}
-            {/* {loginLink} */}
+            {/* <div className="ml-2">{loginLink}</div> */}
+          </nav>
+
+          {/* Tablet Navigation (simplified) */}
+          <nav className="hidden md:flex lg:hidden items-center space-x-3">
+            {navigationLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleSmoothScroll(e, link.href)}
+                className="text-gray-700 hover:text-blue-600 px-1 py-2 text-sm font-bold transition-colors duration-200 cursor-pointer whitespace-nowrap"
+              >
+                {link.label}
+              </a>
+            ))}
+            {/* <div className="ml-2">{loginLink}</div> */}
           </nav>
 
           {/* Mobile menu button */}
@@ -131,7 +146,7 @@ const Header = () => {
                   {link.label}
                 </a>
               ))}
-              {/* {loginLink} */}
+              {/* <div className="pt-2">{loginLink}</div> */}
             </div>
           </div>
         )}

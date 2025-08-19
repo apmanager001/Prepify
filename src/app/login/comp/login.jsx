@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 import { api } from "../../../lib/api";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -22,11 +24,28 @@ const Login = () => {
     mutationFn: loginUser,
     onSuccess: (data) => {
       console.log("Login successful:", data);
-      // Handle successful login (redirect, store token, etc.)
+      // Store user data in localStorage or context if needed
+      if (data.userId) {
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
+      }
+      // Redirect to dashboard
+      router.push("/dashboard");
     },
     onError: (error) => {
-      setError("Invalid email or password. Please try again.");
       console.error("Login error:", error);
+      // Handle different error types based on your API response
+      if (
+        error.message.includes("Invalid") ||
+        error.message.includes("Incorrect")
+      ) {
+        setError("Invalid email or password. Please try again.");
+      } else if (error.message.includes("Missing")) {
+        setError("Please fill in all required fields.");
+      } else {
+        setError("Login failed. Please try again later.");
+      }
     },
   });
 
@@ -41,6 +60,14 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Clear any previous errors
+
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
     loginMutation.mutate(formData);
   };
 
@@ -94,6 +121,7 @@ const Login = () => {
                     className="grow "
                     required
                     autoComplete="email"
+                    disabled={loginMutation.isPending}
                   />
                 </label>
               </fieldset>
@@ -129,19 +157,18 @@ const Login = () => {
                     placeholder="Enter your password"
                     className="grow"
                     required
+                    disabled={loginMutation.isPending}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="btn text-primary bg-transparent border-none"
+                    disabled={loginMutation.isPending}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </label>
               </fieldset>
-
-              {/* Forgot Password Link */}
-              <div className="text-right"></div>
 
               {/* Submit Button */}
               <div className="form-control mt-6">
@@ -162,12 +189,16 @@ const Login = () => {
               </div>
             </form>
 
-            {/* Divider */}
+            {/* Divider
             <div className="divider">OR</div>
 
-            {/* Social Login Buttons */}
+           Social Login Buttons 
             <div className="space-y-3">
-              <button className="btn btn-outline btn-secondary w-full">
+              <button
+                type="button"
+                className="btn btn-outline btn-secondary w-full"
+                disabled={loginMutation.isPending}
+              >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
                     fill="currentColor"
@@ -189,7 +220,11 @@ const Login = () => {
                 Continue with Google
               </button>
 
-              <button className="btn btn-outline btn-secondary w-full">
+              <button
+                type="button"
+                className="btn btn-outline btn-secondary w-full"
+                disabled={loginMutation.isPending}
+              >
                 <svg
                   className="w-5 h-5"
                   fill="currentColor"
@@ -199,7 +234,7 @@ const Login = () => {
                 </svg>
                 Continue with Facebook
               </button>
-            </div>
+            </div> */}
 
             {/* Register Link */}
             <div className="text-center mt-6">

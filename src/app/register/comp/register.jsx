@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff, User, Mail, Lock, Loader2 } from "lucide-react";
 import { api } from "../../../lib/api";
+import { useRouter } from "next/navigation";
 
 const Register = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -25,11 +27,38 @@ const Register = () => {
     mutationFn: registerUser,
     onSuccess: (data) => {
       console.log("Registration successful:", data);
-      // Handle successful registration (redirect, show success message, etc.)
+      // Store user data in localStorage if needed
+      if (data.userId) {
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
+      }
+      // Redirect to dashboard
+      router.push("/dashboard");
     },
     onError: (error) => {
-      setError("Registration failed. Please try again.");
       console.error("Registration error:", error);
+      // Handle different error types based on your API response
+      if (error.message.includes("already in use")) {
+        if (error.message.includes("username")) {
+          setError("Username is already taken. Please choose a different one.");
+        } else if (error.message.includes("Email")) {
+          setError(
+            "Email is already registered. Please use a different email or try logging in."
+          );
+        } else {
+          setError("Account already exists. Please try logging in instead.");
+        }
+      } else if (error.message.includes("Missing")) {
+        setError("Please fill in all required fields.");
+      } else if (
+        error.message.includes("too long") ||
+        error.message.includes("too short")
+      ) {
+        setError("Please check the length requirements for your input fields.");
+      } else {
+        setError("Registration failed. Please try again later.");
+      }
     },
   });
 
@@ -44,8 +73,19 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Clear any previous errors
 
     // Basic validation
+    if (
+      !formData.username ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -53,6 +93,11 @@ const Register = () => {
 
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters long");
+      return;
+    }
+
+    if (formData.username.length > 20) {
+      setError("Username must be 20 characters or less");
       return;
     }
 
@@ -107,9 +152,11 @@ const Register = () => {
                     value={formData.username}
                     onChange={handleInputChange}
                     placeholder="Enter your username"
-                    className="input input-bordered w-full focus:input-primary"
+                    className=""
                     required
                     autoComplete="username"
+                    disabled={registerMutation.isPending}
+                    maxLength={20}
                   />
                 </label>
               </fieldset>
@@ -132,9 +179,10 @@ const Register = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="Enter your email"
-                    className="input input-bordered w-full focus:input-primary"
+                    className=""
                     required
                     autoComplete="email"
+                    disabled={registerMutation.isPending}
                   />
                 </label>
               </fieldset>
@@ -157,13 +205,16 @@ const Register = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     placeholder="Enter your password"
-                    className="input w-full border-none focus:border-none focus:ring-0"
+                    className=""
                     required
+                    disabled={registerMutation.isPending}
+                    minLength={6}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="btn text-primary bg-transparent border-none"
+                    disabled={registerMutation.isPending}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -188,13 +239,15 @@ const Register = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     placeholder="Confirm your password"
-                    className="input w-full border-none focus:border-none focus:ring-0"
+                    className=""
                     required
+                    disabled={registerMutation.isPending}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="btn text-primary bg-transparent border-none"
+                    disabled={registerMutation.isPending}
                   >
                     {showConfirmPassword ? (
                       <EyeOff size={18} />

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { subscribeToNewsletter } from "@/lib/api";
 
 const Action = () => {
   const [progress, setProgress] = useState(0);
@@ -11,6 +13,21 @@ const Action = () => {
 
   const fullText =
     "Your ultimate preparation companion for mastering any exam. We provide intelligent tools and comprehensive study materials designed to help you succeed. Our AI-powered system adapts to your learning style and provides personalized study plans that maximize your efficiency. Track your progress, identify weak areas, and focus on what matters most. Access hundreds of practice questions, detailed explanations, and expert-curated content across multiple subjects and exam types. From standardized tests to professional certifications, we've got you covered. Students using our platform see an average improvement of 25% in their scores within the first month of study. Join the success stories and ace your next exam with confidence. Sign up for free and experience the difference that intelligent preparation makes. No credit card required. Start your journey to academic and professional success with Prepify. Our team of education experts and AI specialists work together to create the most effective learning experience possible. Get personalized guidance and support whenever you need it. Our platform learns from your performance and adapts the content to match your unique learning pace and style. No more one-size-fits-all approaches to studying. Monitor your progress with detailed analytics and insights that help you understand your strengths and areas for improvement. Data-driven learning for better results. Thousands of practice questions with instant feedback. Access your study materials on any device, anytime. Join thousands of students who have transformed their learning experience with our platform.";
+
+  // Newsletter subscription mutation
+  const newsletterMutation = useMutation({
+    mutationFn: subscribeToNewsletter,
+    onSuccess: (data) => {
+      console.log("Newsletter subscription successful:", data);
+      // Reset form on success
+      setEmail("");
+      // You could add a toast notification here
+    },
+    onError: (error) => {
+      console.error("Newsletter subscription failed:", error);
+      // You could add error toast notification here
+    },
+  });
 
   // Intersection Observer to detect when section is in view
   useEffect(() => {
@@ -69,8 +86,7 @@ const Action = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email) {
-      // Here you would typically send the email to your backend
-      console.log("Newsletter subscription:", email);
+      newsletterMutation.mutate({ email });
     }
   };
 
@@ -198,7 +214,57 @@ const Action = () => {
                   </li>
                 </ol>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-4 ">
+
+              {/* Success Message */}
+              {newsletterMutation.isSuccess && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center">
+                    <svg
+                      className="w-4 h-4 text-green-400 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <p className="text-green-800 text-sm font-medium">
+                      Successfully subscribed to newsletter!
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {newsletterMutation.isError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center">
+                    <svg
+                      className="w-4 h-4 text-red-400 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                    <p className="text-red-800 text-sm font-medium">
+                      {newsletterMutation.error?.message ||
+                        "Failed to subscribe. Please try again."}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="relative">
                   <input
                     id="email"
@@ -206,9 +272,10 @@ const Action = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email address"
-                    className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm transition-all duration-300 shadow-lg"
+                    className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent backdrop-blur-sm transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     required
                     autoComplete="email"
+                    disabled={newsletterMutation.isPending}
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                     <div className="w-5 h-5 bg-gradient-to-r from-primary to-secondary rounded-full opacity-60"></div>
@@ -216,10 +283,41 @@ const Action = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 px-6 rounded-xl font-bold hover:from-primary/90 hover:to-secondary/90 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl relative overflow-hidden group"
+                  disabled={newsletterMutation.isPending}
+                  className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 px-6 rounded-xl font-bold hover:from-primary/90 hover:to-secondary/90 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
                 >
-                  <span className="relative z-10">Subscribe to Newsletter</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  {newsletterMutation.isPending ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Subscribing...
+                    </>
+                  ) : (
+                    <>
+                      <span className="relative z-10">
+                        Subscribe to Newsletter
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </>
+                  )}
                 </button>
               </form>
             </div>
