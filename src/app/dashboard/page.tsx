@@ -13,7 +13,6 @@ import {
   Award,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -43,11 +42,11 @@ const Dashboard = () => {
                   👋
                 </h1>
                 <p className="text-lg text-gray-600">
-                  Here's your study progress for today
+                  Here&apos;s your study progress for today
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-500">Today's Date</p>
+                <p className="text-sm text-gray-500">Today&apos;s Date</p>
                 <p className="text-lg font-semibold text-gray-900">
                   {new Date().toLocaleDateString("en-US", {
                     weekday: "long",
@@ -60,7 +59,7 @@ const Dashboard = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-lg text-white">
                 <div className="flex items-center justify-between">
                   <div>
@@ -160,7 +159,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">
-                      Earned "Consistent Learner" Badge
+                      Earned &ldquo;Consistent Learner&rdquo; Badge
                     </p>
                     <p className="text-sm text-gray-600">1 day ago</p>
                   </div>
@@ -224,8 +223,8 @@ const Dashboard = () => {
                   Set Your First Goal
                 </h3>
                 <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Define what you want to achieve and we'll help you get there
-                  step by step.
+                  Define what you want to achieve and we&apos;ll help you get
+                  there step by step.
                 </p>
                 <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Create Goal
