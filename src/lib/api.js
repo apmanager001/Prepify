@@ -1,10 +1,18 @@
 // API utility functions for authentication
+// Last updated: $(date)
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND;
+
+// Validate API_BASE_URL
+if (!API_BASE_URL) {
+  console.error("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
+  console.error("Please add NEXT_PUBLIC_BACKEND to your .env.local file");
+}
 
 export const api = {
   // Register user
   register: async (userData) => {
+    console.log("🔍 Register API call to:", `${API_BASE_URL}/register`);
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
       headers: {
@@ -23,20 +31,54 @@ export const api = {
 
   // Login user
   login: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const requestId = Math.random().toString(36).substr(2, 9);
+    const loginUrl = `${API_BASE_URL}/login`;
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Login failed");
+    console.log(`🔍 [${requestId}] Login API call to:`, loginUrl);
+    console.log(`🔍 [${requestId}] Credentials being sent:`, credentials);
+    console.log(`🔍 [${requestId}] API_BASE_URL:`, API_BASE_URL);
+    console.log(`🔍 [${requestId}] Full URL:`, loginUrl);
+    console.log(`🔍 [${requestId}] Request method: POST`);
+    console.log(`🔍 [${requestId}] Request body:`, JSON.stringify(credentials));
+
+    if (!API_BASE_URL) {
+      throw new Error(
+        "Backend API URL not configured. Please check your environment variables."
+      );
     }
 
-    return response.json();
+    try {
+      const response = await fetch(loginUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      console.log(`🔍 [${requestId}] Login response status:`, response.status);
+      console.log(
+        `🔍 [${requestId}] Login response headers:`,
+        response.headers
+      );
+      console.log(`🔍 [${requestId}] Response URL:`, response.url);
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.error(`❌ [${requestId}] Login API error response:`, error);
+        throw new Error(error.message || "Login failed");
+      }
+
+      const responseData = await response.json();
+      console.log(
+        `✅ [${requestId}] Login API success response:`,
+        responseData
+      );
+      return responseData;
+    } catch (error) {
+      console.error(`❌ [${requestId}] Fetch error:`, error);
+      throw error;
+    }
   },
 
   // Logout user

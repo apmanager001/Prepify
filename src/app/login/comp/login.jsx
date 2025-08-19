@@ -2,49 +2,66 @@
 
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
-import { api } from "../../../lib/api";
+import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { Mail, Lock, User } from "lucide-react";
 
 const Login = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
-  // Use the API utility for login
-  const loginUser = async (credentials) => {
-    return api.login(credentials);
-  };
+  const [debugInfo, setDebugInfo] = useState("");
 
   const loginMutation = useMutation({
-    mutationFn: loginUser,
+    mutationFn: async (credentials) => {
+      console.log("🔍 Login attempt with credentials:", credentials);
+      console.log("🔍 API Base URL:", process.env.NEXT_PUBLIC_BACKEND);
+
+      try {
+        const response = await api.login(credentials);
+        console.log("✅ Login API response:", response);
+        return response;
+      } catch (error) {
+        console.error("❌ Login API error:", error);
+        console.error("❌ Error details:", {
+          message: error.message,
+          stack: error.stack,
+          name: error.name,
+        });
+        throw error;
+      }
+    },
     onSuccess: (data) => {
-      console.log("Login successful:", data);
-      // Store user data in localStorage or context if needed
+      console.log("🎉 Login successful:", data);
+      setDebugInfo(`Login successful! User ID: ${data.userId}`);
+
       if (data.userId) {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
         localStorage.setItem("email", data.email);
+        console.log("💾 User data stored in localStorage");
       }
-      // Redirect to dashboard
+
       router.push("/dashboard");
     },
     onError: (error) => {
-      console.error("Login error:", error);
-      // Handle different error types based on your API response
+      console.error("💥 Login mutation error:", error);
+      setDebugInfo(`Error: ${error.message}`);
+
       if (
         error.message.includes("Invalid") ||
         error.message.includes("Incorrect")
       ) {
-        setError("Invalid email or password. Please try again.");
+        setError("Invalid username or password. Please try again.");
       } else if (error.message.includes("Missing")) {
         setError("Please fill in all required fields.");
+      } else if (error.message.includes("Failed to fetch")) {
+        setError("Network error. Please check your connection and try again.");
       } else {
-        setError("Login failed. Please try again later.");
+        setError(`Login failed: ${error.message}`);
       }
     },
   });
@@ -55,196 +72,200 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
-    setError(""); // Clear error when user starts typing
+    // Clear error when user starts typing
+    if (error) setError("");
+    if (debugInfo) setDebugInfo("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError(""); // Clear any previous errors
+    console.log("🚀 Form submitted with data:", formData);
+    setDebugInfo("Form submitted, attempting login...");
 
-    // Basic validation
-    if (!formData.email || !formData.password) {
-      setError("Please fill in all required fields.");
+    // Client-side validation
+    if (!formData.username.trim()) {
+      setError("Please enter your username or email.");
+      setDebugInfo("Validation failed: missing username");
+      return;
+    }
+    if (!formData.password.trim()) {
+      setError("Please enter your password.");
+      setDebugInfo("Validation failed: missing password");
       return;
     }
 
+    console.log("✅ Validation passed, calling login mutation");
     loginMutation.mutate(formData);
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="card bg-base-100 shadow-xl border border-primary/20">
-          <div className="card-body">
-            <h2 className="card-title text-2xl font-bold text-center text-primary mb-6">
-              Welcome Back
-            </h2>
+  // Test function to check API connectivity
+  const testAPI = async () => {
+    setDebugInfo("Testing API connectivity...");
 
+    // Check environment variable
+    console.log("🔍 Environment check:");
+    console.log("NEXT_PUBLIC_BACKEND:", process.env.NEXT_PUBLIC_BACKEND);
+    console.log("NODE_ENV:", process.env.NODE_ENV);
+
+    if (!process.env.NEXT_PUBLIC_BACKEND) {
+      setDebugInfo("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "test", password: "test" }),
+      });
+
+      console.log("🔍 Test API response status:", response.status);
+      console.log("🔍 Test API response headers:", response.headers);
+
+      const data = await response.text();
+      console.log("🔍 Test API response body:", data);
+
+      setDebugInfo(`API test completed. Status: ${response.status}`);
+    } catch (error) {
+      console.error("❌ API test failed:", error);
+      setDebugInfo(`API test failed: ${error.message}`);
+    }
+  };
+
+  // Check environment on component mount
+  React.useEffect(() => {
+    console.log("🔍 Component mounted - Environment check:");
+    console.log("NEXT_PUBLIC_BACKEND:", process.env.NEXT_PUBLIC_BACKEND);
+
+    if (!process.env.NEXT_PUBLIC_BACKEND) {
+      setDebugInfo("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
+    } else {
+      setDebugInfo(`✅ API URL configured: ${process.env.NEXT_PUBLIC_BACKEND}`);
+    }
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-primary/15 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-gray-600">
+            Sign in to continue your learning journey
+          </p>
+        </div>
+
+        {/* Debug Info */}
+        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="font-semibold text-blue-800 mb-2">Debug Info:</h3>
+          <p className="text-sm text-blue-700">
+            {debugInfo || "No debug info yet"}
+          </p>
+          <p className="text-xs text-blue-600 mt-1">
+            API URL: {process.env.NEXT_PUBLIC_BACKEND || "Not set"}
+          </p>
+          <button
+            onClick={testAPI}
+            className="mt-2 text-xs bg-blue-200 hover:bg-blue-300 px-2 py-1 rounded"
+          >
+            Test API
+          </button>
+        </div>
+
+        {/* Login Form */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/30 shadow-2xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Username Field */}
+            <fieldset className="fieldset">
+              <legend className="label">
+                <span className="input-group-text text-primary">
+                  <User size={18} />
+                </span>
+                <span className="label-text text-base-content font-semibold">
+                  Username or Email
+                </span>
+              </legend>
+              <label className="input w-full">
+                <input
+                  id="login-username"
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  placeholder="Enter your username or email"
+                  className="grow"
+                  required
+                  autoComplete="username"
+                  disabled={loginMutation.isPending}
+                />
+              </label>
+            </fieldset>
+
+            {/* Password Field */}
+            <fieldset className="fieldset">
+              <legend className="label">
+                <span className="label-text text-base-content font-semibold">
+                  Password
+                </span>
+              </legend>
+              <label className="input w-full">
+                <input
+                  id="login-password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter your password"
+                  className="grow"
+                  required
+                  autoComplete="current-password"
+                  disabled={loginMutation.isPending}
+                />
+              </label>
+            </fieldset>
+
+            {/* Error Message */}
             {error && (
-              <div className="alert alert-error mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+              <div className="alert alert-error text-sm">
                 <span>{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
-              <fieldset className="fieldset">
-                <legend className="label">
-                  <span className="input-group-text text-primary">
-                    <Mail size={18} />
-                  </span>
-                  <span className="label-text text-base-content font-semibold">
-                    Email
-                  </span>
-                </legend>
-                <label className="input w-full ">
-                  <input
-                    id="login-email"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Enter your email"
-                    className="grow "
-                    required
-                    autoComplete="email"
-                    disabled={loginMutation.isPending}
-                  />
-                </label>
-              </fieldset>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="btn btn-primary w-full text-lg font-semibold py-3"
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? (
+                <span className="loading loading-spinner loading-md"></span>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+          </form>
 
-              {/* Password Field */}
-              <fieldset className="fieldset">
-                <legend className="label flex justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <span className="input-group-text text-primary">
-                      <Lock size={18} />
-                    </span>
-                    <span className="label-text text-base-content font-semibold">
-                      Password
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <a
-                      href="/forgot-password"
-                      className="link link-primary text-sm"
-                    >
-                      Forgot password?
-                    </a>
-                  </div>
-                </legend>
-
-                <label className="input w-full focus:ring-0">
-                  <input
-                    id="login-password"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="Enter your password"
-                    className="grow"
-                    required
-                    disabled={loginMutation.isPending}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="btn text-primary bg-transparent border-none"
-                    disabled={loginMutation.isPending}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </label>
-              </fieldset>
-
-              {/* Submit Button */}
-              <div className="form-control mt-6">
-                <button
-                  type="submit"
-                  disabled={loginMutation.isPending}
-                  className="btn btn-primary w-full"
-                >
-                  {loginMutation.isPending ? (
-                    <>
-                      <Loader2 className="animate-spin" size={18} />
-                      Signing in...
-                    </>
-                  ) : (
-                    "Sign In"
-                  )}
-                </button>
-              </div>
-            </form>
-
-            {/* Divider
-            <div className="divider">OR</div>
-
-           Social Login Buttons 
-            <div className="space-y-3">
-              <button
-                type="button"
-                className="btn btn-outline btn-secondary w-full"
-                disabled={loginMutation.isPending}
+          {/* Additional Links */}
+          <div className="mt-6 text-center space-y-3">
+            <p className="text-sm text-gray-600">
+              Don&apos;t have an account?{" "}
+              <a
+                href="/register"
+                className="text-primary hover:text-primary/80 font-semibold transition-colors"
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  />
-                </svg>
-                Continue with Google
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline btn-secondary w-full"
-                disabled={loginMutation.isPending}
+                Sign up here
+              </a>
+            </p>
+            <p className="text-sm text-gray-600">
+              <a
+                href="#"
+                className="text-primary hover:text-primary/80 font-semibold transition-colors"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                Continue with Facebook
-              </button>
-            </div> */}
-
-            {/* Register Link */}
-            <div className="text-center mt-6">
-              <p className="text-sm text-base-content/70">
-                Don't have an account?{" "}
-                <a href="/register" className="link link-primary font-semibold">
-                  Sign up here
-                </a>
-              </p>
-            </div>
+                Forgot your password?
+              </a>
+            </p>
           </div>
         </div>
       </div>
