@@ -10,7 +10,7 @@ const Donations = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Donations
+            Make an Impact
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Any donations are appreciated and help provide free study guides to students

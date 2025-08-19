@@ -1,45 +1,54 @@
 import { Instagram } from "lucide-react";
+import Image from "next/image";
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
           {/* Company Info */}
-          <div className="col-span-1 md:col-span-2">
+          <div className="md:w-2/3">
             <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">P</span>
+              <div className="w-50 h-10 bg-white/40  rounded-lg flex items-center justify-center">
+                <Image
+                  src="/logoNoSlogan.webp"
+                  alt="Prepify Logo"
+                  width={100}
+                  height={100}
+                />
               </div>
-              <span className="ml-2 text-xl font-bold">Prepify</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
-              Empowering students and professionals with intelligent preparation
-              tools. Streamline your learning journey with our comprehensive
-              platform.
+              Prepify is a student-led nonprofit initiative fiscally sponsored
+              by the Institute for Education, Research, and Scholarships
+              (IFERS), a registered 501(c)(3) organization. All donations to
+              Prepify are processed through IFERS and are tax-deductible to the
+              fullest extent allowed by law.
+            </p>
+            <p className="text-gray-300 mb-4 max-w-md">
+              To learn more about our fiscal sponsor, please visit{" "}
+              <a
+                href="https://ifers.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+              >
+                ifers.org
+              </a>
             </p>
             <div className="flex space-x-4">
               <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors duration-200"
-                aria-label="Twitter"
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                </svg>
-              </a>
-              <a
-                href="#"
+                href="https://www.instagram.com/its_prepify/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors duration-200"
                 aria-label="Instagram"
               >
                 <Instagram />
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@its_prepify?_t=ZT-8yxziYNg1Ve&_r=1"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors duration-200"
                 aria-label="Tiktok"
               >
@@ -54,66 +63,97 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="/"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
-                >
-                  Home
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#mission"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
-                >
-                  Mission
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#getStarted"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
-                >
-                  Get Started
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#faq"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
-                >
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#contact"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
-                >
-                  Contact Us
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* Links Section */}
+          <div className="md:w-1/3 flex flex-col md:flex-row gap-8 md:gap-12">
+            {/* Quick Links */}
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-4 text-white">
+                Quick Links
+              </h3>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="/"
+                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#mission"
+                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    Mission
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#getStarted"
+                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    Get Started
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#faq"
+                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    FAQ
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#contact"
+                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    Contact Us
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-          {/* Support */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Support</h3>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="#contact"
-                  className="text-gray-300 hover:text-white transition-colors duration-200"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
+            {/* Support */}
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-4 text-white">Support</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="#contact"
+                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Sponsors */}
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold mb-4 text-white">
+                Sponsors
+              </h3>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2">
+                  <a
+                    href="https://ifers.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                  >
+                    IFERS
+                  </a>
+                  <Image
+                    src="/ifers.png"
+                    alt="IFERS Logo"
+                    width={50}
+                    height={50}
+                  />
+                </li>
+                <li></li>
+              </ul>
+            </div>
           </div>
         </div>
 
