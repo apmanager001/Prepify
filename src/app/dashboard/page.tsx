@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Home,
   BookOpen,
@@ -16,6 +16,22 @@ import Image from "next/image";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [userData, setUserData] = useState({
+    username: "",
+    email: "",
+    userId: "",
+  });
+
+  // Safely access localStorage only on client side
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserData({
+        username: localStorage.getItem("username") || "",
+        email: localStorage.getItem("email") || "",
+        userId: localStorage.getItem("userId") || "",
+      });
+    }
+  }, []);
 
   // Sidebar navigation items
   const sidebarItems = [
@@ -38,8 +54,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                  Welcome back, {localStorage.getItem("username") || "Student"}!
-                  👋
+                  Welcome back, {userData.username || "Student"}! 👋
                 </h1>
                 <p className="text-lg text-gray-600">
                   Here&apos;s your study progress for today
@@ -145,7 +160,7 @@ const Dashboard = () => {
                     <Target size={20} className="text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">
+                    <p className="text-lg font-medium text-gray-900">
                       Achieved Daily Goal
                     </p>
                     <p className="text-sm text-gray-600">4 hours ago</p>
@@ -317,7 +332,7 @@ const Dashboard = () => {
                   Organize your study time and never miss a learning
                   opportunity.
                 </p>
-                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-500 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Open Calendar
                 </button>
               </div>
@@ -394,10 +409,12 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    // Clear localStorage
-    localStorage.removeItem("userId");
-    localStorage.removeItem("username");
-    localStorage.removeItem("email");
+    // Clear localStorage only on client side
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("userId");
+      localStorage.removeItem("username");
+      localStorage.removeItem("email");
+    }
     // Redirect to home page
     window.location.href = "/";
   };
@@ -447,10 +464,10 @@ const Dashboard = () => {
         <div className="p-6 border-t border-gray-100">
           <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
             <p className="text-sm font-semibold text-gray-900 mb-1">
-              {localStorage.getItem("username") || "User"}
+              {userData.username || "User"}
             </p>
             <p className="text-xs text-gray-600">
-              {localStorage.getItem("email") || "user@example.com"}
+              {userData.email || "user@example.com"}
             </p>
           </div>
           <button
