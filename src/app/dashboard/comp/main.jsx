@@ -1,28 +1,113 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import {
-  BookOpen,
-  Target,
-  BarChart3,
-  Calendar,
-  Award,
-} from "lucide-react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { BookOpen, Target, BarChart3, Calendar, Award } from "lucide-react";
 
 const Main = () => {
-    const [userData, setUserData] = useState({
+  const router = useRouter();
+  const [userData, setUserData] = useState({
     username: "",
     email: "",
     userId: "",
-    });
-     useEffect(() => {
-       if (typeof window !== "undefined") {
-         setUserData({
-           username: localStorage.getItem("username") || "",
-           email: localStorage.getItem("email") || "",
-           userId: localStorage.getItem("userId") || "",
-         });
-       }
-     }, []);
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Fetch user data from API to validate session
+  const {
+    data: profileData,
+    error: profileError,
+    isLoading: profileLoading,
+  } = useQuery({
+    queryKey: ["profile"],
+    queryFn: api.getProfile,
+    retry: 1,
+    onError: (error) => {
+      console.error("Profile fetch error:", error);
+      if (
+        error.message.includes("401") ||
+        error.message.includes("Unauthorized")
+      ) {
+        // Session expired or invalid, redirect to login
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("email");
+        router.push("/login");
+      }
+    },
+  });
+
+  useEffect(() => {
+    // First try to get data from localStorage for immediate display
+    if (typeof window !== "undefined") {
+      const storedData = {
+        username: localStorage.getItem("username") || "",
+        email: localStorage.getItem("email") || "",
+        userId: localStorage.getItem("userId") || "",
+      };
+      setUserData(storedData);
+    }
+  }, []);
+
+  // Update user data when profile is fetched
+  useEffect(() => {
+    if (profileData) {
+      setUserData({
+        username: profileData.username || userData.username,
+        email: profileData.email || userData.email,
+        userId: profileData.userId || userData.userId,
+      });
+      // Update localStorage with fresh data
+      if (profileData.username)
+        localStorage.setItem("username", profileData.username);
+      if (profileData.email) localStorage.setItem("email", profileData.email);
+      if (profileData.userId)
+        localStorage.setItem("userId", profileData.userId);
+      setIsLoading(false);
+    }
+  }, [profileData]);
+
+  // Handle loading and error states
+  useEffect(() => {
+    if (profileError) {
+      setError(profileError.message);
+      setIsLoading(false);
+    }
+  }, [profileError]);
+
+  // Show loading state
+  if (isLoading || profileLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="loading loading-spinner loading-lg text-primary"></div>
+          <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="alert alert-error max-w-md">
+            <span>Error loading dashboard: {error}</span>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="btn btn-primary mt-4"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
@@ -156,6 +241,6 @@ const Main = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Main
+export default Main;

@@ -18,6 +18,7 @@ export const api = {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // Include cookies
       body: JSON.stringify(userData),
     });
 
@@ -53,6 +54,7 @@ export const api = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(credentials),
       });
 
@@ -88,6 +90,7 @@ export const api = {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // Include cookies
     });
 
     if (!response.ok) {
@@ -104,10 +107,28 @@ export const api = {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // Include cookies
     });
 
     if (!response.ok) {
       throw new Error("Failed to get user data");
+    }
+
+    return response.json();
+  },
+
+  // Get user profile (alternative endpoint)
+  getProfile: async () => {
+    const response = await fetch(`${API_BASE_URL}/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to get profile data");
     }
 
     return response.json();

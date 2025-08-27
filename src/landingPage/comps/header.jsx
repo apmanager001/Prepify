@@ -1,11 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      if (typeof window !== "undefined") {
+        const userId = localStorage.getItem("userId");
+        setIsLoggedIn(!!userId);
+      }
+    };
+
+    // Check initial status
+    checkLoginStatus();
+
+    // Listen for storage changes (when user logs in/out from other tabs)
+    const handleStorageChange = (e) => {
+      if (e.key === "userId") {
+        checkLoginStatus();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   // Navigation links array - single source of truth
   const navigationLinks = [
@@ -18,12 +46,23 @@ const Header = () => {
   ];
 
   const loginLink = (
-    <Link
-      href="/login"
-      className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
-    >
-      Login
-    </Link>
+    <div>
+      {isLoggedIn ? (
+        <Link
+          href="/dashboard"
+          className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
+        >
+          Dashboard
+        </Link>
+      ) : (
+        <Link
+          href="/login"
+          className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
+        >
+          Login
+        </Link>
+      )}
+    </div>
   );
 
   const toggleMenu = () => {

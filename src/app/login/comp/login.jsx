@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Mail, Lock, User } from "lucide-react";
+import { User } from "lucide-react";
 
 const Login = () => {
   const router = useRouter();
@@ -13,44 +13,23 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
-  const [debugInfo, setDebugInfo] = useState("");
 
   const loginMutation = useMutation({
     mutationFn: async (credentials) => {
-      console.log("🔍 Login attempt with credentials:", credentials);
-      console.log("🔍 API Base URL:", process.env.NEXT_PUBLIC_BACKEND);
-
-      try {
-        const response = await api.login(credentials);
-        console.log("✅ Login API response:", response);
-        return response;
-      } catch (error) {
-        console.error("❌ Login API error:", error);
-        console.error("❌ Error details:", {
-          message: error.message,
-          stack: error.stack,
-          name: error.name,
-        });
-        throw error;
-      }
+      const response = await api.login(credentials);
+      return response;
     },
     onSuccess: (data) => {
-      console.log("🎉 Login successful:", data);
-      setDebugInfo(`Login successful! User ID: ${data.userId}`);
-
       if (data.userId) {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
         localStorage.setItem("email", data.email);
-        console.log("💾 User data stored in localStorage");
+        // Store admin status if available
+        localStorage.setItem("isAdmin", data.isAdmin || false);
       }
-
       router.push("/dashboard");
     },
     onError: (error) => {
-      console.error("💥 Login mutation error:", error);
-      setDebugInfo(`Error: ${error.message}`);
-
       if (
         error.message.includes("Invalid") ||
         error.message.includes("Incorrect")
@@ -74,75 +53,23 @@ const Login = () => {
     }));
     // Clear error when user starts typing
     if (error) setError("");
-    if (debugInfo) setDebugInfo("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("🚀 Form submitted with data:", formData);
-    setDebugInfo("Form submitted, attempting login...");
 
     // Client-side validation
     if (!formData.username.trim()) {
       setError("Please enter your username or email.");
-      setDebugInfo("Validation failed: missing username");
       return;
     }
     if (!formData.password.trim()) {
       setError("Please enter your password.");
-      setDebugInfo("Validation failed: missing password");
       return;
     }
 
-    console.log("✅ Validation passed, calling login mutation");
     loginMutation.mutate(formData);
   };
-
-  // Test function to check API connectivity
-  const testAPI = async () => {
-    setDebugInfo("Testing API connectivity...");
-
-    // Check environment variable
-    console.log("🔍 Environment check:");
-    console.log("NEXT_PUBLIC_BACKEND:", process.env.NEXT_PUBLIC_BACKEND);
-    console.log("NODE_ENV:", process.env.NODE_ENV);
-
-    if (!process.env.NEXT_PUBLIC_BACKEND) {
-      setDebugInfo("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: "test", password: "test" }),
-      });
-
-      console.log("🔍 Test API response status:", response.status);
-      console.log("🔍 Test API response headers:", response.headers);
-
-      const data = await response.text();
-      console.log("🔍 Test API response body:", data);
-
-      setDebugInfo(`API test completed. Status: ${response.status}`);
-    } catch (error) {
-      console.error("❌ API test failed:", error);
-      setDebugInfo(`API test failed: ${error.message}`);
-    }
-  };
-
-  // Check environment on component mount
-  React.useEffect(() => {
-    console.log("🔍 Component mounted - Environment check:");
-    console.log("NEXT_PUBLIC_BACKEND:", process.env.NEXT_PUBLIC_BACKEND);
-
-    if (!process.env.NEXT_PUBLIC_BACKEND) {
-      setDebugInfo("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
-    } else {
-      setDebugInfo(`✅ API URL configured: ${process.env.NEXT_PUBLIC_BACKEND}`);
-    }
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-primary/15 flex items-center justify-center p-4">
@@ -155,23 +82,6 @@ const Login = () => {
           <p className="text-gray-600">
             Sign in to continue your learning journey
           </p>
-        </div>
-
-        {/* Debug Info */}
-        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="font-semibold text-blue-800 mb-2">Debug Info:</h3>
-          <p className="text-sm text-blue-700">
-            {debugInfo || "No debug info yet"}
-          </p>
-          <p className="text-xs text-blue-600 mt-1">
-            API URL: {process.env.NEXT_PUBLIC_BACKEND || "Not set"}
-          </p>
-          <button
-            onClick={testAPI}
-            className="mt-2 text-xs bg-blue-200 hover:bg-blue-300 px-2 py-1 rounded"
-          >
-            Test API
-          </button>
         </div>
 
         {/* Login Form */}

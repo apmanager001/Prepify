@@ -93,7 +93,7 @@ const TopCarousel = ({ onGuideSelect, isCollapsed, onToggle }) => {
         </div>
         <button
           onClick={onToggle}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
         >
           <ChevronDown className="w-5 h-5 text-gray-600" />
         </button>
@@ -114,7 +114,7 @@ const TopCarousel = ({ onGuideSelect, isCollapsed, onToggle }) => {
         </div>
         <button
           onClick={onToggle}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
         >
           <ChevronUp className="w-6 h-6 text-gray-600" />
         </button>
@@ -125,14 +125,14 @@ const TopCarousel = ({ onGuideSelect, isCollapsed, onToggle }) => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white border border-gray-200 rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
+          className="cursor-pointer absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white border border-gray-200 rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
         >
           <ChevronLeft className="w-5 h-5 text-gray-600" />
         </button>
 
         <button
           onClick={nextSlide}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white border border-gray-200 rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
+          className="cursor-pointer absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white border border-gray-200 rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
         >
           <ChevronRight className="w-5 h-5 text-gray-600" />
         </button>

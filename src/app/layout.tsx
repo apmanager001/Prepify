@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     siteName: "Prepify",
     images: [
       {
-        url: "/logoSlogan.webp",
+        url: "/logoWBackground.webp",
         width: 1200,
         height: 630,
         alt: "Prepify - Ace Your Prep with AI-Powered Study Plans",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     title: "Prepify - Ace Your Prep with AI-Powered Study Plans",
     description:
       "Transform your learning with Prepify's personalized AI study plans. Get customized study guides, track progress, and achieve your academic goals faster.",
-    images: ["/logoSlogan.webp"],
+    images: ["/logoWBackground.webp"],
     creator: "@prepify",
     site: "@prepify",
   },
