@@ -39,10 +39,6 @@ paths:
                   "userId": "66ce0c8dc538303360039d01",
                   "username": "EasterBunny",
                   "email": "EasterBunny@example.com",
-                  "bio": "I haven't decided what to put in my bio yet.",
-                  "publishEmail": false,
-                  "darkMode": false,
-                  "emailVerified": false,
                 }
         "400":
           description: "If any of the fields are missing, too long, or too short, return an error."
@@ -100,17 +96,7 @@ paths:
                   "userId": "66ce0c8dc538303360039d01",
                   "username": "EasterBunny",
                   "email": "EasterBunny@example.com",
-                  "admin": false,
-                  "moderator": false,
-                  "bio": "I haven't decided what to put in my bio yet.",
-                  "publishEmail": false,
-                  "darkMode": false,
-                  "locked": false,
-                  "emailVerified": true,
-                  "publishedChapters": [],
-                  "followedAuthors": [],
-                  "likedChapters": [],
-                  "bookmarkedChapters": [],
+                  "createdAt": "2025-08-19T16:25:14.149+00:00",
                 }
         "400":
           description: "Missing field."
@@ -126,6 +112,33 @@ paths:
           content:
             application/json:
               example: { "error": "Incorrect name or password." }
+        default:
+          description: Default error sample response
+  /profile:
+    summary: Return user's profile.
+    get:
+      tags:
+        - User
+      summary: Return user's profile.
+      description: Return the privateProfile() of the logged in user, or if there is no logged in user, an error.
+      operationId: get_profile
+      responses:
+        "200":
+          description: Success!
+          content:
+            application/json:
+              example:
+                {
+                  "userId": "66ce0c8dc538303360039d01",
+                  "username": "EasterBunny",
+                  "email": "EasterBunny@example.com",
+                  "createdAt": "2025-08-19T16:25:14.149+00:00",
+                }
+        "401":
+          description: No logged in user.
+          content:
+            application/json:
+              example: { "error": "No logged in user." }
         default:
           description: Default error sample response
   /logout:
@@ -242,6 +255,59 @@ paths:
                 { "error": "Failed to submit message. Please try again." }
         default:
           description: Default error sample response
+  /admin/newsletter:
+    summary: Get all newsletter subscribers
+    get:
+      tags:
+        - Admin
+      summary: Get all newsletter subscribers
+      description: Returns a list of all email addresses subscribed to the newsletter.
+      operationId: get_newsletter_subscribers
+      responses:
+        "200":
+          description: List of newsletter subscribers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscribers:
+                    type: array
+                    items:
+                      type: string
+                      format: email
+              example:
+                [
+                  {
+                    _id: "68af63e0f1607877ec6e3e37",
+                    email: "Freddy@example.com",
+                    createdAt: "2025-08-27T21:00:32.371Z",
+                    updatedAt: "2025-08-27T21:00:32.371Z",
+                    __v: 0,
+                  },
+                  {
+                    _id: "7877ec6e3e3768af63e0f160",
+                    email: "Bob@example.com",
+                    createdAt: "2025-08-27T20:00:32.371Z",
+                    updatedAt: "2025-08-27T20:00:32.371Z",
+                    __v: 0,
+                  },
+                ]
+        "401":
+          description: Unauthorized access.
+          content:
+            application/json:
+              example: { "error": "No logged in admin user." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example:
+                {
+                  "error": "Failed to retrieve newsletter subscribers. Please try again.",
+                }
+        default:
+          description: Default error sample response
 components:
   schemas:
     Register:
@@ -261,7 +327,7 @@ components:
         - username
         - password
       properties:
-        name:
+        username:
           type: string
         password:
           type: string

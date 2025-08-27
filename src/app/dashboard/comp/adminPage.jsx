@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Trash2,
   Mail,
@@ -9,24 +9,46 @@ import {
   Check,
   Users,
   Settings,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
+import { getNewsletterSubscribers } from "@/lib/api";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("newsletter");
   const [copied, setCopied] = useState(false);
   const [expandedMessages, setExpandedMessages] = useState(new Set());
 
-  // Mock data for layout - replace with API calls later
-  const newsletterEmails = [
-    "john.doe@example.com",
-    "jane.smith@example.com",
-    "mike.johnson@example.com",
-    "sarah.wilson@example.com",
-    "david.brown@example.com",
-    "emma.davis@example.com",
-    "alex.taylor@example.com",
-    "lisa.anderson@example.com",
-  ];
+  // Newsletter state
+  const [newsletterEmails, setNewsletterEmails] = useState([]);
+  const [newsletterLoading, setNewsletterLoading] = useState(true);
+  const [newsletterError, setNewsletterError] = useState(null);
+  // Fetch newsletter subscribers on component mount
+  useEffect(() => {
+    if (activeTab === "newsletter") {
+      fetchNewsletterSubscribers();
+    }
+  }, [activeTab]);
+
+  const fetchNewsletterSubscribers = async () => {
+    try {
+      setNewsletterLoading(true);
+      setNewsletterError(null);
+      const response = await getNewsletterSubscribers();
+
+      // Extract emails from the response based on the OpenAPI spec
+      // The API returns an array of subscriber objects with email, createdAt, etc.
+      const emails = response[0]
+        ? response.map((sub) => sub.email)
+        : [];
+      setNewsletterEmails(emails);
+    } catch (error) {
+      console.error("Failed to fetch newsletter subscribers:", error);
+      setNewsletterError(error.message);
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
 
   const contactMessages = [
     {
@@ -106,11 +128,25 @@ const AdminPage = () => {
         </div>
         <div className="flex items-center space-x-3">
           <span className="text-sm text-gray-500">
-            {newsletterEmails.length} subscribers
+            {newsletterLoading
+              ? "Loading..."
+              : `${newsletterEmails.length} subscribers`}
           </span>
           <button
+            onClick={fetchNewsletterSubscribers}
+            disabled={newsletterLoading}
+            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Refresh subscribers"
+          >
+            <RefreshCw
+              size={18}
+              className={newsletterLoading ? "animate-spin" : ""}
+            />
+          </button>
+          <button
             onClick={copyAllEmails}
-            className="btn bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
+            disabled={newsletterLoading || newsletterEmails.length === 0}
+            className="btn bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {copied ? (
               <>
@@ -127,30 +163,79 @@ const AdminPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {newsletterEmails.map((email, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
-            >
-              <div className="flex items-center space-x-3">
-                <Mail size={20} className="text-blue-600" />
-                <span className="text-gray-800 font-medium truncate">
-                  {email}
-                </span>
-              </div>
-              <button
-                onClick={() => copyEmail(email)}
-                className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
-                title="Copy email"
-              >
-                <Copy size={16} />
-              </button>
+      {/* Error State */}
+      {newsletterError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div className="flex items-center space-x-3">
+            <AlertCircle size={20} className="text-red-600" />
+            <div>
+              <h3 className="text-sm font-medium text-red-800">
+                Error loading subscribers
+              </h3>
+              <p className="text-sm text-red-600 mt-1">{newsletterError}</p>
             </div>
-          ))}
+            <button
+              onClick={fetchNewsletterSubscribers}
+              className="ml-auto text-red-600 hover:text-red-800 text-sm font-medium"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Loading State */}
+      {newsletterLoading && (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12">
+          <div className="text-center">
+            <RefreshCw
+              size={48}
+              className="animate-spin text-blue-600 mx-auto mb-4"
+            />
+            <p className="text-gray-600">Loading newsletter subscribers...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Content State */}
+      {!newsletterLoading && !newsletterError && (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          {newsletterEmails.length === 0 ? (
+            <div className="text-center py-12">
+              <Mail size={48} className="text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No subscribers yet
+              </h3>
+              <p className="text-gray-600">
+                Newsletter subscribers will appear here once they sign up.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {newsletterEmails.map((email, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Mail size={20} className="text-blue-600" />
+                    <span className="text-gray-800 font-medium truncate">
+                      {email}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => copyEmail(email)}
+                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
+                    title="Copy email"
+                  >
+                    <Copy size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 

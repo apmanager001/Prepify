@@ -178,3 +178,27 @@ export const subscribeToNewsletter = async (emailData) => {
     throw new Error(error.message || "Network error occurred");
   }
 };
+
+// Admin API - Get newsletter subscribers
+export const getNewsletterSubscribers = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/newsletter`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies for admin authentication
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.error || "Failed to fetch newsletter subscribers"
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || "Network error occurred");
+  }
+};
