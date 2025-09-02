@@ -308,6 +308,155 @@ paths:
                 }
         default:
           description: Default error sample response
+  /admin/message:
+    summary: Get all submitted messages
+    get:
+      tags:
+        - Admin
+      summary: Get all submitted messages
+      description: Returns a list of all messages submitted via the contact form.
+      operationId: get_messages
+      responses:
+        "200":
+          description: List of submitted messages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    email:
+                      type: string
+                      format: email
+                    name:
+                      type: string
+                    message:
+                      type: string
+                    read:
+                      type: boolean
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+              example:
+                [
+                  {
+                    "_id": "66ce0c8dc538303360039d01",
+                    "email": "john.doe@example.com",
+                    "name": "John Doe",
+                    "message": "Hello, I would like to inquire about your services.",
+                    "read": false,
+                    "createdAt": "2025-08-19T16:25:14.149+00:00",
+                    "updatedAt": "2025-08-19T16:25:14.149+00:00",
+                  },
+                ]
+        "401":
+          description: Unauthorized access.
+          content:
+            application/json:
+              example: { "error": "No logged in admin user." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example:
+                { "error": "Failed to retrieve messages. Please try again." }
+        default:
+          description: Default error sample response
+  /admin/message/{messageId}:
+    summary: Update the read status of a message
+    put:
+      tags:
+        - Admin
+      summary: Update the read status of a message
+      description: Allows an admin to update the 'read' status of a message by its ID.
+      operationId: update_message_read_status
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the message to update.
+      requestBody:
+        description: Set the read status of the message.
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - read
+              type: object
+              properties:
+                read:
+                  type: boolean
+                  description: The new read status for the message.
+            example: { "read": true }
+      responses:
+        "200":
+          description: Successfully updated the message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  name:
+                    type: string
+                  message:
+                    type: string
+                  read:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                {
+                  "_id": "66ce0c8dc538303360039d01",
+                  "email": "john.doe@example.com",
+                  "name": "John Doe",
+                  "message": "Hello, I would like to inquire about your services.",
+                  "read": true,
+                  "createdAt": "2025-08-19T16:25:14.149+00:00",
+                  "updatedAt": "2025-08-19T16:30:00.000+00:00",
+                }
+        "400":
+          description: Invalid request (missing or invalid 'read' field).
+          content:
+            application/json:
+              examples:
+                invalidReadType:
+                  value: { "error": "The 'read' field must be a boolean." }
+        "401":
+          description: Unauthorized access.
+          content:
+            application/json:
+              example: { "error": "No logged in admin user." }
+        "404":
+          description: Message not found.
+          content:
+            application/json:
+              example: { "error": "There is no message with that messageId." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example:
+                { "error": "Failed to update message. Please try again." }
+        default:
+          description: Default error sample response
 components:
   schemas:
     Register:

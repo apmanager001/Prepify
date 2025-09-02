@@ -202,3 +202,48 @@ export const getNewsletterSubscribers = async () => {
     throw new Error(error.message || "Network error occurred");
   }
 };
+
+// Admin API - Get all contact messages
+export const getContactMessages = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/message`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies for admin authentication
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to fetch contact messages");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || "Network error occurred");
+  }
+};
+
+// Admin API - Update message read status
+export const updateMessageReadStatus = async (messageId, readStatus) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/message/${messageId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies for admin authentication
+      body: JSON.stringify({ read: readStatus }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to update message status");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw new Error(error.message || "Network error occurred");
+  }
+};

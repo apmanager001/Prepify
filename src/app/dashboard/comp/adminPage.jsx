@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Trash2,
   Mail,
   MessageSquare,
   Copy,
@@ -13,11 +12,11 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { getNewsletterSubscribers } from "@/lib/api";
+import ContactMessages from "./contactMessages";
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState("newsletter");
   const [copied, setCopied] = useState(false);
-  const [expandedMessages, setExpandedMessages] = useState(new Set());
 
   // Newsletter state
   const [newsletterEmails, setNewsletterEmails] = useState([]);
@@ -50,35 +49,6 @@ const AdminPage = () => {
     }
   };
 
-  const contactMessages = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      message:
-        "I would like to know more about your study materials for the MCAT exam. I am a student at the University of California, Los Angeles and I am looking for a study program that can help me prepare for the MCAT exam.",
-      date: "2024-01-15",
-      status: "unread",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      message:
-        "Great platform! I found the practice tests very helpful for my LSAT preparation.",
-      date: "2024-01-14",
-      status: "read",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike.johnson@example.com",
-      message: "Is there a way to get more practice questions for the GRE?",
-      date: "2024-01-13",
-      status: "unread",
-    },
-  ];
-
   const copyAllEmails = async () => {
     const emailList = newsletterEmails.join(", ");
     try {
@@ -98,23 +68,6 @@ const AdminPage = () => {
     } catch (err) {
       console.error("Failed to copy email:", err);
     }
-  };
-
-  const markAsRead = (messageId) => {
-    // TODO: Implement API call to mark message as read
-    console.log("Marking message as read:", messageId);
-  };
-
-  const toggleMessageExpansion = (messageId) => {
-    setExpandedMessages((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(messageId)) {
-        newSet.delete(messageId);
-      } else {
-        newSet.add(messageId);
-      }
-      return newSet;
-    });
   };
 
   const renderNewsletterTab = () => (
@@ -240,157 +193,7 @@ const AdminPage = () => {
   );
 
   const renderMessagesTab = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Contact Messages</h2>
-          <p className="text-gray-600">
-            View and manage user contact form submissions
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-gray-500">
-            {contactMessages.length} messages
-          </span>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-400">Unread:</span>
-            <span className="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">
-              {contactMessages.filter((m) => m.status === "unread").length}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Message
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Delete
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {contactMessages.map((message) => (
-                <React.Fragment key={message.id}>
-                  <tr className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          message.status === "unread"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {message.status === "unread" ? "Unread" : "Read"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {message.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <button
-                        onClick={() => copyEmail(message.email)}
-                        className="text-blue-600 hover:text-blue-800 hover:underline flex items-center space-x-1 cursor-pointer"
-                      >
-                        <span>{message.email}</span>
-                        <Copy size={14} />
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
-                      <button
-                        onClick={() => toggleMessageExpansion(message.id)}
-                        className="text-left w-full hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200 cursor-pointer"
-                      >
-                        <div className="truncate" title={message.message}>
-                          {message.message}
-                        </div>
-                        <div className="text-xs text-blue-600 mt-1">
-                          {expandedMessages.has(message.id)
-                            ? "Click to collapse"
-                            : "Click to expand"}
-                        </div>
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {message.date}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {message.status === "unread" && (
-                        <button
-                          onClick={() => markAsRead(message.id)}
-                          className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
-                        >
-                          Mark as Read
-                        </button>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                      <button className="text-red-600 hover:text-red-800 hover:underline cursor-pointer">
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                  {/* Expanded Message Row */}
-                  {expandedMessages.has(message.id) && (
-                    <tr key={`${message.id}-expanded`}>
-                      <td
-                        colSpan="7"
-                        className="px-6 py-4 bg-gray-50 border-t border-gray-200"
-                      >
-                        <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-gray-900">
-                              Full Message
-                            </h4>
-                            <button
-                              onClick={() => toggleMessageExpansion(message.id)}
-                              className="text-gray-500 hover:text-gray-700 text-sm"
-                            >
-                              Collapse
-                            </button>
-                          </div>
-                          <div className="bg-gray-50 rounded-lg p-4">
-                            <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
-                              {message.message}
-                            </p>
-                          </div>
-                          <div className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between text-sm text-gray-600">
-                            <span>
-                              From: {message.name} ({message.email})
-                            </span>
-                            <span>Date: {message.date}</span>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <ContactMessages />
   );
 
   const renderUsersTab = () => (
@@ -450,8 +253,8 @@ const AdminPage = () => {
   const tabs = [
     { id: "newsletter", label: "Newsletter", icon: Mail },
     { id: "messages", label: "Messages", icon: MessageSquare },
-    { id: "users", label: "Users", icon: Users },
-    { id: "settings", label: "Settings", icon: Settings },
+    // { id: "users", label: "Users", icon: Users },
+    // { id: "settings", label: "Settings", icon: Settings },
   ];
 
   return (
@@ -472,7 +275,7 @@ const AdminPage = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 cursor-pointer ${
                   activeTab === tab.id
                     ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg"
                     : "text-gray-600 hover:text-primary hover:bg-gray-50"
