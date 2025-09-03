@@ -9,10 +9,16 @@ import {
   Eye,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getContactMessages, updateMessageReadStatus } from "@/lib/api";
+import {
+  getContactMessages,
+  updateMessageReadStatus,
+  deleteContactMessage,
+} from "@/lib/api";
 
 const ContactMessages = () => {
   const [expandedMessages, setExpandedMessages] = useState(new Set());
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [toast, setToast] = useState(null);
   const queryClient = useQueryClient();
 
   // Fetch contact messages using TanStack Query
@@ -34,9 +40,51 @@ const ContactMessages = () => {
     onSuccess: () => {
       // Invalidate and refetch contact messages
       queryClient.invalidateQueries({ queryKey: ["contactMessages"] });
+      // Show success toast
+      setToast({
+        type: "success",
+        message: "Message marked as read",
+      });
+      // Auto-hide toast after 3 seconds
+      setTimeout(() => setToast(null), 3000);
     },
     onError: (error) => {
       console.error("Failed to update message status:", error);
+      // Show error toast
+      setToast({
+        type: "error",
+        message: error.message || "Failed to mark message as read",
+      });
+      // Auto-hide toast after 5 seconds
+      setTimeout(() => setToast(null), 5000);
+    },
+  });
+
+  // Mutation for deleting contact message
+  const deleteMessageMutation = useMutation({
+    mutationFn: (messageId) => deleteContactMessage(messageId),
+    onSuccess: () => {
+      // Invalidate and refetch contact messages
+      queryClient.invalidateQueries({ queryKey: ["contactMessages"] });
+      setDeleteConfirm(null);
+      // Show success toast
+      setToast({
+        type: "success",
+        message: "Message deleted successfully",
+      });
+      // Auto-hide toast after 3 seconds
+      setTimeout(() => setToast(null), 3000);
+    },
+    onError: (error) => {
+      console.error("Failed to delete message:", error);
+      setDeleteConfirm(null);
+      // Show error toast
+      setToast({
+        type: "error",
+        message: error.message || "Failed to delete message",
+      });
+      // Auto-hide toast after 5 seconds
+      setTimeout(() => setToast(null), 5000);
     },
   });
 
@@ -65,6 +113,24 @@ const ContactMessages = () => {
     } catch (err) {
       console.error("Failed to copy email:", err);
     }
+  };
+
+  const handleDeleteClick = (message) => {
+    setDeleteConfirm({
+      id: message._id,
+      name: message.name,
+      email: message.email,
+    });
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      deleteMessageMutation.mutate(deleteConfirm.id);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm(null);
   };
 
   return (
@@ -155,24 +221,24 @@ const ContactMessages = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-gray-200 text-center">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                       Name
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                       Email
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                       Message
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                       Date
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                       Delete
                     </th>
                   </tr>
@@ -236,7 +302,12 @@ const ContactMessages = () => {
                           {new Date(message.createdAt).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                          <button className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition-colors duration-200 cursor-pointer">
+                          <button
+                            onClick={() => handleDeleteClick(message)}
+                            disabled={deleteMessageMutation.isPending}
+                            className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Delete message"
+                          >
                             <Trash2 size={16} />
                           </button>
                         </td>
@@ -257,7 +328,7 @@ const ContactMessages = () => {
                                   onClick={() =>
                                     toggleMessageExpansion(message._id)
                                   }
-                                  className="text-gray-500 hover:text-gray-700 text-sm"
+                                  className="text-gray-500 hover:text-gray-700 text-sm cursor-pointer"
                                 >
                                   Collapse
                                 </button>
@@ -288,6 +359,128 @@ const ContactMessages = () => {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <Trash2 size={24} className="text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Delete Message
+                </h3>
+                <p className="text-sm text-gray-600">
+                  This action cannot be undone
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700 mb-2">
+                Are you sure you want to delete the message from:
+              </p>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="font-medium text-gray-900">
+                  {deleteConfirm.name}
+                </p>
+                <p className="text-sm text-gray-600">{deleteConfirm.email}</p>
+              </div>
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={cancelDelete}
+                disabled={deleteMessageMutation.isPending}
+                className="cursor-pointer flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={deleteMessageMutation.isPending}
+                className="cursor-pointer flex-1 px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                {deleteMessageMutation.isPending ? (
+                  <>
+                    <RefreshCw size={16} className="animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={16} />
+                    <span>Delete</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DaisyUI Toast */}
+      {toast && (
+        <div className="toast toast-top toast-end z-50">
+          <div
+            className={`alert ${
+              toast.type === "success"
+                ? "alert-success"
+                : toast.type === "error"
+                ? "alert-error"
+                : "alert-info"
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              {toast.type === "success" ? (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : toast.type === "error" ? (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+              <span>{toast.message}</span>
+            </div>
+            <button
+              onClick={() => setToast(null)}
+              className="btn btn-sm btn-circle btn-ghost"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       )}
     </div>

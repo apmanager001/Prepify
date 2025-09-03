@@ -247,3 +247,26 @@ export const updateMessageReadStatus = async (messageId, readStatus) => {
     throw new Error(error.message || "Network error occurred");
   }
 };
+
+// Admin API - Delete contact message
+export const deleteContactMessage = async (messageId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/message/${messageId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies for admin authentication
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to delete message");
+    }
+
+    // Return success status for 204 No Content
+    return { success: true, status: response.status };
+  } catch (error) {
+    throw new Error(error.message || "Network error occurred");
+  }
+};
