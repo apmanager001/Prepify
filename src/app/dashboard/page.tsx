@@ -11,6 +11,8 @@ import Main from "./comp/main";
 import SettingsPage from "./comp/settings";
 import AdminPage from "./comp/adminPage";
 import Tools from "./comp/tools";
+import Community from "./comp/community.jsx/community";
+import Calendar from "./comp/calendar/calendar";
 
 // Define the user data type
 interface UserData {
@@ -70,25 +72,25 @@ const Dashboard = () => {
         </svg>
       ),
     },
-    {
-      id: "studyGuides",
-      label: "Study Guides",
-      icon: () => (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-          />
-        </svg>
-      ),
-    },
+    // {
+    //   id: "studyGuides",
+    //   label: "Study Guides",
+    //   icon: () => (
+    //     <svg
+    //       className="w-6 h-6"
+    //       fill="none"
+    //       stroke="currentColor"
+    //       viewBox="0 0 24 24"
+    //     >
+    //       <path
+    //         strokeLinecap="round"
+    //         strokeLinejoin="round"
+    //         strokeWidth={2}
+    //         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+    //       />
+    //     </svg>
+    //   ),
+    // },
     {
       id: "tools",
       label: "Study Tools",
@@ -228,45 +230,7 @@ const Dashboard = () => {
         return <Tools />;
       case "calendar":
         return (
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Calendar
-              </h1>
-              <p className="text-lg text-gray-600">
-                Plan and schedule your study sessions
-              </p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg
-                    className="w-12 h-12 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Study Calendar
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Schedule study sessions, set reminders, and organize your
-                  learning calendar for optimal productivity.
-                </p>
-                <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Open Calendar
-                </button>
-              </div>
-            </div>
-          </div>
+          <Calendar />
         );
       case "resources":
         return (
@@ -312,45 +276,7 @@ const Dashboard = () => {
         );
       case "community":
         return (
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Community
-              </h1>
-              <p className="text-lg text-gray-600">
-                Connect with fellow students and study groups
-              </p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-orange-500/10 to-orange-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg
-                    className="w-12 h-12 text-orange-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Study Community
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Join study groups, participate in discussions, and collaborate
-                  with peers to enhance your learning experience.
-                </p>
-                <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Join Community
-                </button>
-              </div>
-            </div>
-          </div>
+          <Community />
         );
       case "settings":
         return <SettingsPage />;
@@ -528,7 +454,7 @@ const Dashboard = () => {
             <button
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
+              className="cursor-pointer w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
             >
               {logoutMutation.isPending ? (
                 <span className="loading loading-spinner loading-sm"></span>

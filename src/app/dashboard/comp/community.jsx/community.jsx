@@ -1,0 +1,142 @@
+import React from "react";
+
+const Community = () => {
+  // Discord server invite link - replace with your actual Discord server invite
+  const DISCORD_INVITE_LINK = "https://discord.gg/56hwzY5fBq";
+
+  const handleJoinDiscord = () => {
+    window.open(DISCORD_INVITE_LINK, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Community</h1>
+        <p className="text-lg text-gray-600">
+          Connect with fellow students and study groups on Discord
+        </p>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+        <div className="text-center py-12">
+          <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg
+              className="w-12 h-12 text-indigo-600"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+            </svg>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            Join Our Discord Community
+          </h3>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            Connect with thousands of students, join study groups, get help with
+            your studies, and participate in community discussions. Our Discord
+            server is the perfect place to enhance your learning journey.
+          </p>
+
+          <div className="space-y-4">
+            <button
+              onClick={handleJoinDiscord}
+              className="cursor-pointer bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 mx-auto"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+              </svg>
+              <span>Join Discord Server</span>
+            </button>
+
+            <div className="text-sm text-gray-500">
+              <p>
+                ✨ Free to join • 🎓 Study groups • 💬 Live discussions • 🚀
+                Quick help
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Community Features */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+            <svg
+              className="w-6 h-6 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-2-2V10a2 2 0 012-2h2m8-4V4a2 2 0 00-2-2H9a2 2 0 00-2 2v2h10z"
+              />
+            </svg>
+          </div>
+          <h4 className="text-lg font-semibold text-gray-900 mb-2">
+            Study Groups
+          </h4>
+          <p className="text-gray-600 text-sm">
+            Join subject-specific study groups and collaborate with peers on
+            assignments and exam prep.
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+            <svg
+              className="w-6 h-6 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          </div>
+          <h4 className="text-lg font-semibold text-gray-900 mb-2">
+            Live Discussions
+          </h4>
+          <p className="text-gray-600 text-sm">
+            Participate in real-time discussions, ask questions, and get instant
+            help from the community.
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+            <svg
+              className="w-6 h-6 text-purple-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h4 className="text-lg font-semibold text-gray-900 mb-2">
+            Quick Help
+          </h4>
+          <p className="text-gray-600 text-sm">
+            Get fast answers to your questions from experienced students and
+            community moderators.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Community;
