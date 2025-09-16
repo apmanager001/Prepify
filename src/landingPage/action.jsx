@@ -124,7 +124,7 @@ const Action = () => {
 
           <div className="text-center relative z-10">
             {/* Title */}
-            <h2 className="text-xl md:text-2xl font-bold text-primary mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h2 className="text-xl md:text-2xl font-bold text-primary mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text">
               Your Study Tools Are Coming to Life
             </h2>
             <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-6">
