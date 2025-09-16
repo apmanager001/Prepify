@@ -8,7 +8,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-const BoxCalendar = ({eventTypes, colorClasses}) => {
+const BoxCalendar = ({eventTypes, colorClasses, onAddEvent}) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(null);
     const [events, setEvents] = useState({});
@@ -72,7 +72,6 @@ const BoxCalendar = ({eventTypes, colorClasses}) => {
   const handleDateClick = (date) => {
     if (date) {
       setSelectedDate(date);
-      setShowEventModal(true);
     }
   };
 
@@ -177,7 +176,7 @@ const BoxCalendar = ({eventTypes, colorClasses}) => {
               className={`min-h-[100px] p-2 border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
                 isToday(date) ? "bg-blue-50 border-blue-200" : ""
               } ${isSelected(date) ? "bg-blue-100 border-blue-300" : ""}`}
-              onClick={() => handleDateClick(date)}
+              onClick={() => { handleDateClick(date); onAddEvent(date); }}
             >
               {date && (
                 <>
@@ -217,135 +216,7 @@ const BoxCalendar = ({eventTypes, colorClasses}) => {
         })}
       </div>
     </div>
- 
 
-    {/* Add Event Modal */}
-      {showEventModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-base-300 rounded-2xl shadow-xl p-6 max-w-md w-full mx-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Add Event - {selectedDate?.toLocaleDateString()}
-              </h3>
-              <button
-                onClick={() => setShowEventModal(false)}
-                className="p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="eventTitle" className="block text-sm font-medium text-gray-700 mb-1">
-                  Event Title
-                </label>
-                <input
-                  id="eventTitle"
-                  type="text"
-                  value={newEvent.title}
-                  onChange={(e) =>
-                    setNewEvent((prev) => ({ ...prev, title: e.target.value }))
-                  }
-                  className="w-full px-3 py-2 input input-primary rounded-lg "
-                  placeholder="Enter event title"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="eventDescription" className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
-                </label>
-                <textarea
-                  id="eventDescription"
-                  value={newEvent.description}
-                  onChange={(e) =>
-                    setNewEvent((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  className="w-full px-3 py-2 textarea textarea-primary rounded-lg"
-                  rows={3}
-                  placeholder="Enter event description"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="eventTime" className="block text-sm font-medium text-gray-700 mb-1">
-                  Time
-                </label>
-                <input
-                  id="eventTime"
-                  type="time"
-                  value={newEvent.time}
-                  onChange={(e) =>
-                    setNewEvent((prev) => ({ ...prev, time: e.target.value }))
-                  }
-                  className="w-full px-3 py-2 rounded-lg input input-primary"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="eventType" className="block text-sm font-medium text-gray-700 mb-1">
-                  Event Type
-                </label>
-                <select
-                  id="eventType"
-                  value={newEvent.type}
-                  onChange={(e) =>
-                    setNewEvent((prev) => ({ ...prev, type: e.target.value }))
-                  }
-                  className="w-full px-3 py-2 rounded-lg select select-primary"
-                >
-                  {Object.entries(eventTypes).map(([key, type]) => (
-                    <option key={key} value={key}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="eventColor" className="block text-sm font-medium text-gray-700 mb-1">
-                  Color
-                </label>
-                <div className="flex space-x-2">
-                  {Object.keys(colorClasses).map((color) => (
-                    <button
-                      key={color}
-                      id="eventColor"
-                      onClick={() =>
-                        setNewEvent((prev) => ({ ...prev, color }))
-                      }
-                      className={`cursor-pointer w-8 h-8 rounded-full border-2 ${
-                        newEvent.color === color
-                          ? "border-gray-400"
-                          : "border-gray-200"
-                      } ${colorClasses[color].split(" ")[0]}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex space-x-3 mt-6">
-              <button
-                onClick={() => setShowEventModal(false)}
-                className="cursor-pointer flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddEvent}
-                className="cursor-pointer flex-1 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
-              >
-                Add Event
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       </>
  );
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Plus } from "lucide-react";
 
-const LinearCalendar = ({ eventTypes, colorClasses }) => {
+const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   const [selectedDay, setSelectedDay] = useState(new Date());
 
   const getWeekDays = (date) => {
@@ -31,57 +32,52 @@ const LinearCalendar = ({ eventTypes, colorClasses }) => {
   return (
     <div>
       {/* 7-Day Calendar */}
-      <div className="flex items-center mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 px-2">
         <button
-          className="btn btn-soft btn-primary"
+          className="btn btn-sm btn-primary rounded-lg"
           onClick={() => changeWeek(-1)}
         >
           &lt;
         </button>
-        <div className="flex justify-center gap-2 flex-1">
-          {currentWeek.map((day, index) => (
-            <button
-              key={index}
-              onClick={() => setSelectedDay(day)}
-              className={`btn btn-sm ${
-                selectedDay.toDateString() === day.toDateString()
-                  ? "btn-primary"
-                  : "btn-outline"
-              }`}
-            >
-              {day.toLocaleDateString("en-US", {
-                weekday: "short",
-                day: "numeric",
-              })}
-            </button>
-          ))}
+
+        <div className="flex flex-wrap justify-center gap-2 flex-1">
+          {currentWeek.map((day, index) => {
+            const isSelected =
+              selectedDay.toDateString() === day.toDateString();
+            return (
+              <button
+                key={index}
+                onClick={() => setSelectedDay(day)}
+                className={`btn btn-sm transition-all duration-200 rounded-lg ${
+                  isSelected ? "btn-primary" : "btn-outline"
+                }`}
+              >
+                {day.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  day: "numeric",
+                })}
+              </button>
+            );
+          })}
         </div>
+
         <button
-          className="btn btn-soft btn-primary"
+          className="btn btn-sm btn-primary rounded-lg"
           onClick={() => changeWeek(1)}
         >
           &gt;
         </button>
       </div>
-
+      <div className="flex justify-end m-2">
+        <button
+          className="btn btn-primary btn-soft rounded-2xl"
+          onClick={() => onAddEvent(selectedDay)}
+        >
+          <Plus size={16} className="inline mr-2" />
+          Add Event
+        </button>
+      </div>
       {/* Vertical Calendar */}
-      {/* <div className="flex flex-col items-center">
-        {mockEvents.map((event, index) => (
-          //   <React.Fragment key={index}>
-          //     <div className="flex items-center gap-4 w-full max-w-md justify-center">
-          //       <input type="checkbox" className="checkbox checkbox-primary" />
-          //       <span className="w-20 text-right">{event.time}</span>
-          //       <div className="flex-1">{event.title}</div>
-          //     </div>
-
-          //     {index < mockEvents.length - 1 && (
-          //       <div className="w-full flex justify-center">
-          //         <div className="w-1 h-10 bg-primary" />
-          //       </div>
-          //     )}
-          //   </React.Fragment>
-        ))}
-      </div> */}
       <table className="table-auto w-full max-w-md mb-4">
         <thead>
           <tr>
@@ -100,15 +96,13 @@ const LinearCalendar = ({ eventTypes, colorClasses }) => {
               <td className="px-2 py-2">{event.title}</td>
             </tr>
             {index < mockEvents.length - 1 && (
-                <tr>
-                    <td></td>
-                    <td className="w-full h-10 flex justify-left px-2 py-2">
-                        <div 
-                            className="divider divider-horizontal divider-primary h-10"
-                        />
-                    </td>
-                    <td></td>
-                </tr>
+              <tr>
+                <td></td>
+                <td className="w-full h-10 flex justify-left px-2 py-2">
+                  <div className="divider divider-horizontal divider-primary h-10" />
+                </td>
+                <td></td>
+              </tr>
             )}
           </tbody>
         ))}
