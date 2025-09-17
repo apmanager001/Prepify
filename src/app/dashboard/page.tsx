@@ -302,16 +302,18 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 hover:bg-white transition-colors"
-        >
-          {isMobileMenuOpen ? (
-            <X size={24} className="text-gray-700" />
-          ) : (
-            <Menu size={24} className="text-gray-700" />
-          )}
-        </button>
+        <label htmlFor="menu-toggle" className="swap swap-rotate btn rounded-lg">
+          <input
+            id='menu-toggle'
+            type="checkbox"
+            checked={isMobileMenuOpen}
+            onChange={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          />
+
+          <Menu size={24} className="swap-off text-gray-700" />
+          <X size={24} className="swap-on text-gray-700" />
+        </label>
       </div>
 
       {/* Mobile Sidebar Overlay */}

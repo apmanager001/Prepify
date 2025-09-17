@@ -10,6 +10,7 @@ import {
   Users,
   Target,
   List,
+  Rows3,
 } from "lucide-react";
 
 const Calendar = () => {
@@ -57,24 +58,6 @@ const Calendar = () => {
             Plan and schedule your study sessions, exams, and study groups
           </p>
         </div>
-        {/* <div className="tooltip tooltip-left" data-tip={calendarSelect ? "Switch to List View" : "Switch to Calendar View"}>
-          <button
-            onClick={() => setCalendarSelect(!calendarSelect)}
-            className="btn btn-primary rounded-2xl "
-          >
-            {calendarSelect ? <List /> : <CalendarIcon />}
-          </button>
-        </div> */}
-
-        {/* <label className="toggle text-base-content w-24">
-          <input
-            type="checkbox"
-            className="toggle toggle-lg"
-            onClick={() => setCalendarSelect(!calendarSelect)}
-          />
-          <List strokeWidth={4} />
-          <CalendarIcon strokeWidth={4} />
-        </label> */}
         <div
           className="tooltip tooltip-left"
           data-tip={
@@ -89,12 +72,27 @@ const Calendar = () => {
               onChange={() => setCalendarSelect(!calendarSelect)}
             />
             <div className="swap-on flex justify-center items-center">
-              <List strokeWidth={4} className="w-6 h-6 text-secondary" />
+              <Rows3 strokeWidth={4} className="w-6 h-6 text-secondary" />
             </div>
             <div className="swap-off flex justify-center items-center">
-              <CalendarIcon strokeWidth={4} className="w-6 h-6 text-secondary" />
+              <CalendarIcon
+                strokeWidth={4}
+                className="w-6 h-6 text-secondary"
+              />
             </div>
-          </label>
+          </label> 
+          
+          {/* <label htmlFor="calendar-toggle" className="swap swap-rotate btn btn-primary rounded-lg">
+            <input
+              id="calendar-toggle"
+              type="checkbox"
+              checked={calendarSelect}
+              onChange={() => setCalendarSelect(!calendarSelect)}
+              aria-label="Toggle calendar view"
+            />
+            <Rows3 strokeWidth={3} className="swap-off text-secondary" />
+            <CalendarIcon strokeWidth={3} className="swap-on text-secondary" />
+          </label> */}
         </div>
       </div>
       {/* Event Types Legend */}

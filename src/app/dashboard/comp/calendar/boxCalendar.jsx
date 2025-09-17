@@ -173,7 +173,7 @@ const BoxCalendar = ({eventTypes, colorClasses, onAddEvent}) => {
           return (
             <div
               key={index}
-              className={`min-h-[100px] p-2 border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
+              className={`md:min-h-[100px] p-2 border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
                 isToday(date) ? "bg-blue-50 border-blue-200" : ""
               } ${isSelected(date) ? "bg-blue-100 border-blue-300" : ""}`}
               onClick={() => { handleDateClick(date); onAddEvent(date); }}

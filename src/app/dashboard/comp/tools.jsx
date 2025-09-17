@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Play,
   Pause,
@@ -23,6 +23,22 @@ import {
 } from "lucide-react";
 
 const Tools = () => {
+  const audioRefs = useRef({});
+
+  const handleToggle = (sound) => {
+    toggleAmbientSound(sound);
+
+    const audio = audioRefs.current[sound];
+    if (!audio) return;
+
+    if (ambientSounds[sound]) {
+      audio.pause();
+      audio.currentTime = 0;
+    } else {
+      audio.play();
+    }
+  };
+
   // Tool visibility states
   const [visibleTools, setVisibleTools] = useState({
     pomodoro: false,
@@ -32,7 +48,6 @@ const Tools = () => {
     ambientSounds: false,
     progressTracker: false,
     breakReminder: false,
-    darkMode: false,
   });
 
   // Pomodoro timer states
@@ -58,10 +73,18 @@ const Tools = () => {
   // Ambient sounds states
   const [ambientSounds, setAmbientSounds] = useState({
     rain: false,
-    whiteNoise: false,
+    hz40: false,
     nature: false,
     cafe: false,
   });
+
+  const soundFiles = {
+    rain: "/ambient/rain.mp3",
+    hz40: "/ambient/40hz.mp3",
+    nature: "/sounds/nature.mp3",
+    cafe: "/sounds/cafe.mp3",
+  };
+
 
   // Progress tracker states
   const [studyGoals, setStudyGoals] = useState([
@@ -237,11 +260,6 @@ const Tools = () => {
                 label: "Break Reminder",
                 color: "bg-orange-500",
               },
-              darkMode: {
-                icon: Moon,
-                label: "Dark Mode",
-                color: "bg-gray-500",
-              },
             };
 
             const config = toolConfigs[tool];
@@ -251,7 +269,7 @@ const Tools = () => {
               <button
                 key={tool}
                 onClick={() => toggleTool(tool)}
-                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                className={`p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer ${
                   isVisible
                     ? "border-primary bg-primary/10"
                     : "border-gray-200 hover:border-gray-300"
@@ -547,37 +565,67 @@ const Tools = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {Object.entries(ambientSounds).map(([sound, isActive]) => {
-              const soundConfigs = {
+              const config = {
                 rain: { label: "Rain", icon: "🌧️", color: "bg-blue-500" },
-                whiteNoise: {
-                  label: "White Noise",
+                hz40: {
+                  label: "40 hz",
                   icon: "🔊",
                   color: "bg-gray-500",
                 },
                 nature: { label: "Nature", icon: "🌿", color: "bg-green-500" },
                 cafe: { label: "Cafe", icon: "☕", color: "bg-orange-500" },
-              };
-
-              const config = soundConfigs[sound];
+              }[sound];
 
               return (
-                <button
+                // <button
+                //   key={sound}
+                //   onClick={() => toggleAmbientSound(sound)}
+                //   className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                //     isActive
+                //       ? "border-primary bg-primary/10"
+                //       : "border-gray-200 hover:border-gray-300"
+                //   }`}
+                // >
+                //   <div className="text-center">
+                //     <div className="text-3xl mb-2">{config.icon}</div>
+                //     <p className="font-medium text-gray-900">{config.label}</p>
+                //     <p className="text-sm text-gray-500">
+                //       {isActive ? "Playing" : "Click to play"}
+                //     </p>
+                //   </div>
+                // </button>
+                <div
                   key={sound}
-                  onClick={() => toggleAmbientSound(sound)}
-                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                    isActive
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className="flex flex-col md:flex-row items-center"
                 >
-                  <div className="text-center">
-                    <div className="text-3xl mb-2">{config.icon}</div>
-                    <p className="font-medium text-gray-900">{config.label}</p>
-                    <p className="text-sm text-gray-500">
-                      {isActive ? "Playing" : "Click to play"}
-                    </p>
-                  </div>
-                </button>
+                  <audio
+                    ref={(el) => (audioRefs.current[sound] = el)}
+                    src={soundFiles[sound]}
+                    loop
+                  />
+                  <button
+                    onClick={() => handleToggle(sound)}
+                    className={`w-96 py-4 rounded-lg border-2 transition-all duration-200 ${
+                      isActive
+                        ? "border-primary bg-primary/10"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-3xl mb-2">{config.icon}</div>
+                      <p className="font-medium text-gray-900">
+                        {config.label}
+                      </p>
+                      <span className="btn rounded-full btn-primary mt-2 text-accent">
+                        {isActive ? (
+                          <Pause strokeWidth={1.75} />
+                        ) : (
+                          <Play strokeWidth={1.75} />
+                        )}
+                      </span>
+                    </div>
+                  </button>
+                </div>
               );
             })}
           </div>
@@ -695,35 +743,6 @@ const Tools = () => {
                 minutes, look at something 20 feet away for 20 seconds
               </p>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Dark Mode Toggle */}
-      {visibleTools.darkMode && (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center space-x-3">
-            <Moon className="text-gray-500" size={28} />
-            <span>Theme Settings</span>
-          </h2>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Dark Mode</h3>
-              <p className="text-gray-600">
-                Switch between light and dark themes
-              </p>
-            </div>
-
-            <label className="flex cursor-pointer gap-2">
-              <Sun />
-              <input
-                type="checkbox"
-                value="synthwave"
-                className="toggle theme-controller"
-              />
-              <Moon />
-            </label>
           </div>
         </div>
       )}

@@ -48,14 +48,16 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
               <button
                 key={index}
                 onClick={() => setSelectedDay(day)}
-                className={`btn btn-sm transition-all duration-200 rounded-lg ${
-                  isSelected ? "btn-primary" : "btn-outline"
+                className={`btn btn-sm text-xs py-2 transition-all duration-200 rounded-lg flex flex-col md:flex-row items-center gap-1 btn-outline ${
+                  isSelected ? "bg-primary" : ""
                 }`}
               >
-                {day.toLocaleDateString("en-US", {
-                  weekday: "short",
-                  day: "numeric",
-                })}
+                <span>
+                  {day.toLocaleDateString("en-US", { weekday: "short" })}
+                </span>
+                <span>
+                  {day.toLocaleDateString("en-US", { day: "numeric" })}
+                </span>
               </button>
             );
           })}
