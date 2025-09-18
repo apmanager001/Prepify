@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { LogOut, Menu, X, Shield, Hammer } from "lucide-react";
@@ -7,7 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import StudyGuides from "./comp/studyGuides/studyGuides";
-import Main from "./comp/main";
+// import Main from "./comp/main";
+import DashboardPage from "./comp/dashboard";
 import SettingsPage from "./comp/settings";
 import AdminPage from "./comp/adminPage";
 import Tools from "./comp/tools";
@@ -223,7 +223,8 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <Main />;
+        return <DashboardPage />
+        // <Main />;
       case "studyGuides":
         return <StudyGuides />;
       case "tools":
