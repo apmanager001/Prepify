@@ -26,13 +26,13 @@ export default function StatusBar() {
               value={value}
               max="100"
             ></progress>
-            <div className="absolute inset-0 flex items-end justify-center pb-2 text-lg font-bold">
+            <div className="absolute inset-0 flex items-end justify-center pb-2 text-lg font-extrabold">
               {value}%
             </div>
           </>
         ) : (
           <div
-            className="radial-progress text-success bg-primary/30"
+            className="radial-progress text-success bg-primary/30 font-extrabold text-2xl"
             style={
               {
                 "--value": value,

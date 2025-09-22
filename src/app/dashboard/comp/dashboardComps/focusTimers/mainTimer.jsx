@@ -22,9 +22,12 @@ const MainTimer = () => {
       </div>
       <div className="flex justify-center items-center gap-24 flex-wrap">
         {indTimer.map((timer, index) => (
-            <div key={index} className='bg-primary rounded-2xl h-40 w-40 shadow-lg flex flex-col items-center justify-center text-2xl font-bold cursor-pointer hover:scale-105 transition-transform'>
-                <IndTimer timer={timer} />
-            </div>
+          <div
+            key={index}
+            className="bg-gradient-to-br from-primary to-secondary rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-pointer hover:shadow-2xl hover:ring-2 hover:ring-accent transition-all duration-300"
+          >
+            <IndTimer timer={timer} />
+          </div>
         ))}
       </div>
     </div>
