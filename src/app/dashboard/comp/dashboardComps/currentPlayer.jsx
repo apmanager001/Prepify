@@ -16,6 +16,12 @@ const songs = [
     audio: "/audio/social.mp3",
   },
   {
+    title: "Inception - Hans Zimmer",
+    image: "/albumnArt/inception.webp",
+    audio: "/ambient/inception.mp3",
+    duration: "1:00:00",
+  },
+  {
     title: "Rain - Ambient",
     image: "/albumnArt/rain.webp",
     audio: "/ambient/rain.mp3",
@@ -34,15 +40,24 @@ const CurrentPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const audioRefs = useRef({});
+  // const audioRefs = useRef({});
 
-  
   const timeStringToSeconds = (time) => {
     if (!time) return 0;
-    const [minutes, seconds] = time.split(":").map(Number);
-    return minutes * 60 + seconds;
+    const parts = time.split(":").map(Number);
+    if (parts.length === 3) {
+      // HH:MM:SS
+      return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    } else if (parts.length === 2) {
+      // MM:SS
+      return parts[0] * 60 + parts[1];
+    } else if (parts.length === 1) {
+      // SS
+      return parts[0];
+    }
+    return 0;
   };
-  
+
   const togglePlay = () => {
     const audio = document.querySelector("audio");
     if (!audio) return;
@@ -60,7 +75,18 @@ const CurrentPlayer = () => {
     setIsPlaying(false);
     setCurrentTime(0);
   };
-  
+
+  const seekAudio = (delta) => {
+    const audio = document.querySelector("audio");
+    if (!audio) return;
+    let newTime = Math.max(
+      0,
+      Math.min(audio.duration || 0, audio.currentTime + delta)
+    );
+    audio.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
   return (
     <div className="w-full h-full flex justify-center">
       <div className="w-[350px] bg-gradient-to-br from-primary to-secondary rounded-2xl h-full shadow-lg border-1 border-gray-600">
@@ -94,7 +120,7 @@ const CurrentPlayer = () => {
             </ul>
           </details>
         </div>
-        <div className="h-[200px] text-center">
+        <div className="h-[150px] text-center">
           <span className="text-xl font-bold h-1/3 flex items-center justify-center">
             {currentSong.title || "No song is playing"}
           </span>
@@ -112,7 +138,11 @@ const CurrentPlayer = () => {
               <span>{currentSong.duration || "0:00"}</span>
             </div>
             <div className="flex items-center justify-center mt-4">
-              <div className="bg-black/10 z-50 rounded-full p-2 inline-block mr-4 cursor-pointer transition-transform duration-100 active:scale-105">
+              <div
+                className="bg-black/10 z-50 rounded-full p-2 inline-block mr-4 cursor-pointer transition-transform duration-100 active:scale-105 tooltip tooltip-top"
+                onClick={() => seekAudio(-10)}
+                data-tip="Rewind 10 seconds"
+              >
                 <Undo />
               </div>
 
@@ -122,7 +152,11 @@ const CurrentPlayer = () => {
               >
                 {isPlaying ? <Pause /> : <Play />}
               </div>
-              <div className="bg-black/10 z-50 rounded-full p-2 inline-block ml-4 cursor-pointer transition-all duration-100 active:scale-105">
+              <div
+                className="bg-black/10 z-50 rounded-full p-2 inline-block ml-4 cursor-pointer transition-all duration-100 active:scale-105 tooltip tooltip-top"
+                onClick={() => seekAudio(10)}
+                data-tip="Forward 10 seconds"
+              >
                 <Redo />
               </div>
             </div>

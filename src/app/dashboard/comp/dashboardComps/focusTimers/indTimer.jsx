@@ -1,12 +1,26 @@
 'use client'
 import React, {useState} from 'react'
-import {Play, Pause} from 'lucide-react'
+import {Play, Pause, Plus} from 'lucide-react'
 
-const IndTimer = ({ timer}) => {
-    const [isActive, setIsActive] = useState(false);
+const IndTimer = ({ timer }) => {
+  const [isActive, setIsActive] = useState(false);
+
+  if (!timer) {
+    return (
+      <>
+        <div className='text-center text-gray-400'>
+          <div className="text-2xl font-semibold ">Add Timer</div>
+          <button className="btn btn-sm btn-circle rounded-lg">
+            <Plus />
+          </button>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      <div className="text-sm font-semibold">{timer.name || ""}</div>
+      <div className="text-sm font-semibold">{timer.name || "Unnamed"}</div>
       <div className="text-3xl font-bold tracking-wide">
         {timer.duration || "00:00"}
       </div>
@@ -27,6 +41,6 @@ const IndTimer = ({ timer}) => {
       </div>
     </>
   );
-}
+};
 
 export default IndTimer
