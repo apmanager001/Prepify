@@ -20,37 +20,30 @@ const GoogleButton = ({ onSuccess } = {}) => {
     );
 
     if (!popup) return Promise.reject(new Error("Popup blocked"));
-
     return new Promise((resolve, reject) => {
-      const timer = setInterval(() => {
+      const onMessage = (event) => {
         try {
-          // If popup closed, stop polling
-          if (popup.closed) {
-            clearInterval(timer);
-            reject(new Error("Popup closed before completing authentication"));
-            return;
-          }
-
-          // If the popup has navigated to the same origin, we can detect success.
-          // We'll look for an URL containing `/auth/success` or similar — since
-          // your backend uses `/googleCallback` we expect it to eventually redirect
-          // to a frontend route or to a page we can inspect. If backend sets a
-          // cookie session, simply closing the popup may be enough and we'll
-          // call getCurrentUser after popup closes.
-          const url = popup.location.href;
-          if (
-            url &&
-            (url.includes("/auth/success") || url.includes("/googleCallback"))
-          ) {
-            clearInterval(timer);
+          if (event.origin !== window.origin) return;
+          const data = event.data || {};
+          if (data && data.type === "oauth_success") {
+            window.removeEventListener("message", onMessage);
             try {
-              popup.close();
+              if (!popup.closed) popup.close();
             } catch (e) {}
             resolve({ success: true });
           }
-        } catch (err) {
-          // Cross-origin access will throw while the popup is on the provider's domain;
-          // ignore until it redirects back to our origin or closes.
+        } catch (e) {
+          // ignore
+        }
+      };
+
+      window.addEventListener("message", onMessage);
+
+      const poll = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(poll);
+          window.removeEventListener("message", onMessage);
+          reject(new Error("Popup closed before completing authentication"));
         }
       }, 500);
     });
