@@ -11,7 +11,7 @@ import {
   RefreshCw,
   AlertCircle,
 } from "lucide-react";
-import { getNewsletterSubscribers } from "@/lib/api";
+import { getNewsletterSubscribers } from "@/lib/adminApi";
 import ContactMessages from "./contactMessages";
 
 const AdminPage = () => {

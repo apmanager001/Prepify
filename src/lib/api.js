@@ -35,13 +35,6 @@ export const api = {
     const requestId = Math.random().toString(36).substr(2, 9);
     const loginUrl = `${API_BASE_URL}/login`;
 
-    console.log(`🔍 [${requestId}] Login API call to:`, loginUrl);
-    console.log(`🔍 [${requestId}] Credentials being sent:`, credentials);
-    console.log(`🔍 [${requestId}] API_BASE_URL:`, API_BASE_URL);
-    console.log(`🔍 [${requestId}] Full URL:`, loginUrl);
-    console.log(`🔍 [${requestId}] Request method: POST`);
-    console.log(`🔍 [${requestId}] Request body:`, JSON.stringify(credentials));
-
     if (!API_BASE_URL) {
       throw new Error(
         "Backend API URL not configured. Please check your environment variables."
@@ -58,13 +51,6 @@ export const api = {
         body: JSON.stringify(credentials),
       });
 
-      console.log(`🔍 [${requestId}] Login response status:`, response.status);
-      console.log(
-        `🔍 [${requestId}] Login response headers:`,
-        response.headers
-      );
-      console.log(`🔍 [${requestId}] Response URL:`, response.url);
-
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         console.error(`❌ [${requestId}] Login API error response:`, error);
@@ -72,10 +58,7 @@ export const api = {
       }
 
       const responseData = await response.json();
-      console.log(
-        `✅ [${requestId}] Login API success response:`,
-        responseData
-      );
+      
       return responseData;
     } catch (error) {
       console.error(`❌ [${requestId}] Fetch error:`, error);
@@ -174,98 +157,6 @@ export const subscribeToNewsletter = async (emailData) => {
     }
 
     return await response.json();
-  } catch (error) {
-    throw new Error(error.message || "Network error occurred");
-  }
-};
-
-// Admin API - Get newsletter subscribers
-export const getNewsletterSubscribers = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/admin/newsletter`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies for admin authentication
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        errorData.error || "Failed to fetch newsletter subscribers"
-      );
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw new Error(error.message || "Network error occurred");
-  }
-};
-
-// Admin API - Get all contact messages
-export const getContactMessages = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/admin/message`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies for admin authentication
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to fetch contact messages");
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw new Error(error.message || "Network error occurred");
-  }
-};
-
-// Admin API - Update message read status
-export const updateMessageReadStatus = async (messageId, readStatus) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/admin/message/${messageId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies for admin authentication
-      body: JSON.stringify({ read: readStatus }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to update message status");
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw new Error(error.message || "Network error occurred");
-  }
-};
-
-// Admin API - Delete contact message
-export const deleteContactMessage = async (messageId) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/admin/message/${messageId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies for admin authentication
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to delete message");
-    }
-
-    // Return success status for 204 No Content
-    return { success: true, status: response.status };
   } catch (error) {
     throw new Error(error.message || "Network error occurred");
   }

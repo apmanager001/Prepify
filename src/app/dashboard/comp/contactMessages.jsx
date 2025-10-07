@@ -13,7 +13,7 @@ import {
   getContactMessages,
   updateMessageReadStatus,
   deleteContactMessage,
-} from "@/lib/api";
+} from "@/lib/adminApi";
 
 const ContactMessages = () => {
   const [expandedMessages, setExpandedMessages] = useState(new Set());

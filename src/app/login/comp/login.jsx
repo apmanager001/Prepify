@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { User } from "lucide-react";
+import { User, Key } from "lucide-react";
+import GoogleButton from "./googleButton";
 
 const Login = () => {
   const router = useRouter();
@@ -67,7 +68,6 @@ const Login = () => {
       setError("Please enter your password.");
       return;
     }
-
     loginMutation.mutate(formData);
   };
 
@@ -86,7 +86,10 @@ const Login = () => {
 
         {/* Login Form */}
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/30 shadow-2xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          
+           <GoogleButton />
+            <div className="divider divider-primary mb-4">OR</div>
+            <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}
             <fieldset className="fieldset">
               <legend className="label">
@@ -116,6 +119,9 @@ const Login = () => {
             {/* Password Field */}
             <fieldset className="fieldset">
               <legend className="label">
+                <span className="input-group-text text-primary">
+                  <Key size={18} />
+                </span>
                 <span className="label-text text-base-content font-semibold">
                   Password
                 </span>
