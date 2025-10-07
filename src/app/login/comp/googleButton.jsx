@@ -38,7 +38,10 @@ const GoogleButton = ({ onSuccess } = {}) => {
           // cookie session, simply closing the popup may be enough and we'll
           // call getCurrentUser after popup closes.
           const url = popup.location.href;
-          if (url && (url.includes("/auth/success") || url.includes("/googleCallback"))) {
+          if (
+            url &&
+            (url.includes("/auth/success") || url.includes("/googleCallback"))
+          ) {
             clearInterval(timer);
             try {
               popup.close();
