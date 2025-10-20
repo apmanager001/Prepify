@@ -67,7 +67,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
     <fieldset className="fieldset">
       <button
         onClick={handleLogin}
-        className="btn bg-white text-black border-[#e5e5e5]"
+        className="btn bg-white text-black border-[#e5e5e5] hover:bg-base-200 hover:border-gray-300 hover:scale-105 transition-transform duration-100"
         type="button"
       >
         <svg

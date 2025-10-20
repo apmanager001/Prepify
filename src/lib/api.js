@@ -12,7 +12,6 @@ if (!API_BASE_URL) {
 export const api = {
   // Register user
   register: async (userData) => {
-    console.log("🔍 Register API call to:", `${API_BASE_URL}/register`);
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
       headers: {

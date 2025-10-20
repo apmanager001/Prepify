@@ -26,10 +26,11 @@ const MainTimer = () => {
           .map((timer, index) => (
             <div
               key={index}
-              className={`rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-pointer transition-all duration-300 ${
+              className={`rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-auto transition-all duration-300 ${
                 !timer
-                  ? "bg-base-100 border-2 border-dotted border-primary"
-                  : "bg-gradient-to-br from-primary to-secondary hover:shadow-2xl hover:ring-2 hover:ring-accent"
+                  ? "bg-base-100 border-2 border-dotted border-gray-800 hover:scale-115"
+                  : // : "bg-gradient-to-br from-primary to-secondary hover:shadow-2xl hover:ring-2 hover:ring-accent"
+                    "bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white hover:shadow-2xl hover:scale-115"
               }`}
             >
               <IndTimer timer={timer} />

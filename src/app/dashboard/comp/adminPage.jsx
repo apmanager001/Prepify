@@ -88,7 +88,7 @@ const AdminPage = () => {
           <button
             onClick={fetchNewsletterSubscribers}
             disabled={newsletterLoading}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-500 cursor-pointer hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh subscribers"
           >
             <RefreshCw
@@ -99,7 +99,7 @@ const AdminPage = () => {
           <button
             onClick={copyAllEmails}
             disabled={newsletterLoading || newsletterEmails.length === 0}
-            className="btn bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn bg-gradient-to-r cursor-copy from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {copied ? (
               <>
@@ -178,7 +178,7 @@ const AdminPage = () => {
                   </div>
                   <button
                     onClick={() => copyEmail(email)}
-                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
+                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-copy"
                     title="Copy email"
                   >
                     <Copy size={16} />

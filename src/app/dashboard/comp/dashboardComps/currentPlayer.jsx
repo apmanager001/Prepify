@@ -89,13 +89,13 @@ const CurrentPlayer = () => {
 
   return (
     <div className="w-full h-full flex justify-center">
-      <div className="w-[350px] bg-gradient-to-br from-primary to-secondary rounded-2xl h-full shadow-lg border-1 border-gray-600">
-        <div className="h-[250px]  rounded-t-2xl flex items-center justify-center relative">
+      <div className="w-[350px] bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl h-full shadow-2xl border border-gray-700">
+        <div className="h-[250px] rounded-t-2xl flex items-center justify-center relative">
           <Img
             src={currentSong.image}
             alt="Album Art"
             fill
-            className=" object-top rounded-t-xl overflow-hidden"
+            className="object-cover rounded-t-xl overflow-hidden"
           />
           <audio
             src={currentSong.audio}
@@ -105,23 +105,28 @@ const CurrentPlayer = () => {
             onEnded={() => setIsPlaying(false)}
             className="hidden"
           />
-          <div className="absolute inset-0 bg-black/40 rounded-t-lg z-10 h-[250px]"></div>
+          <div className="absolute inset-0 bg-black/50 rounded-t-lg z-10 h-[250px]"></div>
 
           <details className="dropdown dropdown-right absolute top-2 left-2 z-10">
-            <summary className="btn btn-primary btn-sm rounded-lg">
+            <summary className="btn btn-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600">
               Change Song
             </summary>
-            <ul className="menu dropdown-content bg-primary/50 rounded-lg w-48 p-2">
+            <ul className="menu dropdown-content bg-gray-800 text-white rounded-lg w-48 p-2">
               {songs.map((song, index) => (
                 <li key={index}>
-                  <button onClick={() => changeSong(song)}>{song.title}</button>
+                  <button
+                    onClick={() => changeSong(song)}
+                    className="hover:bg-gray-700 rounded-md p-2"
+                  >
+                    {song.title}
+                  </button>
                 </li>
               ))}
             </ul>
           </details>
         </div>
-        <div className="h-[150px] text-center">
-          <span className="text-xl font-bold h-1/3 flex items-center justify-center">
+        <div className="h-[150px] text-center text-white border-t-2 border-white/40">
+          <span className="text-xl font-semibold h-1/3 flex items-center justify-center">
             {currentSong.title || "No song is playing"}
           </span>
           <div className="mx-4 h-2/3 flex flex-col items-center justify-center">
@@ -130,34 +135,45 @@ const CurrentPlayer = () => {
                 {Math.floor(currentTime / 60)}:
                 {String(Math.floor(currentTime % 60)).padStart(2, "0")}
               </span>
-              <progress
-                className="progress w-full mx-2"
-                value={currentTime}
-                max={timeStringToSeconds(currentSong.duration)}
-              />
+              <div className="relative w-full mx-2 h-2 bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-green-500"
+                  style={{
+                    width: `${
+                      (currentTime /
+                        timeStringToSeconds(currentSong.duration)) *
+                      100
+                    }%`,
+                  }}
+                ></div>
+              </div>
               <span>{currentSong.duration || "0:00"}</span>
             </div>
             <div className="flex items-center justify-center mt-4">
               <div
-                className="bg-black/10 z-50 rounded-full p-2 inline-block mr-4 cursor-pointer transition-transform duration-100 active:scale-105 tooltip tooltip-top"
+                className="bg-gray-700 hover:bg-gray-600 z-50 rounded-full p-2 inline-block mr-4 cursor-pointer transition-transform duration-100 active:scale-105 tooltip tooltip-top"
                 onClick={() => seekAudio(-10)}
                 data-tip="Rewind 10 seconds"
               >
-                <Undo />
+                <Undo className="text-white" />
               </div>
 
               <div
-                className="bg-black/10 z-50 rounded-full p-3 inline-block cursor-pointer"
+                className="bg-primary hover:bg-primary/80 z-50 rounded-full p-3 inline-block cursor-pointer"
                 onClick={togglePlay}
               >
-                {isPlaying ? <Pause /> : <Play />}
+                {isPlaying ? (
+                  <Pause className="text-white" />
+                ) : (
+                  <Play className="text-white" />
+                )}
               </div>
               <div
-                className="bg-black/10 z-50 rounded-full p-2 inline-block ml-4 cursor-pointer transition-all duration-100 active:scale-105 tooltip tooltip-top"
+                className="bg-gray-700 hover:bg-gray-600 z-50 rounded-full p-2 inline-block ml-4 cursor-pointer transition-all duration-100 active:scale-105 tooltip tooltip-top"
                 onClick={() => seekAudio(10)}
                 data-tip="Forward 10 seconds"
               >
-                <Redo />
+                <Redo className="text-white" />
               </div>
             </div>
           </div>
