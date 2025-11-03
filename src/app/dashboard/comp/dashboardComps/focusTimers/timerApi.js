@@ -24,3 +24,16 @@ export async function addTimer(timerData) {
   const data = await res.json();
   return data;
 }
+
+export async function deleteTimer(timerId) {
+  const res = await fetch(`${API_BASE_URL}/timer/${timerId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to delete timer");
+  }
+
+  return res.json();
+}

@@ -48,7 +48,7 @@ const MainTimer = () => {
             (timer, index) => (
               <div
                 key={index}
-                className={`rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-auto transition-all duration-300 ${
+                className={`relative rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-auto transition-all duration-300 ${
                   !timer
                     ? "bg-base-100 border-2 border-dotted border-gray-800 hover:scale-105"
                     : "bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white hover:shadow-2xl hover:scale-105"

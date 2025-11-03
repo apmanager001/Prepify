@@ -17,11 +17,10 @@ import {
   Save,
   X,
 } from "lucide-react";
+import RenderAccountTab from "./settings/accountTab/renderAccountTab";
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("profile");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Mock user data - replace with actual user data later
   const [userData, setUserData] = useState({
@@ -190,10 +189,11 @@ const SettingsPage = () => {
           />
         </div> */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
             Username
           </label>
           <input
+            id="username"
             type="text"
             value={userData.profile.username}
             onChange={(e) =>
@@ -202,13 +202,15 @@ const SettingsPage = () => {
             // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             className="input"
             disabled={isLoading}
+            autoComplete="off"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
             Email
           </label>
           <input
+            id="email"
             type="email"
             value={userData.profile.email}
             onChange={(e) =>
@@ -217,13 +219,15 @@ const SettingsPage = () => {
             // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             className='input'
             disabled={true}
+            autoComplete="off"
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
             Bio
           </label>
           <textarea
+            id="bio"
             value={userData.profile.bio || ""}
             onChange={(e) =>
               handleInputChange("profile", "bio", e.target.value)
@@ -232,6 +236,7 @@ const SettingsPage = () => {
             // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
             className="textarea w-full h-32"
             disabled={isLoading || !userData.profile.bio}
+            autoComplete="off"
           />
         </div>
       </div>
@@ -438,121 +443,6 @@ const SettingsPage = () => {
     </div>
   );
 
-  const renderAccountTab = () => (
-    <div className="space-y-6">
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <Shield className="h-5 w-5 text-yellow-400" />
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-yellow-800">
-              Security Notice
-            </h3>
-            <div className="mt-2 text-sm text-yellow-700">
-              <p>
-                Changing your password will log you out of all devices. Make
-                sure to remember your new password.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Current Password
-          </label>
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={userData.account.currentPassword}
-              onChange={(e) =>
-                handleInputChange("account", "currentPassword", e.target.value)
-              }
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            >
-              {showPassword ? (
-                <EyeOff size={20} className="text-gray-400" />
-              ) : (
-                <Eye size={20} className="text-gray-400" />
-              )}
-            </button>
-          </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            New Password
-          </label>
-          <div className="relative">
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              value={userData.account.newPassword}
-              onChange={(e) =>
-                handleInputChange("account", "newPassword", e.target.value)
-              }
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-            >
-              {showConfirmPassword ? (
-                <EyeOff size={20} className="text-gray-400" />
-              ) : (
-                <Eye size={20} className="text-gray-400" />
-              )}
-            </button>
-          </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Confirm New Password
-          </label>
-          <input
-            type="password"
-            value={userData.account.confirmPassword}
-            onChange={(e) =>
-              handleInputChange("account", "confirmPassword", e.target.value)
-            }
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-end space-x-3">
-        <button
-          onClick={() => {
-            setUserData((prev) => ({
-              ...prev,
-              account: {
-                currentPassword: "",
-                newPassword: "",
-                confirmPassword: "",
-              },
-            }));
-          }}
-          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-        >
-          Clear
-        </button>
-        <button
-          onClick={() => handleSave("account")}
-          className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors flex items-center space-x-2"
-        >
-          <Save size={18} />
-          <span>Change Password</span>
-        </button>
-      </div>
-    </div>
-  );
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -565,7 +455,7 @@ const SettingsPage = () => {
       case "appearance":
         return renderAppearanceTab();
       case "account":
-        return renderAccountTab();
+        return <RenderAccountTab email={userData.profile.email} />;
       default:
         return renderProfileTab();
     }
