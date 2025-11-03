@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useProfileQuery } from "./useProfileQuery";
 import {
   Settings,
   User,
@@ -31,6 +32,7 @@ const SettingsPage = () => {
       username: "johndoe",
       bio: "Passionate student focused on academic excellence",
       avatar: null,
+      createdAt: null,
     },
     notifications: {
       emailNotifications: true,
@@ -56,6 +58,22 @@ const SettingsPage = () => {
       confirmPassword: "",
     },
   });
+
+  // TanStack Query: fetch profile data
+  const { data: profileData, isLoading, isError } = useProfileQuery();
+
+  React.useEffect(() => {
+    if (profileData) {
+      setUserData((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          ...profileData,
+          createdAt: profileData.createdAt || prev.profile.createdAt,
+        },
+      }));
+    }
+  }, [profileData]);
 
   const handleInputChange = (section, field, value) => {
     setUserData((prev) => ({
@@ -121,12 +139,29 @@ const SettingsPage = () => {
             Profile Picture
           </h3>
           <p className="text-sm text-gray-600">Upload a new profile picture</p>
+          {userData.profile.createdAt && (
+            <p className="text-xs text-gray-500 mt-2">
+              Created On:{" "}
+              {new Date(userData.profile.createdAt).toLocaleDateString(
+                undefined,
+                {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }
+              )}
+            </p>
+          )}
         </div>
       </div>
 
+      {/* Loading/Error States */}
+      {isLoading && <div className="text-gray-500">Loading profile...</div>}
+      {isError && <div className="text-red-500">Error loading profile.</div>}
+
       {/* Form Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             First Name
           </label>
@@ -137,6 +172,7 @@ const SettingsPage = () => {
               handleInputChange("profile", "firstName", e.target.value)
             }
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -150,8 +186,9 @@ const SettingsPage = () => {
               handleInputChange("profile", "lastName", e.target.value)
             }
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            disabled={isLoading}
           />
-        </div>
+        </div> */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Username
@@ -162,7 +199,9 @@ const SettingsPage = () => {
             onChange={(e) =>
               handleInputChange("profile", "username", e.target.value)
             }
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="input"
+            disabled={isLoading}
           />
         </div>
         <div>
@@ -175,7 +214,9 @@ const SettingsPage = () => {
             onChange={(e) =>
               handleInputChange("profile", "email", e.target.value)
             }
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            className='input'
+            disabled={true}
           />
         </div>
         <div className="md:col-span-2">
@@ -183,12 +224,14 @@ const SettingsPage = () => {
             Bio
           </label>
           <textarea
-            value={userData.profile.bio}
+            value={userData.profile.bio || ""}
             onChange={(e) =>
               handleInputChange("profile", "bio", e.target.value)
             }
             rows={3}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+            // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+            className="textarea w-full h-32"
+            disabled={isLoading || !userData.profile.bio}
           />
         </div>
       </div>
@@ -197,6 +240,7 @@ const SettingsPage = () => {
         <button
           onClick={() => handleSave("profile")}
           className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors flex items-center space-x-2"
+          disabled={isLoading}
         >
           <Save size={18} />
           <span>Save Changes</span>

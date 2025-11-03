@@ -170,15 +170,18 @@ const AdminPage = () => {
                   key={index}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                 >
-                  <div className="flex items-center space-x-3">
-                    <Mail size={20} className="text-blue-600" />
-                    <span className="text-gray-800 font-medium truncate">
+                  {/* Left side: icon + email */}
+                  <div className="flex items-center space-x-3 flex-grow min-w-0">
+                    <Mail size={20} className="text-blue-600 shrink-0" />
+                    <span className="text-gray-800 font-medium overflow-hidden text-ellipsis whitespace-nowrap flex-grow min-w-0">
                       {email}
                     </span>
                   </div>
+
+                  {/* Right side: copy button */}
                   <button
                     onClick={() => copyEmail(email)}
-                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-copy"
+                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-copy shrink-0"
                     title="Copy email"
                   >
                     <Copy size={16} />
