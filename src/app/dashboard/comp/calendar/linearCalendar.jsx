@@ -1,5 +1,36 @@
-import React, { useState } from "react";
-import { Plus } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Clock, CheckCircle } from "lucide-react";
+import { useCalendarEvents, useDeleteCalendarEvent } from "./lib/calendar";
+import toast from "react-hot-toast";
+import { X, Trash2 } from "lucide-react";
+
+// Inline delete button component for the linear calendar modal
+function DeleteButtonLinear({ selectedEvent, onClose }) {
+  const deleteMutation = useDeleteCalendarEvent();
+  return (
+    <button
+      onClick={async () => {
+        if (!selectedEvent || !selectedEvent.id) return;
+        const ok = window.confirm("Delete this event? This cannot be undone.");
+        if (!ok) return;
+        try {
+          await deleteMutation.mutateAsync(selectedEvent.id);
+          toast.success("Event deleted");
+          onClose && onClose();
+        } catch (err) {
+          console.error("Failed to delete event", err);
+          toast.error("Failed to delete event");
+        }
+      }}
+      className={`btn btn-error btn-soft rounded-3xl text-error hover:text-white ${
+        deleteMutation.isLoading ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+      disabled={deleteMutation.isLoading}
+    >
+      <Trash2 size={18} />
+    </button>
+  );
+}
 
 const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   const [selectedDay, setSelectedDay] = useState(new Date());
@@ -15,6 +46,68 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   };
 
   const [currentWeek, setCurrentWeek] = useState(getWeekDays(new Date()));
+  const [fetchedMap, setFetchedMap] = useState({});
+  const [showViewEventModal, setShowViewEventModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  // use React Query to fetch events for the current week (from/to)
+  const from = currentWeek[0].toISOString().split("T")[0];
+  const to = currentWeek[6].toISOString().split("T")[0];
+  const { data: fetchedData } = useCalendarEvents({ from, to });
+
+  useEffect(() => {
+    if (!fetchedData) return;
+    let items = [];
+    if (Array.isArray(fetchedData)) items = fetchedData;
+    else if (Array.isArray(fetchedData.items)) items = fetchedData.items;
+    else if (Array.isArray(fetchedData.data)) items = fetchedData.data;
+    else if (Array.isArray(fetchedData.events)) items = fetchedData.events;
+    else {
+      // unexpected shape — bail
+      console.warn(
+        "Unexpected fetchedData shape for linear calendar",
+        fetchedData
+      );
+      items = [];
+    }
+
+    const map = {};
+    const pickDateField = (ev) =>
+      ev.eventDate ||
+      ev.event_date ||
+      ev.date ||
+      ev.startDate ||
+      ev.start_date ||
+      ev.datetime ||
+      ev.dateTime ||
+      ev.createdAt ||
+      ev.created_at ||
+      ev.created ||
+      null;
+
+    items.forEach((ev) => {
+      const raw = pickDateField(ev);
+      const d = raw
+        ? new Date(raw)
+        : ev.eventDate
+        ? new Date(ev.eventDate)
+        : ev.date
+        ? new Date(ev.date)
+        : null;
+      const key = d ? d.toDateString() : String(raw || ev._id || ev.id || "");
+      map[key] = map[key] || [];
+      map[key].push({
+        id: ev._id || ev.id,
+        time: ev.eventTime || ev.time || "",
+        title: ev.eventTitle || ev.title || "(no title)",
+        type: ev.eventType || ev.type || "",
+        color: ev.eventColor || ev.color || "blue",
+        createdAt: ev.createdAt || ev.created_at || ev.created || null,
+        _raw: ev,
+      });
+    });
+
+    setFetchedMap(map);
+  }, [fetchedData]);
 
   const changeWeek = (direction) => {
     const newDate = new Date(currentWeek[0]);
@@ -79,36 +172,145 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
           Add Event
         </button>
       </div>
-      {/* Vertical Calendar */}
-      <table className="table-auto w-full max-w-md mb-4">
-        <thead>
-          <tr>
-            <th></th>
-            <th className="text-left px-2 py-2">Time</th>
-            <th className="text-left px-2 py-2">Event</th>
-          </tr>
-        </thead>
-        {mockEvents.map((event, index) => (
-          <tbody key={index}>
-            <tr className="align-middle">
-              <td className="px-2 py-2 text-center">
-                <input type="checkbox" className="checkbox checkbox-primary" />
-              </td>
-              <td className="px-2 py-2 ">{event.time}</td>
-              <td className="px-2 py-2">{event.title}</td>
-            </tr>
-            {index < mockEvents.length - 1 && (
-              <tr>
-                <td></td>
-                <td className="w-full h-10 flex justify-left px-2 py-2">
-                  <div className="divider divider-horizontal divider-primary h-10" />
-                </td>
-                <td></td>
-              </tr>
-            )}
-          </tbody>
-        ))}
-      </table>
+      {/* Events for selected day */}
+      <div className="bg-white rounded-lg p-4 shadow-sm">
+        <h4 className="text-sm font-semibold mb-2">
+          Events on {selectedDay.toLocaleDateString()}
+        </h4>
+        {(fetchedMap[selectedDay.toDateString()] || []).length === 0 ? (
+          <div className="text-sm text-gray-500">No events for this day.</div>
+        ) : (
+          // <ul className="space-y-2">
+          //   {(fetchedMap[selectedDay.toDateString()] || []).map((ev) => (
+          //     <li
+          //       key={ev.id}
+          //       className="flex items-start space-x-3 cursor-pointer"
+          //       onClick={(e) => {
+          //         e.stopPropagation();
+          //         setSelectedEvent(ev);
+          //         setShowViewEventModal(true);
+          //       }}
+          //     >
+          //       <div className="text-xs text-gray-500 w-20">{ev.time}</div>
+          //       <div className="flex-1">
+          //         <div className="font-medium">{ev.title}</div>
+          //         <div className="text-xs text-gray-500">{ev.type}</div>
+          //       </div>
+          //     </li>
+          //   ))}
+          // </ul>
+          <ul className="timeline timeline-vertical">
+            {(fetchedMap[selectedDay.toDateString()] || []).map((ev) => (
+              <li
+                key={ev.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedEvent(ev);
+                  setShowViewEventModal(true);
+                }}
+                className="cursor-pointer"
+              >
+                <div className="timeline-start flex gap-1 items-center">
+                  <Clock className="h-4" />
+                  <div className="">{ev.time}</div>
+                </div>
+                <div className="timeline-middle">
+                  {/* <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-5 w-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clipRule="evenodd"
+                  />
+                </svg> */}
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="checkbox checkbox-primary"
+                  />
+                </div>
+                <div className="timeline-end timeline-box font-bold">
+                  {ev.type}
+                </div>
+                <hr />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      {/* View Event Modal (linear) */}
+      {showViewEventModal && selectedEvent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 mx-4">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold flex items-center">
+                  {selectedEvent.title || "Event"}
+                </h3>
+                <span className="text-sm text-gray-500 ml-2">
+                  {(() => {
+                    const raw =
+                      selectedEvent?.createdAt ||
+                      selectedEvent?._raw?.createdAt ||
+                      selectedEvent?._raw?.created_at ||
+                      selectedEvent?._raw?.created ||
+                      null;
+                    if (!raw) return "—";
+                    try {
+                      return new Date(raw).toLocaleDateString();
+                    } catch (e) {
+                      return String(raw);
+                    }
+                  })()}
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setShowViewEventModal(false);
+                  setSelectedEvent(null);
+                }}
+                aria-label="Close"
+                className="btn btn-circle btn-ghost"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs text-gray-500">Time</div>
+                <div className="text-sm">{selectedEvent.time || "—"}</div>
+              </div>
+
+              <div>
+                <div className="text-xs text-gray-500">Type</div>
+                <div className="text-sm">{selectedEvent.type || "—"}</div>
+              </div>
+
+              <div>
+                <div className="text-xs text-gray-500">Description</div>
+                <div className="text-sm whitespace-pre-wrap">
+                  {selectedEvent.description || "No description"}
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <DeleteButtonLinear
+                  selectedEvent={selectedEvent}
+                  onClose={() => {
+                    setShowViewEventModal(false);
+                    setSelectedEvent(null);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

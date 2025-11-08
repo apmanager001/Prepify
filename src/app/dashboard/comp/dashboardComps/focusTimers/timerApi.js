@@ -9,6 +9,7 @@ if (!API_BASE_URL) {
 export async function getTimer() {
   const res = await fetch(`${API_BASE_URL}/timer`, { credentials: "include" });
   const data = await res.json();
+
   return data;
 }
 

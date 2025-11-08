@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { useProfileQuery } from "./useProfileQuery";
+import { sendVerificationEmail } from "./settingsApi";
+import { toast } from "react-hot-toast";
 import {
   Settings,
   User,
@@ -16,8 +18,11 @@ import {
   Camera,
   Save,
   X,
+  Trophy,
+  Check,
 } from "lucide-react";
 import RenderAccountTab from "./settings/accountTab/renderAccountTab";
+import Scoreboard from "./settings/scoreboardTab/renderScoreboardTab";
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -101,9 +106,10 @@ const SettingsPage = () => {
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "privacy", label: "Privacy", icon: Shield },
-    { id: "appearance", label: "Appearance", icon: Palette },
+    { id: "scoreboard", label: "Scoreboard", icon: Trophy },
+    // { id: "notifications", label: "Notifications", icon: Bell },
+    // { id: "privacy", label: "Privacy", icon: Shield },
+    // { id: "appearance", label: "Appearance", icon: Palette },
     { id: "account", label: "Account", icon: Key },
   ];
 
@@ -189,7 +195,10 @@ const SettingsPage = () => {
           />
         </div> */}
         <div>
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Username
           </label>
           <input
@@ -206,24 +215,71 @@ const SettingsPage = () => {
           />
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Email
           </label>
-          <input
-            id="email"
-            type="email"
-            value={userData.profile.email}
-            onChange={(e) =>
-              handleInputChange("profile", "email", e.target.value)
-            }
-            // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            className='input'
-            disabled={true}
-            autoComplete="off"
-          />
+          <div className="flex items-center space-x-3">
+            <input
+              id="email"
+              type="email"
+              value={userData.profile.email}
+              onChange={(e) =>
+                handleInputChange("profile", "email", e.target.value)
+              }
+              // className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="input flex-1"
+              disabled={isLoading}
+              autoComplete="off"
+            />
+
+            <div className="flex items-center space-x-2">
+              {/* Verified/Unverified icon */}
+              {userData.profile.emailVerified ? (
+                <Check size={18} className="text-green-500" />
+              ) : (
+                <X size={18} className="text-red-500" />
+              )}
+
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!userData.profile.email) {
+                    toast.error("No email available to verify.");
+                    return;
+                  }
+                  try {
+                    // disable via loading indicator by relying on isLoading from profile fetch
+                    await sendVerificationEmail(userData.profile.email);
+                    toast.success("Verification email sent. Check your inbox.");
+                  } catch (err) {
+                    console.error("sendVerificationEmail error", err);
+                    const msg =
+                      err?.body?.message ||
+                      err?.message ||
+                      "Failed to send verification email.";
+                    toast.error(msg);
+                  }
+                }}
+                disabled={isLoading || userData.profile.emailVerified}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                  userData.profile.emailVerified
+                    ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                    : "bg-primary text-white hover:bg-primary/90"
+                }`}
+              >
+                {userData.profile.emailVerified ? "Verified" : "Verify Email"}
+              </button>
+            </div>
+          </div>
         </div>
         <div className="md:col-span-2">
-          <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="bio"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Bio
           </label>
           <textarea
@@ -443,11 +499,12 @@ const SettingsPage = () => {
     </div>
   );
 
-
   const renderTabContent = () => {
     switch (activeTab) {
       case "profile":
         return renderProfileTab();
+      case "scoreboard":
+        return <Scoreboard />;
       case "notifications":
         return renderNotificationsTab();
       case "privacy":

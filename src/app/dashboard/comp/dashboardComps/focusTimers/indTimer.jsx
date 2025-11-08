@@ -30,7 +30,7 @@ const IndTimer = ({ timer, onAddTimer }) => {
       await deleteTimer(timer._id);
       toast.success("Timer deleted successfully!");
       setShowDeletePopup(false);
-      queryClient.invalidateQueries(["timer"]);
+      queryClient.invalidateQueries({ queryKey: ["timer"] });
     } catch (err) {
       console.error("Failed to delete timer", err);
       toast.error("Failed to delete timer. Please try again.");

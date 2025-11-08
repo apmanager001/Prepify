@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import BoxCalendar from "./boxCalendar";
-import LinearCalendar from './linearCalendar';
+import LinearCalendar from "./linearCalendar";
 import {
   X,
   Calendar as CalendarIcon,
@@ -12,6 +12,8 @@ import {
   List,
   Rows3,
 } from "lucide-react";
+import { useAddCalendarEvent } from "./lib/calendar";
+import toast from "react-hot-toast";
 
 const Calendar = () => {
   const [calendarSelect, setCalendarSelect] = useState(true);
@@ -19,16 +21,65 @@ const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState({});
   const [newEvent, setNewEvent] = useState({
-      title: "",
-      description: "",
-      time: "",
-      type: "study",
-      color: "blue",
+    title: "",
+    description: "",
+    time: "",
+    type: "study",
+    color: "blue",
   });
- 
+
   const handleAddEvent = (date) => {
     setShowEventModal(true);
-    setSelectedDate(date);
+    // Ensure selectedDate is a Date object (BoxCalendar may pass a string)
+    setSelectedDate(date ? new Date(date) : new Date());
+  };
+
+  const addEventMutation = useAddCalendarEvent();
+
+  const colorHexMap = {
+    blue: "#3b82f6",
+    red: "#ef4444",
+    green: "#10b981",
+    yellow: "#f59e0b",
+  };
+
+  const submitNewEvent = () => {
+    // Basic validation
+    if (!newEvent.title) {
+      return alert("Please enter an event title.");
+    }
+    if (!selectedDate) {
+      return alert("No date selected for the event.");
+    }
+
+    const payload = {
+      eventTitle: newEvent.title,
+      eventDescription: newEvent.description || "",
+      // send date as YYYY-MM-DD
+      eventDate: selectedDate.toISOString().split("T")[0],
+      eventTime: newEvent.time || "",
+      eventType: newEvent.type,
+      eventColor: colorHexMap[newEvent.color] || "#000000",
+    };
+
+    addEventMutation.mutate(payload, {
+      onSuccess: () => {
+        setShowEventModal(false);
+        // reset form
+        toast.success("Event added successfully!");
+        setNewEvent({
+          title: "",
+          description: "",
+          time: "",
+          type: "study",
+          color: "blue",
+        });
+      },
+      onError: (err) => {
+        console.error("Failed to add event", err);
+        toast.error("Failed to add event. Please try again.");
+      },
+    });
   };
 
   const eventTypes = {
@@ -44,8 +95,6 @@ const Calendar = () => {
     green: "bg-green-100 text-green-800 border-green-200",
     yellow: "bg-yellow-100 text-yellow-800 border-yellow-200",
   };
-
-
 
   return (
     <div className="space-y-8">
@@ -80,8 +129,8 @@ const Calendar = () => {
                 className="w-6 h-6 text-secondary"
               />
             </div>
-          </label> 
-          
+          </label>
+
           {/* <label htmlFor="calendar-toggle" className="swap swap-rotate btn btn-primary rounded-lg">
             <input
               id="calendar-toggle"
@@ -134,7 +183,15 @@ const Calendar = () => {
           <div className="bg-base-300 rounded-2xl shadow-xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                Add Event - {selectedDate?.toLocaleDateString()}
+                {/* Add Event - {selectedDate ? selectedDate : selectedDate} */}
+                Add Event -{" "}
+                {selectedDate
+                  ? selectedDate.toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : ""}
               </h3>
               <button
                 onClick={() => setShowEventModal(false)}
@@ -261,10 +318,10 @@ const Calendar = () => {
                 Cancel
               </button>
               <button
-                onClick={handleAddEvent}
+                onClick={submitNewEvent}
                 className="cursor-pointer flex-1 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
               >
-                Add Event
+                {addEventMutation.isLoading ? "Adding..." : "Add Event"}
               </button>
             </div>
           </div>

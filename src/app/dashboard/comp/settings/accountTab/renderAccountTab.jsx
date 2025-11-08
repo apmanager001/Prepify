@@ -5,14 +5,18 @@ import useForgotPassword from "./useForgotPassword";
 import toast from "react-hot-toast";
 
 const RenderAccountTab = ({ email }) => {
-  console.log("RenderAccountTab loaded with email:", email);
+  const forgotPasswordMutation = useForgotPassword();
 
   const handleForgotPassword = async () => {
     try {
-      const data = await useForgotPassword(email);
+      await forgotPasswordMutation.mutateAsync({ email });
       toast.success("Password reset email sent successfully!");
     } catch (error) {
-      toast.error("Failed to send password reset email. Please try again.");
+      if (error && error.status === 404) {
+        toast.error("No user found with that email.");
+      } else {
+        toast.error("Failed to send password reset email. Please try again.");
+      }
     }
   };
   return (
