@@ -36,7 +36,9 @@ export default function StatusBar() {
                 ? raw
                 : null;
             return (
-              <span className="font-medium">Lifetime Score: {total ?? "—"} pts</span>
+              <span className="font-medium">
+                Lifetime Score: {total ?? "—"} pts
+              </span>
             );
           })()
         )}
