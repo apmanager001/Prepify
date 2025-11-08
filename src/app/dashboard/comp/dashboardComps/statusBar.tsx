@@ -1,11 +1,12 @@
 // components/ArchedStatusBar.tsx
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import useTotalScore from "./useTotalScore";
 
 export default function StatusBar() {
   const [value, setValue] = useState(0);
   const [statusBar, setStatusBar] = useState(true);
+  const { data, isLoading, isError } = useTotalScore();
 
   const handleChange = (delta: number) => {
     setValue((prev) => Math.min(100, Math.max(0, prev + delta)));
@@ -21,25 +22,24 @@ export default function StatusBar() {
       </button>
       {/* total score display */}
       <div className="text-sm text-gray-700">
-        {/* show total score fetched from backend */}
-        {(() => {
-          const { data, isLoading, isError } = useTotalScore();
-          if (isLoading) return <span>Loading score…</span>;
-          if (isError) return <span>Score unavailable</span>;
-          // backend may return multiple shapes; normalize
-          const raw = data;
-          const total =
-            raw && typeof raw === "object"
-              ? raw.totalScore ?? raw.total ?? raw.score ?? null
-              : typeof raw === "number"
-              ? raw
-              : null;
-          return (
-            <span className="font-medium">
-              Lifetime Score: {total ?? "—"} pts
-            </span>
-          );
-        })()}
+        {isLoading ? (
+          <span>Loading score…</span>
+        ) : isError ? (
+          <span>Score unavailable</span>
+        ) : (
+          (() => {
+            const raw = data;
+            const total =
+              raw && typeof raw === "object"
+                ? raw.totalScore ?? raw.total ?? raw.score ?? null
+                : typeof raw === "number"
+                ? raw
+                : null;
+            return (
+              <span className="font-medium">Lifetime Score: {total ?? "—"} pts</span>
+            );
+          })()
+        )}
       </div>
       <div className="relative w-full h-40 overflow-hidden flex items-center justify-center">
         {statusBar ? (

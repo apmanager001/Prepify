@@ -41,7 +41,7 @@ export async function sendVerificationEmail(email) {
   let body = null;
   try {
     body = await res.json();
-  } catch (e) {
+  } catch {
     // ignore parse errors
   }
 

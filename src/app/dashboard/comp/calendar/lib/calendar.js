@@ -26,7 +26,7 @@ export async function fetchCalendarEvents({ from, to } = {}) {
   // Helpful debug: log the backend response shape so UI mapping can be adjusted
   try {
     console.debug("fetchCalendarEvents response", { from, to, json });
-  } catch (e) {
+  } catch {
     // ignore logging errors in environments that restrict console
   }
   return json;
@@ -65,7 +65,7 @@ export async function deleteCalendarEvent(eventId) {
   // Some APIs return an empty body; try to parse JSON but fall back to true
   try {
     return await res.json();
-  } catch (e) {
+  } catch {
     return true;
   }
 }

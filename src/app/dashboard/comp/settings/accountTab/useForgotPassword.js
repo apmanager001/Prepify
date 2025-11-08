@@ -23,7 +23,7 @@ const useForgotPassword = () => {
       let json;
       try {
         json = text ? JSON.parse(text) : null;
-      } catch (e) {
+      } catch {
         json = null;
       }
 
