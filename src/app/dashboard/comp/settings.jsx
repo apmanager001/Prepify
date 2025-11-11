@@ -264,7 +264,7 @@ const SettingsPage = () => {
                   }
                 }}
                 disabled={isLoading || userData.profile.emailVerified}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                className={`btn btn-primary rounded-xl btn-sm text-sm font-medium transition-colors ${
                   userData.profile.emailVerified
                     ? "bg-gray-200 text-gray-600 cursor-not-allowed"
                     : "bg-primary text-white hover:bg-primary/90"
@@ -300,7 +300,7 @@ const SettingsPage = () => {
       <div className="flex justify-end">
         <button
           onClick={() => handleSave("profile")}
-          className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors flex items-center space-x-2"
+          className="bg-primary text-white btn btn-primary rounded-xl font-extrabold transition-colors"
           disabled={isLoading}
         >
           <Save size={18} />

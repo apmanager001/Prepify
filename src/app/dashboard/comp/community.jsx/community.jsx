@@ -1,4 +1,6 @@
 import React from "react";
+import { GraduationCap, MessageCircleMore, CircleCheck } from "lucide-react";
+import Leaderboard from "./leaderboard";
 
 const Community = () => {
   // Discord server invite link - replace with your actual Discord server invite
@@ -16,7 +18,6 @@ const Community = () => {
           Connect with fellow students and study groups on Discord
         </p>
       </div>
-
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
         <div className="text-center py-12">
           <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -59,80 +60,55 @@ const Community = () => {
       </div>
 
       {/* Community Features */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-            <svg
-              className="w-6 h-6 text-blue-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-2-2V10a2 2 0 012-2h2m8-4V4a2 2 0 00-2-2H9a2 2 0 00-2 2v2h10z"
-              />
-            </svg>
-          </div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-2">
-            Study Groups
-          </h4>
-          <p className="text-gray-600 text-sm">
-            Join subject-specific study groups and collaborate with peers on
-            assignments and exam prep.
-          </p>
+      <div className="flex justify-center">
+        <div className="flex-2">
+          <Leaderboard />
         </div>
-
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-            <svg
-              className="w-6 h-6 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
+        <div className="flex-1 flex flex-wrap gap-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                <GraduationCap className="text-blue-600" />
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                Study Groups
+              </h4>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Join subject-specific study groups and collaborate with peers on
+              assignments and exam prep.
+            </p>
           </div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-2">
-            Live Discussions
-          </h4>
-          <p className="text-gray-600 text-sm">
-            Participate in real-time discussions, ask questions, and get instant
-            help from the community.
-          </p>
-        </div>
 
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-            <svg
-              className="w-6 h-6 text-purple-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <MessageCircleMore className="text-green-600" />
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                Live Discussions
+              </h4>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Participate in real-time discussions, ask questions, and get instant
+              help from the community.
+            </p>
           </div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-2">
-            Quick Help
-          </h4>
-          <p className="text-gray-600 text-sm">
-            Get fast answers to your questions from experienced students and
-            community moderators.
-          </p>
+
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                <CircleCheck className="text-purple-600" />
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                Quick Help
+              </h4>
+            </div>
+            <p className="text-gray-600 text-sm">
+              Get fast answers to your questions from experienced students and
+              community moderators.
+            </p>
+          </div>
         </div>
       </div>
     </div>

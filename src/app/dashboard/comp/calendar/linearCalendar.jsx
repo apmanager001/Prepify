@@ -84,15 +84,53 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
       ev.created ||
       null;
 
+    const normalizeDate = (raw, ev) => {
+      // fallback to common fields if raw is falsy
+      if (!raw) {
+        raw =
+          ev.eventDate ||
+          ev.event_date ||
+          ev.date ||
+          ev.startDate ||
+          ev.start_date ||
+          ev.createdAt ||
+          ev.created_at ||
+          ev.created ||
+          null;
+      }
+      if (!raw) return null;
+
+      const time = ev.eventTime || ev.time || ev.timeOfDay || null;
+      const rawStr = String(raw);
+
+      // plain date YYYY-MM-DD -> local midnight for that day
+      if (/^\d{4}-\d{2}-\d{2}$/.test(rawStr)) {
+        if (time) {
+          const combined = `${rawStr}T${time}`;
+          const d = new Date(combined);
+          if (isNaN(d)) return null;
+          return d;
+        }
+        const [y, m, d] = rawStr.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      // ISO at midnight UTC -> treat as date-only
+      if (/^\d{4}-\d{2}-\d{2}T00:00:00(?:\.000)?Z?$/.test(rawStr)) {
+        const datePart = rawStr.split("T")[0];
+        const [y, m, d] = datePart.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      // fallback to normal datetime parsing
+      const d = new Date(rawStr);
+      if (isNaN(d)) return null;
+      return d;
+    };
+
     items.forEach((ev) => {
       const raw = pickDateField(ev);
-      const d = raw
-        ? new Date(raw)
-        : ev.eventDate
-        ? new Date(ev.eventDate)
-        : ev.date
-        ? new Date(ev.date)
-        : null;
+      const d = normalizeDate(raw, ev);
       const key = d ? d.toDateString() : String(raw || ev._id || ev.id || "");
       map[key] = map[key] || [];
       map[key].push({

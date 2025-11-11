@@ -175,16 +175,33 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
 
     const normalizeDate = (raw, ev) => {
       if (!raw) return null;
-      // If we have a separate time field and the date string is a plain date (no T), combine them
-      let combined = raw;
       const time = ev.eventTime || ev.time || ev.timeOfDay || null;
-      const looksLikeDateOnly = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(
-        String(raw)
-      );
-      if (looksLikeDateOnly && time) {
-        combined = `${raw}T${time}`;
+      const rawStr = String(raw);
+
+      // If the backend sent a plain YYYY-MM-DD string, treat it as a date-only value
+      // and construct a local Date at midnight for that calendar day.
+      if (/^\d{4}-\d{2}-\d{2}$/.test(rawStr)) {
+        if (time) {
+          // combine date-only with explicit time if provided
+          const combined = `${rawStr}T${time}`;
+          const d = new Date(combined);
+          if (isNaN(d)) return null;
+          return d;
+        }
+        const [y, m, d] = rawStr.split("-").map(Number);
+        return new Date(y, m - 1, d);
       }
-      const d = new Date(combined);
+
+      // If the backend sent an ISO that is midnight UTC (e.g. 2025-11-19T00:00:00.000Z)
+      // treat it as date-only to avoid timezone shifts that move it to the previous day
+      if (/^\d{4}-\d{2}-\d{2}T00:00:00(?:\.000)?Z?$/.test(rawStr)) {
+        const datePart = rawStr.split("T")[0];
+        const [y, m, d] = datePart.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      // Fallback: parse as a normal datetime (keeps timezone behaviour for events with explicit times)
+      const d = new Date(rawStr);
       if (isNaN(d)) return null;
       return d;
     };

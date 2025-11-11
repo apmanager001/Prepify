@@ -1,10 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND;
+import { API_BASE_URL } from "@/lib/backendAPI";
 
-// Validate API_BASE_URL
-if (!API_BASE_URL) {
-  console.error("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
-  console.error("Please add NEXT_PUBLIC_BACKEND to your .env.local file");
-}
 // API utility for /timer route
 export async function getTimer() {
   const res = await fetch(`${API_BASE_URL}/timer`, { credentials: "include" });

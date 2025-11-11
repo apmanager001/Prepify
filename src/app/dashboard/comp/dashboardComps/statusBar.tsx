@@ -1,85 +1,85 @@
 // components/ArchedStatusBar.tsx
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import useTotalScore from "./useTotalScore";
 
+// Placeholder daily goal and points. Backend API will replace this.
+const DAILY_GOAL = 50;
+const DAILY_POINTS_PLACEHOLDER = 23;
+
 export default function StatusBar() {
-  const [value, setValue] = useState(0);
-  const [statusBar, setStatusBar] = useState(true);
   const { data, isLoading, isError } = useTotalScore();
 
-  const handleChange = (delta: number) => {
-    setValue((prev) => Math.min(100, Math.max(0, prev + delta)));
-  };
+  // compute percent for radial progress
+  const percent = Math.min(
+    100,
+    Math.round((DAILY_POINTS_PLACEHOLDER / Math.max(1, DAILY_GOAL)) * 100)
+  );
+
+  // pick a color class for progress: red if low, amber if mid, green if high
+  let progressColor = "text-error";
+  if (percent >= 80) progressColor = "text-success";
+  else if (percent >= 50) progressColor = "text-amber-500";
+
+  const lifetimeDisplay = (() => {
+    const raw = data;
+    const total =
+      raw && typeof raw === "object"
+        ? raw.totalScore ?? raw.total ?? raw.score ?? null
+        : typeof raw === "number"
+        ? raw
+        : null;
+    return total ?? null;
+  })();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-4 h-full mx-10">
-      <button
-        className="btn btn-primary absolute top-10 center rounded-2xl"
-        onClick={() => setStatusBar(!statusBar)}
-      >
-        Toggle Status Bar
-      </button>
-      {/* total score display */}
-      <div className="text-sm text-gray-700">
+    <div className="flex flex-col items-center justify-center gap-4 p-4 h-full">
+      {/* lifetime score (styled) */}
+      <div className="text-center">
         {isLoading ? (
-          <span>Loading score…</span>
+          <div className="text-sm text-gray-500">Loading score…</div>
         ) : isError ? (
-          <span>Score unavailable</span>
+          <div className="text-sm text-red-500">Score unavailable</div>
         ) : (
-          (() => {
-            const raw = data;
-            const total =
-              raw && typeof raw === "object"
-                ? raw.totalScore ?? raw.total ?? raw.score ?? null
-                : typeof raw === "number"
-                ? raw
-                : null;
-            return (
-              <span className="font-medium">
-                Lifetime Score: {total ?? "—"} pts
-              </span>
-            );
-          })()
-        )}
-      </div>
-      <div className="relative w-full h-40 overflow-hidden flex items-center justify-center">
-        {statusBar ? (
           <>
-            <progress
-              className="progress progress-success bg-error w-full"
-              value={value}
-              max="100"
-            ></progress>
-            <div className="absolute inset-0 flex items-end justify-center pb-2 text-lg font-extrabold">
-              {value}%
+            <div className="text-xs text-gray-500">Lifetime Score</div>
+            <div className="text-2xl font-extrabold text-indigo-700">
+              {lifetimeDisplay ?? "—"} pts
             </div>
           </>
-        ) : (
-          <div
-            className="radial-progress text-success bg-primary/30 font-extrabold text-2xl"
-            style={
-              {
-                "--value": value,
-                "--size": "10rem",
-                "--thickness": "1.5rem",
-              } as React.CSSProperties
-            }
-            aria-valuenow={value}
-            role="progressbar"
-          >
-            {value}%
-          </div>
         )}
       </div>
 
-      <div className="flex gap-2">
-        <button className="btn btn-error" onClick={() => handleChange(-10)}>
-          Decrease
-        </button>
-        <button className="btn btn-success" onClick={() => handleChange(10)}>
-          Increase
-        </button>
+      {/* radial progress for daily points only (styled & color-coded) */}
+      <div className="flex flex-col items-center justify-center">
+        <div
+          className={`radial-progress ${progressColor} bg-indigo-50 font-extrabold text-3xl shadow-lg`}
+          style={
+            {
+              "--value": percent,
+              "--size": "9rem",
+              "--thickness": "1.25rem",
+            } as React.CSSProperties
+          }
+          role="progressbar"
+          aria-valuenow={percent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          {DAILY_POINTS_PLACEHOLDER}
+        </div>
+
+        <div className="mt-2 text-center">
+          <div className="text-sm font-semibold text-gray-700">
+            Daily Points
+          </div>
+          <div className="text-xs text-gray-500">
+            {DAILY_POINTS_PLACEHOLDER} / {DAILY_GOAL} pts
+          </div>
+          <div className="text-xs text-gray-400">
+            (placeholder — will fetch from API)
+          </div>
+        </div>
       </div>
     </div>
   );

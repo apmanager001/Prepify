@@ -1,13 +1,27 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { LogOut, Menu, X, Shield, Hammer } from "lucide-react";
+import {
+  LogOut,
+  Menu,
+  X,
+  Shield,
+  NotebookPen,
+  CheckSquare,
+  ChartNoAxesColumn,
+  Calendar as CalendarIcon,
+  FolderClosed,
+  UsersRound,
+  Settings,
+} from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import StudyGuides from "./comp/studyGuides/studyGuides";
+import Notes from "./comp/notes/notes";
+import Todo from "./comp/todo/todo";
 // import Main from "./comp/main";
-import DashboardPage from "./comp/dashboard";
+import DashboardPage from "./comp/dashboardComps/dashboard";
 import SettingsPage from "./comp/settings";
 import AdminPage from "./comp/adminPage";
 import Tools from "./comp/tools";
@@ -56,21 +70,7 @@ const Dashboard = () => {
     {
       id: "overview",
       label: "Overview",
-      icon: () => (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-          />
-        </svg>
-      ),
+      icon: () => <ChartNoAxesColumn size={24} />,
     },
     // {
     //   id: "studyGuides",
@@ -91,92 +91,40 @@ const Dashboard = () => {
     //     </svg>
     //   ),
     // },
+    // {
+    //   id: "tools",
+    //   label: "Study Tools",
+    //   icon: () => <Hammer size={24} />,
+    // },
     {
-      id: "tools",
-      label: "Study Tools",
-      icon: () => <Hammer size={24} />,
+      id: "notes",
+      label: "Notes",
+      icon: () => <NotebookPen size={24} />,
+    },
+    {
+      id: "todo",
+      label: "To-Do",
+      icon: () => <CheckSquare size={24} />,
     },
     {
       id: "calendar",
       label: "Calendar",
-      icon: () => (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
-      ),
+      icon: () => <CalendarIcon size={24} />,
     },
     {
       id: "resources",
       label: "Resources",
-      icon: () => (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2m14 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v4"
-          />
-        </svg>
-      ),
+      icon: () => <FolderClosed size={24} />,
     },
     {
       id: "community",
       label: "Community",
-      icon: () => (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-          />
-        </svg>
-      ),
+      icon: () => <UsersRound size={24} />,
     },
     {
       id: "settings",
       label: "Settings",
-      icon: () => (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
-      ),
+      icon: () => <Settings size={24} />,
     },
     // Admin-only item
     ...(userData.isAdmin
@@ -223,16 +171,18 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <DashboardPage />
-        // <Main />;
+        return <DashboardPage />;
+      // <Main />;
       case "studyGuides":
         return <StudyGuides />;
+      case "notes":
+        return <Notes />;
+      case "todo":
+        return <Todo />;
       case "tools":
         return <Tools />;
       case "calendar":
-        return (
-          <Calendar />
-        );
+        return <Calendar />;
       case "resources":
         return (
           <div className="space-y-8">
@@ -276,9 +226,7 @@ const Dashboard = () => {
           </div>
         );
       case "community":
-        return (
-          <Community />
-        );
+        return <Community />;
       case "settings":
         return <SettingsPage />;
       case "admin":
@@ -303,9 +251,12 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <label htmlFor="menu-toggle" className="swap swap-rotate btn rounded-lg">
+        <label
+          htmlFor="menu-toggle"
+          className="swap swap-rotate btn rounded-lg"
+        >
           <input
-            id='menu-toggle'
+            id="menu-toggle"
             type="checkbox"
             checked={isMobileMenuOpen}
             onChange={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -319,7 +270,7 @@ const Dashboard = () => {
 
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40">
+        <div className="lg:hidden fixed inset-0 z-50">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -403,7 +354,7 @@ const Dashboard = () => {
       {/* Desktop Layout */}
       <div className="hidden lg:flex">
         {/* Sidebar */}
-        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col">
+        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col min-h-screen">
           {/* Logo Section */}
           <div className="border-b border-gray-100">
             <div className="flex flex-col items-center">
@@ -412,14 +363,14 @@ const Dashboard = () => {
                 alt="Prepify"
                 width={100}
                 height={20}
-                className="h-40 w-40"
+                className="h-40 w-40 rounded-full"
                 priority={true}
               />
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-6 space-y-3">
+          <nav className="flex-1 p-6 space-y-3 ">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               return (

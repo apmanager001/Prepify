@@ -88,7 +88,7 @@ const CurrentPlayer = () => {
   };
 
   return (
-    <div className="w-full h-full flex justify-center">
+    <div className="w-full max-h-[400px] flex justify-center md:justify-left ">
       <div className="w-[350px] bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl h-full shadow-2xl border border-gray-700">
         <div className="h-[250px] rounded-t-2xl flex items-center justify-center relative">
           <Img
@@ -151,7 +151,7 @@ const CurrentPlayer = () => {
             </div>
             <div className="flex items-center justify-center mt-4">
               <div
-                className="bg-gray-700 hover:bg-gray-600 z-50 rounded-full p-2 inline-block mr-4 cursor-pointer transition-transform duration-100 active:scale-105 tooltip tooltip-top"
+                className="bg-gray-700 hover:bg-gray-600 z-30 rounded-full p-2 inline-block mr-4 cursor-pointer transition-transform duration-100 active:scale-105 tooltip tooltip-top"
                 onClick={() => seekAudio(-10)}
                 data-tip="Rewind 10 seconds"
               >
@@ -159,7 +159,7 @@ const CurrentPlayer = () => {
               </div>
 
               <div
-                className="bg-primary hover:bg-primary/80 z-50 rounded-full p-3 inline-block cursor-pointer"
+                className="bg-primary hover:bg-primary/80 z-30 rounded-full p-3 inline-block cursor-pointer "
                 onClick={togglePlay}
               >
                 {isPlaying ? (
@@ -169,7 +169,7 @@ const CurrentPlayer = () => {
                 )}
               </div>
               <div
-                className="bg-gray-700 hover:bg-gray-600 z-50 rounded-full p-2 inline-block ml-4 cursor-pointer transition-all duration-100 active:scale-105 tooltip tooltip-top"
+                className="bg-gray-700 hover:bg-gray-600 z-30 rounded-full p-2 inline-block ml-4 cursor-pointer transition-all duration-100 active:scale-105 tooltip tooltip-top"
                 onClick={() => seekAudio(10)}
                 data-tip="Forward 10 seconds"
               >

@@ -116,7 +116,7 @@ const Calendar = () => {
           <label className="swap swap-rotate">
             <input
               type="checkbox"
-              className="bg-primary p-5 rounded-lg "
+              className="bg-primary/20 p-5 rounded-lg "
               checked={calendarSelect}
               onChange={() => setCalendarSelect(!calendarSelect)}
             />

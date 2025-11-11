@@ -1,10 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND;
-
-if (!API_BASE_URL) {
-  console.error("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
-}
+import { API_BASE_URL } from "@/lib/backendAPI";
 
 async function fetchUserScores({
   page = 1,

@@ -1,18 +1,30 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND;
+import { API_BASE_URL } from "@/lib/backendAPI";
 
-// Validate API_BASE_URL
-if (!API_BASE_URL) {
-  console.error("❌ NEXT_PUBLIC_BACKEND environment variable is not set!");
-  console.error("Please add NEXT_PUBLIC_BACKEND to your .env.local file");
-}
-
-// Low-level fetcher for calendar events. Accepts optional from/to ISO date strings.
-export async function fetchCalendarEvents({ from, to } = {}) {
+// Low-level fetcher for calendar events.
+// Accepts an options object and forwards supported query params to the backend:
+// { from, to, startDate, endDate, page, pageSize, sort, fields }
+export async function fetchCalendarEvents({
+  from,
+  to,
+  startDate,
+  endDate,
+  page,
+  pageSize,
+  sort,
+  fields,
+} = {}) {
   const params = new URLSearchParams();
   if (from) params.set("from", from);
   if (to) params.set("to", to);
+  if (startDate) params.set("startDate", startDate);
+  if (endDate) params.set("endDate", endDate);
+  if (page !== undefined) params.set("page", String(page));
+  if (pageSize !== undefined) params.set("pageSize", String(pageSize));
+  if (sort) params.set("sort", sort);
+  if (fields) params.set("fields", fields);
+
   const url = `${API_BASE_URL}/calendar${
     params.toString() ? "?" + params.toString() : ""
   }`;
@@ -71,10 +83,11 @@ export async function deleteCalendarEvent(eventId) {
 }
 
 // React Query hook to get calendar events. Use object form (v5).
-export function useCalendarEvents({ from, to } = {}) {
+export function useCalendarEvents(options = {}) {
+  // options can include: from, to, startDate, endDate, page, pageSize, sort, fields
   return useQuery({
-    queryKey: ["calendar", { from, to }],
-    queryFn: () => fetchCalendarEvents({ from, to }),
+    queryKey: ["calendar", options],
+    queryFn: () => fetchCalendarEvents(options),
     keepPreviousData: true,
     staleTime: 60 * 1000,
   });
