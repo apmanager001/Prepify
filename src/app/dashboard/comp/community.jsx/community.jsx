@@ -60,10 +60,8 @@ const Community = () => {
       </div>
 
       {/* Community Features */}
-      <div className="flex justify-center">
-        <div className="flex-2">
-          <Leaderboard />
-        </div>
+      <div className="flex flex-col md:flex-row gap-6 md:gap-4 justify-center">
+        
         <div className="flex-1 flex flex-wrap gap-6">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center gap-2">
@@ -109,6 +107,9 @@ const Community = () => {
               community moderators.
             </p>
           </div>
+        </div>
+        <div className="flex-2">
+          <Leaderboard />
         </div>
       </div>
     </div>

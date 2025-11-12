@@ -120,7 +120,7 @@ const Scoreboard = () => {
         </table>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-0 items-center justify-between">
         <div className="text-sm text-gray-600">
           Showing {(page - 1) * pageSize + 1} -{" "}
           {Math.min(page * pageSize, total)} of {total}

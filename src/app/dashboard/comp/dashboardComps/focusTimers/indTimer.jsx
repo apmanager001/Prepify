@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { deleteTimer } from "./timerApi";
 import toast from "react-hot-toast";
 
-const IndTimer = ({ timer, onAddTimer }) => {
+const IndTimer = ({ timer, onAddTimer, index }) => {
   const [isActive, setIsActive] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(
     typeof timer?.timeSet === "number" ? timer.timeSet * 60 : 0
@@ -15,19 +15,17 @@ const IndTimer = ({ timer, onAddTimer }) => {
   const intervalRef = React.useRef(null);
 
   const queryClient = useQueryClient();
-
   // Use a direct async call instead of `useMutation` to avoid potential
   // React Query runtime/version issues in the environment (Turbopack/Next).
   // This keeps behavior simple: call the API, show toast, and invalidate cache.
   const handleDelete = async () => {
-    console.log("Deleting timer with id:", timer?._id);
-    if (!timer?._id) {
+    if (index>=4) {
       toast.error("Invalid timer id");
       return;
     }
 
     try {
-      await deleteTimer(timer._id);
+      await deleteTimer(index);
       toast.success("Timer deleted successfully!");
       setShowDeletePopup(false);
       queryClient.invalidateQueries({ queryKey: ["timer"] });
@@ -72,8 +70,8 @@ const IndTimer = ({ timer, onAddTimer }) => {
 
   React.useEffect(() => {
     // Reset timer if timer.timeSet changes
-    setSecondsLeft(typeof timer?.timeSet === "number" ? timer.timeSet * 60 : 0);
-  }, [timer?.timeSet]);
+    setSecondsLeft(typeof timer?.minutes === "number" ? timer.minutes * 60 : 0);
+  }, [timer?.minutes]);
 
   const formatTime = (totalSeconds) => {
     const m = Math.floor(totalSeconds / 60);
@@ -135,12 +133,12 @@ const IndTimer = ({ timer, onAddTimer }) => {
               <p>Are you sure you want to delete this timer?</p>
               <div className="flex justify-end space-x-4">
                 <button
-                  className="btn btn-secondary btn-soft"
+                  className="btn btn-secondary btn-soft rounded-lg"
                   onClick={() => setShowDeletePopup(false)}
                 >
                   Cancel
                 </button>
-                <button className="btn btn-error" onClick={handleDelete}>
+                <button className="btn btn-error rounded-lg" onClick={handleDelete}>
                   Delete
                 </button>
               </div>

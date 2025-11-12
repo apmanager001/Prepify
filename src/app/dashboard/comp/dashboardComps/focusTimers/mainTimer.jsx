@@ -54,7 +54,7 @@ const MainTimer = () => {
                     : "bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white hover:shadow-2xl hover:scale-105"
                 }`}
               >
-                <IndTimer timer={timer} onAddTimer={() => setShowModal(true)} />
+                <IndTimer timer={timer} index={index} onAddTimer={() => setShowModal(true)} />
               </div>
             )
           )}
