@@ -2,12 +2,49 @@ import React from "react";
 import useUserScores from "./useUserScores";
 import useTotalScore from "../../dashboardComps/useTotalScore";
 
+// map backend `type` keys to readable labels for the UI
+function formatType(type) {
+  switch (type) {
+    case "addCalendarEvent":
+      return "Calendar Event (added)";
+    case "addToDoItem":
+      return "To Do Item (added)";
+    case "addNotesItem":
+      return "Note (added)";
+    case "completedTimer":
+      return "Timer Completed";
+    case "dailyLogin":
+      return "Daily Login";
+    case "streak7Bonus":
+      return "7-day Streak Bonus";
+    case "referFriend":
+      return "Referral Bonus";
+    case "profileComplete":
+      return "Profile Completed";
+    case "dailyGoalComplete":
+      return "Daily Goal Completed";
+    default:
+      return " Misc Points ";
+      try {
+        return String(type)
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (s) => s.toUpperCase());
+      } catch {
+        return String(type);
+      }
+  }
+}
+
 const Scoreboard = () => {
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
   const [sort, setSort] = React.useState("createdAt:desc");
   const [filter, setFilter] = React.useState("");
-  const { data: totalData, isLoading: isTotalLoading, isError: isTotalError } = useTotalScore();
+  const {
+    data: totalData,
+    isLoading: isTotalLoading,
+    isError: isTotalError,
+  } = useTotalScore();
 
   const { data, isLoading, isError, error, isFetching } = useUserScores({
     page,
@@ -16,8 +53,9 @@ const Scoreboard = () => {
     filter,
   });
 
-  const scores = data?.items || [];
-  const total = data?.total || 0;
+  // normalize backend shapes: prefer `scores` (your backend), fall back to `items` or `data`
+  const scores = data?.scores || data?.items || data?.data || [];
+  const total = data?.totalCount ?? data?.total ?? 0;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
   return (
@@ -80,7 +118,7 @@ const Scoreboard = () => {
       <div className="overflow-x-auto">
         <table className="table w-full">
           <thead>
-            <tr>
+            <tr className="text-center">
               <th>Type</th>
               <th>Amount</th>
               <th>Created At</th>
@@ -107,8 +145,8 @@ const Scoreboard = () => {
               </tr>
             ) : (
               scores.map((s) => (
-                <tr key={s._id || `${s.type}-${s.createdAt}`}>
-                  <td className="font-medium">{s.type}</td>
+                <tr key={s._id || `${s.type}-${s.createdAt}`} className="text-center">
+                  <td className="font-medium">{formatType(s.type)}</td>
                   <td>{s.amount}</td>
                   <td className="text-sm text-gray-500">
                     {new Date(s.createdAt).toLocaleString()}

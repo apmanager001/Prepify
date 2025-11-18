@@ -2,17 +2,42 @@
 import React from "react";
 import { Zap, CheckSquare, FileText, Award } from "lucide-react";
 import { Calendar } from "lucide-react";
-import useTotalScore from "./useTotalScore";
+import useTotalScore, { useDailyScore } from "./useTotalScore";
 import { useCalendarEvents } from "../calendar/lib/calendar";
-import StatusBar from "./statusBar";
+import { useNotes } from "../notes/lib/notesApi";
+// import StatusBar from "./statusBar";
 import CurrentPlayer from "./currentPlayer";
 import MainTimer from "./focusTimers/mainTimer";
 
 const DashboardPage = () => {
-  // Placeholder stats — replace with real data via props or hooks
-  const DAILY_POINTS = 23;
+  // Placeholder stats — replace with real data via hooks
+  const {
+    data: dailyData,
+    isLoading: dailyLoading,
+    isError: dailyError,
+  } = useDailyScore();
+  const {
+      data: notesData,
+      isLoading,
+      isError,
+    } = useNotes({
+      // return server shape directly; assume server returns an array
+      select: (v) => (Array.isArray(v) ? v : v.notes ?? []),
+    });
+
+  // derive a numeric daily points value from the possible response shapes
+  const DAILY_POINTS_NUM = (() => {
+    const raw = dailyData;
+    const maybeNumber =
+      raw && typeof raw === "object"
+        ? raw.total ?? raw.totalScore ?? raw.score ?? null
+        : typeof raw === "number"
+        ? raw
+        : null;
+    return Number.isFinite(maybeNumber) ? maybeNumber : 0;
+  })();
   const TODO_COUNT = 5;
-  const NOTES_COUNT = 3;
+  const NOTES_COUNT = Array.isArray(notesData) ? notesData.length : 0;
   const {
     data: totalData,
     isLoading: totalLoading,
@@ -34,7 +59,7 @@ const DashboardPage = () => {
   const STAT_CARD_BASE =
     "flex items-center gap-3 px-3 py-2 rounded-md border border-gray-200";
   const STAT_ICON_WRAP =
-    "w-9 h-9 rounded-full flex items-center justify-center";
+    "w-9 h-9 rounded-full hidden md:flex items-center justify-center";
   const STAT_TEXT_WRAP = "flex flex-col items-center flex-2";
   const STAT_LABEL = "text-xs text-gray-500 truncate";
   const STAT_VALUE = "text-sm font-semibold truncate";
@@ -80,10 +105,10 @@ const DashboardPage = () => {
     return 0;
   })();
   // small radial shown next to header (quick glance) — uses same scale as StatusBar
-  const DAILY_GOAL_DASH = 50;
+  const DAILY_GOAL_DASH = 100;
   const dashPercent = Math.min(
     100,
-    Math.round((DAILY_POINTS / Math.max(1, DAILY_GOAL_DASH)) * 100)
+    Math.round((DAILY_POINTS_NUM / Math.max(1, DAILY_GOAL_DASH)) * 100)
   );
 
   let dashColor = "text-error";
@@ -111,15 +136,16 @@ const DashboardPage = () => {
                 "--thickness": "0.9rem",
               }}
               role="img"
-              aria-label={`Daily points ${DAILY_POINTS} of ${DAILY_GOAL_DASH}`}
+              aria-label={`Daily points ${DAILY_POINTS_NUM} of ${DAILY_GOAL_DASH}`}
             >
-              {DAILY_POINTS}
+              {dailyLoading ? "…" : dailyError ? "—" : DAILY_POINTS_NUM}
             </div>
 
             <div className="flex flex-col text-left">
               <div className="text-xs text-gray-500">Daily points</div>
               <div className="text-sm font-semibold text-indigo-700">
-                {DAILY_POINTS} pts
+                {dailyLoading ? "…" : dailyError ? "—" : DAILY_POINTS_NUM || 0}{" "}
+                pts
               </div>
             </div>
           </div>
@@ -134,7 +160,7 @@ const DashboardPage = () => {
             <div className={STAT_TEXT_WRAP}>
               <div className={STAT_LABEL}>Daily Points</div>
               <div className={`${STAT_VALUE} text-indigo-700`}>
-                {DAILY_POINTS}
+                {DAILY_POINTS_NUM}
               </div>
             </div>
           </div>

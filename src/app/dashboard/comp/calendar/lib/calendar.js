@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "@/lib/backendAPI";
+import addScores from "@/lib/addScores";
 
 // Low-level fetcher for calendar events.
 // Accepts an options object and forwards supported query params to the backend:
@@ -57,7 +58,18 @@ export async function postCalendarEvent(eventPayload) {
     const txt = await res.text();
     throw new Error(`Failed to add calendar event: ${res.status} ${txt}`);
   }
-  return res.json();
+  const body = await res.json();
+
+  // Award gamification points for adding a calendar event. Don't fail the
+  // primary flow if awarding points fails — log and continue.
+  try {
+    await addScores("addCalendarEvent");
+  } catch (err) {
+    // non-fatal: backend score endpoint may be unavailable or rate-limited
+    console.error("Failed to award addCalendarEvent points:", err);
+  }
+
+  return body;
 }
 
 // Low-level DELETE to remove a calendar event by id.

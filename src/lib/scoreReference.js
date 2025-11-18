@@ -49,7 +49,7 @@ const SCORES = {
   },
   addNotesItem: {
     points: 8,
-    type: "event",
+    type: "addNotesItem",
     perDay: 10,
     notes: "Adding a note or resource to your study notes.",
   },

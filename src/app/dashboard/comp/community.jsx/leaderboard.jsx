@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Award, Users } from "lucide-react";
+import useLeaderboard from "./leaderboard.js";
 
 const PLACEHOLDER_USERS = [
   { id: 1, name: "Ava Thompson", handle: "@ava", score: 12840 },
@@ -34,8 +35,24 @@ function formatNumber(n) {
 }
 
 export default function Leaderboard() {
-  const top = PLACEHOLDER_USERS.slice(0, 15);
-  const topScore = top[0]?.score ?? 1;
+  // Fetch top users from backend; fall back to placeholders while loading/error
+  const { data, isLoading, isError } = useLeaderboard({
+    page: 1,
+    pageSize: 15,
+  });
+  // Normalize possible response shapes into an items array
+  const normalizeItems = (d) => {
+    if (!d) return null;
+    if (Array.isArray(d)) return d;
+    if (Array.isArray(d.items)) return d.items;
+    if (Array.isArray(d.data)) return d.data;
+    if (Array.isArray(d.leaderboard)) return d.leaderboard;
+    return null;
+  };
+
+  const items = normalizeItems(data) || PLACEHOLDER_USERS;
+  const top = items.slice(0, 15);
+  const topScore = Math.max(Number(top[0]?.score) || 0, 1); // avoid div-by-zero
 
   return (
     <section className="p-4 bg-white rounded-lg shadow-sm">
@@ -55,55 +72,84 @@ export default function Leaderboard() {
       </div>
 
       <ul className="divide-y">
-        {top.map((u, idx) => {
-          const rank = idx + 1;
-          const pct = Math.round((u.score / topScore) * 100);
-          const isMedal = rank <= 3;
-          const medalColor =
-            rank === 1
-              ? "text-yellow-500"
-              : rank === 2
-              ? "text-gray-400"
-              : "text-amber-600";
-          return (
-            <li key={u.id} className="py-3 flex items-center justify-between">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-700 font-bold">
-                  {initials(u.name)}
-                </div>
-
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <div className="text-sm font-medium truncate">{u.name}</div>
-                    {isMedal && (
-                      <span
-                        className={`inline-flex items-center text-xs ${medalColor}`}
-                        title={`Rank ${rank}`}
-                      >
-                        <Award size={14} />
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-gray-500 truncate">
-                    {u.handle}
+        {isLoading
+          ? // simple skeleton rows while loading
+            Array.from({ length: 5 }).map((_, i) => (
+              <li
+                key={`skeleton-${i}`}
+                className="py-3 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+                  <div className="min-w-0 flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-32 animate-pulse mb-2" />
+                    <div className="h-3 bg-gray-200 rounded w-20 animate-pulse" />
                   </div>
                 </div>
-              </div>
 
-              <div className="w-48 md:w-64 flex items-center gap-3">
-                <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
-                  <div
-                    className="bg-indigo-500 h-2 rounded-full"
-                    style={{ width: `${pct}%` }}
-                  />
+                <div className="w-48 md:w-64 flex items-center gap-3">
+                  <div className="flex-1 bg-gray-100 rounded-full h-2">
+                    <div className="bg-gray-200 h-2 rounded-full w-1/3 animate-pulse" />
+                  </div>
+                  <div className="w-20 text-right text-sm font-semibold">
+                    <div className="h-4 bg-gray-200 rounded w-12 ml-auto animate-pulse" />
+                  </div>
                 </div>
-                <div className="w-20 text-right text-sm font-semibold">
-                  {formatNumber(u.score)}
-                </div>
-              </div>
-            </li>
-          );
-        })}
+              </li>
+            ))
+          : top?.map((u, idx) => {
+              const rank = idx + 1;
+              const pct = Math.round((u.score / topScore) * 100);
+              const isMedal = rank <= 3;
+              const medalColor =
+                rank === 1
+                  ? "text-yellow-500"
+                  : rank === 2
+                  ? "text-gray-400"
+                  : "text-amber-600";
+              return (
+                <li
+                  key={u.userId}
+                  className="py-3 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-700 font-bold">
+                      {u.name ? initials(u.name) : "U"}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium truncate">
+                          {u.name ? u.name : u.user?.username}
+                        </div>
+                        {isMedal && (
+                          <span
+                            className={`inline-flex items-center text-xs ${medalColor}`}
+                            title={`Rank ${rank}`}
+                          >
+                            <Award size={14} />
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 truncate">
+                        {u.user?.username}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-48 md:w-64 flex items-center gap-3">
+                    <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-indigo-500 h-2 rounded-full"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className="w-20 text-right text-sm font-semibold">
+                      {u.total}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
       </ul>
     </section>
   );
