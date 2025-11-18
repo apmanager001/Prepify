@@ -6,7 +6,7 @@ async function safeParse(res) {
   try {
     return txt ? JSON.parse(txt) : {};
   } catch (e) {
-    return txt;
+    return e;
   }
 }
 
