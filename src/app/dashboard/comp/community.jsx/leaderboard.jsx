@@ -50,7 +50,7 @@ export default function Leaderboard() {
     if (Array.isArray(d.leaderboard)) return d.leaderboard;
     return null;
   };
-  
+
   const items = normalizeItems(data) || PLACEHOLDER_USERS;
   const top = items.slice(0, 15);
   const topScore = Math.max(Number(top[0]?.score) || 0, 1); // avoid div-by-zero
@@ -108,19 +108,57 @@ export default function Leaderboard() {
                   : rank === 2
                   ? "text-gray-400"
                   : "text-amber-600";
+              // Defensive coercions: ensure we render primitives, not objects
+              const displayName =
+                u && u.name
+                  ? typeof u.name === "string"
+                    ? u.name
+                    : JSON.stringify(u.name)
+                  : u && u.user && u.user.username
+                  ? typeof u.user.username === "string"
+                    ? u.user.username
+                    : JSON.stringify(u.user.username)
+                  : `User ${idx + 1}`;
+
+              if (typeof displayName !== "string") {
+                console.warn(
+                  "Leaderboard: coerced non-string name",
+                  displayName
+                );
+              }
+
+              const displayUsername =
+                u && u.user && u.user.username
+                  ? typeof u.user.username === "string"
+                    ? u.user.username
+                    : JSON.stringify(u.user.username)
+                  : "";
+
+              const displayTotal = (() => {
+                const t = u?.total ?? u?.score ?? u?.points ?? 0;
+                const n = Number(t);
+                if (Number.isNaN(n)) {
+                  console.warn("Leaderboard: coerced non-numeric total", t);
+                  return String(t ?? "0");
+                }
+                return formatNumber(n);
+              })();
+
               return (
                 <li
-                  key={u.userId}
+                  key={u.userId ?? u.id ?? u.user?.id ?? idx}
                   className="py-3 flex items-center justify-between"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-700 font-bold">
-                      {u.name ? initials(u.name) : "U"}
+                      {typeof (u?.name ?? displayName) === "string"
+                        ? initials(String(u?.name ?? displayName))
+                        : "U"}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <div className="text-sm font-medium truncate">
-                          {u.name ? u.name : u.user?.username}
+                          {displayName}
                         </div>
                         {isMedal && (
                           <span
@@ -132,7 +170,7 @@ export default function Leaderboard() {
                         )}
                       </div>
                       <div className="text-xs text-gray-500 truncate">
-                        {u.user?.username}
+                        {displayUsername}
                       </div>
                     </div>
                   </div>
@@ -145,7 +183,7 @@ export default function Leaderboard() {
                       />
                     </div>
                     <div className="w-20 text-right text-sm font-semibold">
-                      {u.total}
+                      {displayTotal}
                     </div>
                   </div>
                 </li>

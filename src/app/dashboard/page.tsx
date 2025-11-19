@@ -10,7 +10,6 @@ import {
   CheckSquare,
   ChartNoAxesColumn,
   Calendar as CalendarIcon,
-  FolderClosed,
   UsersRound,
   Settings,
 } from "lucide-react";
@@ -111,11 +110,11 @@ const Dashboard = () => {
       label: "Calendar",
       icon: () => <CalendarIcon size={24} />,
     },
-    {
-      id: "resources",
-      label: "Resources",
-      icon: () => <FolderClosed size={24} />,
-    },
+    // {
+    //   id: "resources",
+    //   label: "Resources",
+    //   icon: () => <FolderClosed size={24} />,
+    // },
     {
       id: "community",
       label: "Community",
