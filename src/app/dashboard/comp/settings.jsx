@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useProfileQuery } from "./useProfileQuery";
 import RenderProfileTab from "./settings/profileTab/renderProfileTab";
+import StudyGoalsTab from "./settings/studyGoalsTab/studyGoalTab";
 import { sendVerificationEmail } from "./settingsApi";
 import { toast } from "react-hot-toast";
 import {
@@ -10,6 +11,7 @@ import {
   Key,
   Save,
   Trophy,
+  GraduationCap
 } from "lucide-react";
 import RenderAccountTab from "./settings/accountTab/renderAccountTab";
 import Scoreboard from "./settings/scoreboardTab/renderScoreboardTab";
@@ -97,6 +99,7 @@ const SettingsPage = () => {
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "scoreboard", label: "Scoreboard", icon: Trophy },
+    { id: "studyGoals", label: "Study Goals", icon: GraduationCap },
     // { id: "notifications", label: "Notifications", icon: Bell },
     // { id: "privacy", label: "Privacy", icon: Shield },
     // { id: "appearance", label: "Appearance", icon: Palette },
@@ -300,6 +303,8 @@ const SettingsPage = () => {
         return <RenderProfileTab />
       case "scoreboard":
         return <Scoreboard />;
+      case "studyGoals":
+        return <StudyGoalsTab />;
       case "notifications":
         return renderNotificationsTab();
       case "privacy":
@@ -325,7 +330,7 @@ const SettingsPage = () => {
       {/* Tab Navigation */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
         <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6" aria-label="Tabs">
+          <nav className="flex flex-col md:flex-row space-x-8 px-6" aria-label="Tabs">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (

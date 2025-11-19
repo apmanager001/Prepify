@@ -5,6 +5,7 @@ import { Calendar } from "lucide-react";
 import useTotalScore, { useDailyScore } from "./useTotalScore";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
+import { useTodos } from "../todo/lib/todoAPI";
 
 // import StatusBar from "./statusBar";
 import CurrentPlayer from "./currentPlayer";
@@ -18,13 +19,19 @@ const DashboardPage = () => {
     isError: dailyError,
   } = useDailyScore();
   const {
-      data: notesData,
-      isLoading,
-      isError,
-    } = useNotes({
-      // return server shape directly; assume server returns an array
-      select: (v) => (Array.isArray(v) ? v : v.notes ?? []),
-    });
+    data: notesData,
+    isLoading,
+    isError,
+  } = useNotes({
+    // return server shape directly; assume server returns an array
+    select: (v) => (Array.isArray(v) ? v : v.notes ?? []),
+  });
+
+  const {
+    data: todosData,
+    isLoading: todosLoading,
+    isError: todosError,
+  } = useTodos();
 
   // derive a numeric daily points value from the possible response shapes
   const DAILY_POINTS_NUM = (() => {
@@ -37,7 +44,7 @@ const DashboardPage = () => {
         : null;
     return Number.isFinite(maybeNumber) ? maybeNumber : 0;
   })();
-  const TODO_COUNT = 5;
+  const TODO_COUNT = Array.isArray(todosData) ? todosData.length : 0;
   const NOTES_COUNT = Array.isArray(notesData) ? notesData.length : 0;
   const {
     data: totalData,
