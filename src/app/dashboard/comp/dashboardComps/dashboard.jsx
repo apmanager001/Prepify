@@ -5,6 +5,7 @@ import { Calendar } from "lucide-react";
 import useTotalScore, { useDailyScore } from "./useTotalScore";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
+
 // import StatusBar from "./statusBar";
 import CurrentPlayer from "./currentPlayer";
 import MainTimer from "./focusTimers/mainTimer";

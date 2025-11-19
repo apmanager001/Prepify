@@ -22,6 +22,7 @@ const PLACEHOLDER_USERS = [
 ];
 
 function initials(name) {
+  if (!name || typeof name !== "string") return "U";
   return name
     .split(" ")
     .map((n) => n[0])
@@ -51,7 +52,21 @@ export default function Leaderboard() {
     return null;
   };
 
-  const items = normalizeItems(data) || PLACEHOLDER_USERS;
+  // Defensive: some callers or runtime mistakes may pass the whole query object
+  // (contains keys like status, isLoading, data) accidentally as `data`.
+  // Detect and unwrap it so we don't try to render the query object as JSX.
+  let raw = data;
+  if (
+    raw &&
+    typeof raw === "object" &&
+    ("status" in raw || "isLoading" in raw) &&
+    "data" in raw
+  ) {
+    console.warn("Leaderboard: received full query object instead of data — unwrapping.", raw);
+    raw = raw.data;
+  }
+
+  const items = normalizeItems(raw) 
   const top = items.slice(0, 15);
   const topScore = Math.max(Number(top[0]?.score) || 0, 1); // avoid div-by-zero
 

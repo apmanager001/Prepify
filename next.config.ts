@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // Enable production browser source maps so minified prod stack traces map to source
+  productionBrowserSourceMaps: true,
 };
 
 export default nextConfig;
