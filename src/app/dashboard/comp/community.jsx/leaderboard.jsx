@@ -62,11 +62,14 @@ export default function Leaderboard() {
     ("status" in raw || "isLoading" in raw) &&
     "data" in raw
   ) {
-    console.warn("Leaderboard: received full query object instead of data — unwrapping.", raw);
+    console.warn(
+      "Leaderboard: received full query object instead of data — unwrapping.",
+      raw
+    );
     raw = raw.data;
   }
 
-  const items = normalizeItems(raw) 
+  const items = normalizeItems(raw);
   const top = items.slice(0, 15);
   const topScore = Math.max(Number(top[0]?.score) || 0, 1); // avoid div-by-zero
 
