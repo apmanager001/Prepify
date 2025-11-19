@@ -6,7 +6,7 @@ const addScores = async (type) => {
     throw new Error("addScores requires a string `type`");
   }
 
-  const response = await fetch(`${API_BASE_URL}/scores`, {
+  const response = await fetch(`${API_BASE_URL}/score`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

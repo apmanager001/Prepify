@@ -347,8 +347,11 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
                           >
                             <EventIcon size={12} className="flex-shrink-0" />
                             <div className="hidden md:flex md:flex-1 md:min-w-0">
-                              <div className="flex flex-col justify-center items-start">
-                                <span className="truncate font-medium text-xs md:text-sm text-gray-900">
+                              <div className="flex flex-col justify-center items-start min-w-0">
+                                <span
+                                  className="truncate block font-medium text-xs md:text-sm text-gray-900 max-w-full"
+                                  title={event.title}
+                                >
                                   {event.title}
                                 </span>
                                 {event.time && (

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "@/lib/backendAPI";
 
@@ -62,3 +62,86 @@ export function useDailyScore() {
 }
 
 export { fetchTotalScore, fetchDailyScore };
+
+// Mutation hook to add score and invalidate relevant queries on success
+export function useAddScore() {
+  const queryClient = useQueryClient();
+
+  const addScore = async (type: string) => {
+    if (!type || typeof type !== "string") {
+      throw new Error("addScore requires a string `type`");
+    }
+
+    const res = await fetch(`${API_BASE_URL}/score`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ type }),
+    });
+
+    const text = await res.text().catch(() => "");
+    let body: any;
+    try {
+      body = text ? JSON.parse(text) : null;
+    } catch {
+      body = text;
+    }
+
+    if (!res.ok) {
+      const msg =
+        (body && body.error) ||
+        (typeof body === "string" && body) ||
+        res.statusText;
+      throw new Error(`Failed to add score: ${res.status} ${msg}`);
+    }
+
+    return body;
+  };
+
+  return useMutation({
+    mutationFn: addScore,
+    onSuccess: () => {
+      // daily score will change when a new score is added — refetch it
+      queryClient.invalidateQueries({ queryKey: ["dailyScore"] });
+      queryClient.invalidateQueries({ queryKey: ["totalScore"] });
+    },
+  });
+}
+
+// Non-hook helper: perform the same POST and invalidate queries using shared queryClient
+import { queryClient } from "@/lib/queryClient";
+
+export async function addScoreAndInvalidate(type: string) {
+  if (!type || typeof type !== "string") {
+    throw new Error("addScore requires a string `type`");
+  }
+
+  const res = await fetch(`${API_BASE_URL}/score`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ type }),
+  });
+
+  const text = await res.text().catch(() => "");
+  let body: any;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    body = text;
+  }
+
+  if (!res.ok) {
+    const msg =
+      (body && body.error) ||
+      (typeof body === "string" && body) ||
+      res.statusText;
+    throw new Error(`Failed to add score: ${res.status} ${msg}`);
+  }
+
+  // invalidate the queries that depend on score
+  queryClient.invalidateQueries({ queryKey: ["dailyScore"] });
+  queryClient.invalidateQueries({ queryKey: ["totalScore"] });
+
+  return body;
+}

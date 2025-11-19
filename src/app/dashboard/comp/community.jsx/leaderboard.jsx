@@ -40,6 +40,7 @@ export default function Leaderboard() {
     page: 1,
     pageSize: 15,
   });
+
   // Normalize possible response shapes into an items array
   const normalizeItems = (d) => {
     if (!d) return null;
@@ -49,7 +50,7 @@ export default function Leaderboard() {
     if (Array.isArray(d.leaderboard)) return d.leaderboard;
     return null;
   };
-
+  
   const items = normalizeItems(data) || PLACEHOLDER_USERS;
   const top = items.slice(0, 15);
   const topScore = Math.max(Number(top[0]?.score) || 0, 1); // avoid div-by-zero
