@@ -21,6 +21,18 @@ async function fetchTotalScore() {
   return body;
 }
 
+// Helper to safely extract an error/message string from a parsed response body
+function extractMessage(body: unknown): string | null {
+  if (body == null) return null;
+  if (typeof body === "string") return body;
+  if (typeof body === "object") {
+    const obj = body as Record<string, unknown>;
+    const candidate = obj.error ?? obj.message ?? obj.msg ?? obj.detail;
+    if (typeof candidate === "string") return candidate;
+  }
+  return null;
+}
+
 export default function useTotalScore() {
   return useQuery({
     queryKey: ["totalScore"],
@@ -80,7 +92,7 @@ export function useAddScore() {
     });
 
     const text = await res.text().catch(() => "");
-    let body: any;
+    let body: unknown;
     try {
       body = text ? JSON.parse(text) : null;
     } catch {
@@ -88,10 +100,7 @@ export function useAddScore() {
     }
 
     if (!res.ok) {
-      const msg =
-        (body && body.error) ||
-        (typeof body === "string" && body) ||
-        res.statusText;
+      const msg = extractMessage(body) ?? res.statusText;
       throw new Error(`Failed to add score: ${res.status} ${msg}`);
     }
 
@@ -124,7 +133,7 @@ export async function addScoreAndInvalidate(type: string) {
   });
 
   const text = await res.text().catch(() => "");
-  let body: any;
+  let body: unknown;
   try {
     body = text ? JSON.parse(text) : null;
   } catch {
@@ -132,10 +141,7 @@ export async function addScoreAndInvalidate(type: string) {
   }
 
   if (!res.ok) {
-    const msg =
-      (body && body.error) ||
-      (typeof body === "string" && body) ||
-      res.statusText;
+    const msg = extractMessage(body) ?? res.statusText;
     throw new Error(`Failed to add score: ${res.status} ${msg}`);
   }
 
