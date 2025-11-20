@@ -1,6 +1,6 @@
 import React from "react";
 import { GraduationCap, MessageCircleMore, CircleCheck } from "lucide-react";
-import Leaderboard from "./leaderboard";
+import Leaderboard from "./leaderboard.jsx";
 
 const Community = () => {
   // Discord server invite link - replace with your actual Discord server invite
@@ -61,7 +61,6 @@ const Community = () => {
 
       {/* Community Features */}
       <div className="flex flex-col md:flex-row gap-6 md:gap-4 justify-center">
-        
         <div className="flex-1 flex flex-wrap gap-6">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center gap-2">
@@ -88,8 +87,8 @@ const Community = () => {
               </h4>
             </div>
             <p className="text-gray-600 text-sm">
-              Participate in real-time discussions, ask questions, and get instant
-              help from the community.
+              Participate in real-time discussions, ask questions, and get
+              instant help from the community.
             </p>
           </div>
 
