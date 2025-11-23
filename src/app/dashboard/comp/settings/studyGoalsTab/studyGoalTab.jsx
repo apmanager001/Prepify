@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import {
   GraduationCap,
   Clipboard,
@@ -12,7 +13,12 @@ import {
   Play,
   Globe,
   Link,
+  Save,
 } from "lucide-react";
+import { useStudyGoalsQuery } from "../../useProfileQuery";
+import { updateStudyGoals } from "../../settingsApi";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import LoadingComp from "../../../../../lib/loading";
 
 const SUBJECTS = [
   "Mathematics",
@@ -80,7 +86,6 @@ const DEFAULT_PROFILE = {
   timezone: Intl?.DateTimeFormat?.()?.resolvedOptions?.()?.timeZone || "",
   linkedin: "",
   portfolio: "",
-  publicProfile: false,
 };
 
 const StudyGoalsTab = ({
@@ -90,12 +95,26 @@ const StudyGoalsTab = ({
   toggleAvailability: propToggleAvailability,
   toggleTimeOfDay: propToggleTimeOfDay,
   handleSave: propHandleSave,
-  isLoading = false,
+  isLoading: propIsLoading = false,
 }) => {
-  const [localProfile, setLocalProfile] = useState(
-    propProfile || DEFAULT_PROFILE
-  );
+  const { data: studyGoalsData, isLoading: queryLoading, isError } =
+    useStudyGoalsQuery();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: updateStudyGoals,
+    onSuccess: () => {
+      toast.success("Study goals saved");
+      queryClient.invalidateQueries({ queryKey: ["studyGoals"] });
+    },
+    onError: (error) => {
+      console.error("Failed to save study goals", error);
+      toast.error("Failed to save study goals");
+    },
+  });
+  
+  const [localProfile, setLocalProfile] = useState(DEFAULT_PROFILE);
   const profile = propProfile || localProfile;
+  const isLoading = propIsLoading;
 
   const handleInputChange = (section, field, value) => {
     if (typeof propHandleInputChange === "function") {
@@ -146,7 +165,27 @@ const StudyGoalsTab = ({
 
   const handleSave = (name) => {
     if (typeof propHandleSave === "function") return propHandleSave(name);
-    // local fallback: no-op
+    // Use mutation to save to backend
+    const payload = {
+      gradeLevel: profile.gradeLevel,
+      subjects: profile.subjects,
+      studyGoals: profile.studyGoals,
+      availability: profile.availability,
+      institution: profile.institution,
+      graduationYear: profile.graduationYear,
+      ageRange: profile.ageRange,
+      currentCourse: profile.currentCourse,
+      expectedExams: profile.expectedExams,
+      expectedExamsNA: profile.expectedExamsNA,
+      proficiency: profile.proficiency,
+      preferredStudyStyle: profile.preferredStudyStyle,
+      goalDeadline: profile.goalDeadline,
+      goalDeadlineNA: profile.goalDeadlineNA,
+      minutesPerWeek: profile.minutesPerWeek,
+      linkedin: profile.linkedin,
+      portfolio: profile.portfolio,
+    };
+    mutation.mutate(payload);
   };
   const {
     gradeLevel,
@@ -167,99 +206,73 @@ const StudyGoalsTab = ({
     timezone,
     linkedin,
     portfolio,
-    publicProfile,
   } = profile || {};
 
+  React.useEffect(() => {
+    if (studyGoalsData) {
+      setLocalProfile((prev) => ({
+        ...prev,
+        ...studyGoalsData,
+      }));
+    }
+  }, [studyGoalsData]);
 
-//   React.useEffect(() => {
-//       if (profileData) {
-//         setUserData((prev) => ({
-//           ...prev,
-//           profile: {
-//             ...prev.profile,
-//             ...profileData,
-//             // merge new fields safely
-//             gradeLevel: profileData.gradeLevel ?? prev.profile.gradeLevel,
-//             subjects: profileData.subjects ?? prev.profile.subjects,
-//             studyGoals: profileData.studyGoals ?? prev.profile.studyGoals,
-//             availability: profileData.availability ?? prev.profile.availability,
-//             institution: profileData.institution ?? prev.profile.institution,
-//             graduationYear:
-//               profileData.graduationYear ?? prev.profile.graduationYear,
-//             ageRange: profileData.ageRange ?? prev.profile.ageRange,
-//             currentCourse:
-//               profileData.currentCourse ?? prev.profile.currentCourse,
-//             expectedExams:
-//               profileData.expectedExams ?? prev.profile.expectedExams,
-//             expectedExamsNA:
-//               profileData.expectedExamsNA ?? prev.profile.expectedExamsNA,
-//             proficiency: profileData.proficiency ?? prev.profile.proficiency,
-//             preferredStudyStyle:
-//               profileData.preferredStudyStyle ?? prev.profile.preferredStudyStyle,
-//             goalDeadline: profileData.goalDeadline ?? prev.profile.goalDeadline,
-//             goalDeadlineNA:
-//               profileData.goalDeadlineNA ?? prev.profile.goalDeadlineNA,
-//             minutesPerWeek:
-//               profileData.minutesPerWeek ?? prev.profile.minutesPerWeek,
-//             timezone: profileData.timezone ?? prev.profile.timezone,
-//             linkedin: profileData.linkedin ?? prev.profile.linkedin,
-//             portfolio: profileData.portfolio ?? prev.profile.portfolio,
-//             publicProfile:
-//               profileData.publicProfile ?? prev.profile.publicProfile,
-//             createdAt: profileData.createdAt || prev.profile.createdAt,
-//           },
-//         }));
-//       }
-//     }, [profileData]);
+  const computeCompletion = () => {
+    const p = profile || {};
+    const isNonEmpty = (val) => {
+      if (val === null || val === undefined) return false;
+      if (typeof val === "string") return val.trim() !== "";
+      if (Array.isArray(val)) return val.length > 0;
+      return true;
+    };
+
+    const availabilityFilled = !!(
+      p.availability?.weekdays ||
+      p.availability?.weekends ||
+      (Array.isArray(p.availability?.timesOfDay) &&
+        p.availability.timesOfDay.length > 0)
+    );
+
+    const checks = [
+      isNonEmpty(p.gradeLevel),
+      Array.isArray(p.subjects) && p.subjects.length > 0,
+      Array.isArray(p.studyGoals) && p.studyGoals.length > 0,
+      availabilityFilled,
+      isNonEmpty(p.institution),
+      isNonEmpty(p.graduationYear),
+      isNonEmpty(p.ageRange),
+      isNonEmpty(p.currentCourse),
+      (Array.isArray(p.expectedExams) && p.expectedExams.length > 0) ||
+        !!p.expectedExamsNA,
+      isNonEmpty(p.proficiency),
+      Array.isArray(p.preferredStudyStyle) && p.preferredStudyStyle.length > 0,
+
+      isNonEmpty(p.goalDeadline) || !!p.goalDeadlineNA,
+      isNonEmpty(p.minutesPerWeek),
+      isNonEmpty(p.timezone),
+      // count at least one of linkedin or portfolio as filled
+      !!(isNonEmpty(p.linkedin) || isNonEmpty(p.portfolio)),
+    ];
+
+    const total = checks.length;
+    const filled = checks.filter(Boolean).length;
+    return total === 0 ? 0 : Math.round((filled / total) * 100);
+  };
+
+  //  const defaultTZ =
+  //    Intl?.DateTimeFormat?.()?.resolvedOptions?.()?.timeZone || "";
 
 
-   const computeCompletion = () => {
-     const p = profile || {};
-     const isNonEmpty = (val) => {
-       if (val === null || val === undefined) return false;
-       if (typeof val === "string") return val.trim() !== "";
-       if (Array.isArray(val)) return val.length > 0;
-       return true;
-     };
+  if (queryLoading) {
+    return <div className="text-gray-500 min-h-24 flex items-center justify-center"><LoadingComp /></div>;
+  }
+  if (isError) {
+    return <div className="text-red-500 min-h-24">Error loading profile.</div>;
+  }
 
-     const availabilityFilled = !!(
-       p.availability?.weekdays ||
-       p.availability?.weekends ||
-       (Array.isArray(p.availability?.timesOfDay) &&
-         p.availability.timesOfDay.length > 0)
-     );
-
-     const checks = [
-       isNonEmpty(p.gradeLevel),
-       Array.isArray(p.subjects) && p.subjects.length > 0,
-       Array.isArray(p.studyGoals) && p.studyGoals.length > 0,
-       availabilityFilled,
-       isNonEmpty(p.institution),
-       isNonEmpty(p.graduationYear),
-       isNonEmpty(p.ageRange),
-       isNonEmpty(p.currentCourse),
-       (Array.isArray(p.expectedExams) && p.expectedExams.length > 0) ||
-         !!p.expectedExamsNA,
-       isNonEmpty(p.proficiency),
-       Array.isArray(p.preferredStudyStyle) && p.preferredStudyStyle.length > 0,
-
-       isNonEmpty(p.goalDeadline) || !!p.goalDeadlineNA,
-       isNonEmpty(p.minutesPerWeek),
-       isNonEmpty(p.timezone),
-       // count at least one of linkedin or portfolio as filled
-       !!(isNonEmpty(p.linkedin) || isNonEmpty(p.portfolio)),
-     ];
-
-     const total = checks.length;
-     const filled = checks.filter(Boolean).length;
-     return total === 0 ? 0 : Math.round((filled / total) * 100);
-   };
-
-    //  const defaultTZ =
-    //    Intl?.DateTimeFormat?.()?.resolvedOptions?.()?.timeZone || "";
   return (
     <div className="space-y-6">
-      <div className="p-6 bg-white/80 rounded-lg shadow-sm border border-gray-100 flex gap-4">
+      <div className="p-6 bg-white/80 rounded-lg shadow-sm border border-gray-100 flex justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">Study Goals & Preferences</h2>
           <p className="text-sm text-gray-600 mt-1 max-w-2xl">
@@ -742,31 +755,17 @@ const StudyGoalsTab = ({
               <p className="validator-hint">Must be valid URL</p>
             </div>
 
-            <div className="lg:col-span-2 flex flex-col md:flex-row gap-2 items-center justify-between">
-              <label className="inline-flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={!!publicProfile}
-                  onChange={() =>
-                    handleInputChange(
-                      "profile",
-                      "publicProfile",
-                      !publicProfile
-                    )
-                  }
-                  className="toggle"
-                />
-                <span className="text-sm">
-                  Show my profile on leaderboards/community (public)
-                </span>
-              </label>
+            <div className="flex flex-row gap-2 items-center justify-end">
               <div>
                 <button
                   onClick={() => handleSave("profile")}
                   className="bg-primary text-white btn btn-primary rounded-xl font-extrabold transition-colors"
-                  disabled={isLoading}
+                  disabled={isLoading || mutation.isPending}
                 >
-                  <span>Save Profile Settings</span>
+                  <Save size={16} />
+                  <span>
+                    {mutation.isPending ? "Saving..." : "Save Study Goals"}
+                  </span>
                 </button>
               </div>
             </div>
