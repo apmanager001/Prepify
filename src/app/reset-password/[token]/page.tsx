@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
       try {
         await api.logout();
       } catch (error) {
-        // Ignore logout errors if not logged in
+        console.error("Logout error:", error);
       }
       router.push("/login");
     },
