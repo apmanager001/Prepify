@@ -20,6 +20,27 @@ export async function updateProfile(profile) {
   return await res.json();
 }
 
+export async function getStudyGoals() {
+  const res = await fetch(`${API_BASE_URL}/studyGoals`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await res.json();
+  return data;
+}
+
+export async function updateStudyGoals(studyGoals) {
+
+  const res = await fetch(`${API_BASE_URL}/studyGoals`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(studyGoals),
+  });
+  return await res.json();
+}
+
 // Send a verification email to the provided address
 export async function sendVerificationEmail(email) {
   if (!email) throw new Error("Email is required");

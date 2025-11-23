@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { api } from "@/lib/api";
 import { useRouter, useParams } from "next/navigation";
 
 export default function ResetPasswordPage() {
@@ -21,6 +22,7 @@ export default function ResetPasswordPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, password }),
+          credentials: "include",
         }
       );
 
@@ -32,8 +34,13 @@ export default function ResetPasswordPage() {
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Password reset successfully! You can now sign in.");
+      try {
+        await api.logout();
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
       router.push("/login");
     },
     onError: (err) => {

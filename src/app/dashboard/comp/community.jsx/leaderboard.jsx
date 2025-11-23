@@ -127,10 +127,10 @@ export default function Leaderboard() {
             }
 
             const displayUsername =
-              user && user.user && user.user.username
-                ? typeof user.user.username === "string"
-                  ? user.user.username
-                  : JSON.stringify(user.user.username)
+              user && user.user && user.user.screenName
+                ? typeof user.user.screenName === "string"
+                  ? user.user.screenName
+                  : JSON.stringify(user.user.screenName)
                 : "";
 
             const displayTotal = (() => {
@@ -154,7 +154,7 @@ export default function Leaderboard() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <div className="text-sm font-medium truncate">
-                        {displayName}
+                        {displayUsername || displayName}
                       </div>
                       {isMedal && (
                         <span

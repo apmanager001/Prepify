@@ -19,6 +19,7 @@ export default function VerifyEmailPage() {
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
           }
         );
 

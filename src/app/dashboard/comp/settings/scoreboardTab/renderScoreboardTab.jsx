@@ -1,6 +1,7 @@
 import React from "react";
 import useUserScores from "./useUserScores";
 import useTotalScore from "../../dashboardComps/useTotalScore";
+import LoadingComp from "../../../../../lib/loading";
 
 // map backend `type` keys to readable labels for the UI
 function formatType(type) {
@@ -57,6 +58,12 @@ const Scoreboard = () => {
   const scores = data?.scores || data?.items || data?.data || [];
   const total = data?.totalCount ?? data?.total ?? 0;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
+
+  if (isLoading) {
+    return (
+      <div className="text-gray-500 min-h-24 flex items-center justify-center"><LoadingComp /></div>
+    );
+  }
 
   return (
     <div className="space-y-4">
