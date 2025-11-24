@@ -66,7 +66,6 @@ const Calendar = () => {
       onSuccess: () => {
         setShowEventModal(false);
         // reset form
-        toast.success("Event added successfully!");
         setNewEvent({
           title: "",
           description: "",

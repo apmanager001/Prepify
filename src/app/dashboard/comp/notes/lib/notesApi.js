@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL } from "@/lib/backendAPI";
+import { addScoreAndInvalidate } from "../../dashboardComps/useTotalScore";
+import toast from "react-hot-toast";
 
 async function safeParse(res) {
   const txt = await res.text().catch(() => "");
@@ -30,6 +32,19 @@ export async function createNote(payload) {
     const body = await safeParse(res);
     throw new Error(body?.message || `Status ${res.status}`);
   }
+
+  // use the shared helper that also invalidates query cache
+  const { status } = await addScoreAndInvalidate("addNotesItem");
+  if (status === 206) {
+    toast.success("Note created, but you have reached your daily score cap for notes today");
+  } else if (status === 207) {
+    toast.success("Note created, but you have reached your cap for daily points");
+  } else if(status === 201 || status === 214) {
+    toast.success("Note created");
+  } else {
+    console.error("Failed to award Note points:", err);
+  }
+
   return safeParse(res);
 }
 

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "@/lib/backendAPI";
 import { addScoreAndInvalidate } from "@/app/dashboard/comp/dashboardComps/useTotalScore";
+import toast from "react-hot-toast";
 
 // Low-level fetcher for calendar events.
 // Accepts an options object and forwards supported query params to the backend:
@@ -60,14 +61,19 @@ export async function postCalendarEvent(eventPayload) {
   }
   const body = await res.json();
 
-  // Award gamification points for adding a calendar event. Don't fail the
-  // primary flow if awarding points fails — log and continue.
-  try {
-    // use the shared helper that also invalidates query cache
-    await addScoreAndInvalidate("addCalendarEvent");
-  } catch (err) {
-    // non-fatal: backend score endpoint may be unavailable or rate-limited
-    console.error("Failed to award addCalendarEvent points:", err);
+  const { status } = await addScoreAndInvalidate("addCalendarEvent");
+  if (status === 206) {
+    toast.success(
+      "Calendar Event created, but you have reached your daily score cap for calendar events today"
+    );
+  } else if (status === 207) {
+    toast.success(
+      "Calendar Event created, but you have reached your cap for daily points"
+    );
+  } else if (status === 201 || status === 214) {
+    toast.success("Calendar Event created");
+  } else {
+    console.error("Failed to award Calendar Award points");
   }
 
   return body;

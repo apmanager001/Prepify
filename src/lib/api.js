@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/lib/backendAPI";
+import { useRouter } from "next/navigation";
 
 export const api = {
   // Register user
@@ -92,6 +93,7 @@ export const api = {
 
   // Get user profile (alternative endpoint)
   getProfile: async () => {
+    const router = useRouter();
     const response = await fetch(`${API_BASE_URL}/profile`, {
       method: "GET",
       headers: {
@@ -101,6 +103,7 @@ export const api = {
     });
 
     if (!response.ok) {
+      router.push("/login");
       throw new Error("Failed to get profile data");
     }
 

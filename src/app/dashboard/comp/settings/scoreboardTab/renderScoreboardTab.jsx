@@ -24,6 +24,8 @@ function formatType(type) {
       return "Profile Completed";
     case "dailyGoalComplete":
       return "Daily Goal Completed";
+    case "completeStudyGoal":
+      return "Study Goal Completed";
     default:
       return " Misc Points ";
       try {
