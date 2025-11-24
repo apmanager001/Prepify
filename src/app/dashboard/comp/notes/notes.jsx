@@ -84,7 +84,7 @@ export default function Notes() {
       // if server returned the created note, select it
       const id = created?._id || created?.note?._id;
       if (id) setSelectedId(id);
-      toast.success("Note created");
+      
     } catch (err) {
       console.error("create note failed", err);
       // optionally toast error

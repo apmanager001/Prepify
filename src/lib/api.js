@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "@/lib/backendAPI";
-
 export const api = {
   // Register user
   register: async (userData) => {
@@ -48,7 +47,7 @@ export const api = {
       }
 
       const responseData = await response.json();
-      
+
       return responseData;
     } catch (error) {
       console.error(`❌ [${requestId}] Fetch error:`, error);
@@ -101,7 +100,7 @@ export const api = {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to get profile data");
+      throw new Error(`Failed to get profile data: ${response.status}`);
     }
 
     return response.json();

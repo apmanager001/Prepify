@@ -1,6 +1,7 @@
 "use client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL } from "@/lib/backendAPI";
+import { addScoreAndInvalidate } from "../../dashboardComps/useTotalScore";
 import toast from "react-hot-toast";
 
 async function fetchTodos() {
@@ -43,8 +44,25 @@ async function createTodoApi(payload) {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.error || body.message || "Failed to create todo");
   }
-
   const todo = await res.json();
+
+
+  const { status } = await addScoreAndInvalidate("addToDoItem");
+  if (status === 206) {
+    toast.success(
+      "To Do item created, but you have reached your daily score cap for to do items today"
+    );
+  } else if (status === 207) {
+    toast.success(
+      "To Do item created, but you have reached your cap for daily points"
+    );
+  } else if (status === 201 || status === 214) {
+    toast.success("To Do item created");
+  } else {
+    console.error("Failed to award To Do points:", err);
+  }
+
+
   return { ...todo, id: todo._id ?? todo.id };
 }
 
@@ -90,7 +108,6 @@ export function useCreateTodo() {
     mutationFn: createTodoApi,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["todos"] });
-      toast.success("Task added");
     },
     onError: (err) => {
       toast.error(err?.message ?? "Failed to add task");

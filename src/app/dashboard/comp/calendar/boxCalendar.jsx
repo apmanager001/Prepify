@@ -1,15 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-  Calendar as CalendarIcon,
-  X,
   BookOpen,
   ChevronLeft,
   ChevronRight,
-  Trash2,
 } from "lucide-react";
-import { useCalendarEvents, useDeleteCalendarEvent } from "./lib/calendar";
-import toast from "react-hot-toast";
+import EventModal from "./eventModal";
+import { useCalendarEvents} from "./lib/calendar";
+import LoadingComp from "@/lib/loading";
 
 const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -130,7 +128,6 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
     to: endOfMonthIso,
   });
 
-  const deleteMutation = useDeleteCalendarEvent();
 
   useEffect(() => {
     if (!fetchedData) return;
@@ -235,31 +232,9 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
     setFetchedEventsMap(map);
   }, [fetchedData]);
 
-  // const handleAddEvent = () => {
-  //   if (!selectedDate || !newEvent.title.trim()) return;
-
-  //   const dateKey = selectedDate.toDateString();
-  //   const eventWithId = {
-  //     ...newEvent,
-  //     id: Date.now(),
-  //     date: selectedDate,
-  //   };
-
-  //   setEvents((prev) => ({
-  //     ...prev,
-  //     [dateKey]: [...(prev[dateKey] || []), eventWithId],
-  //   }));
-
-  //   setNewEvent({
-  //     title: "",
-  //     description: "",
-  //     time: "",
-  //     type: "study",
-  //     color: "blue",
-  //   });
-  //   setShowEventModal(false);
-  //   setSelectedDate(null);
-  // };
+  if (isLoading) {
+    return <div className="flex justify-center items-center min-h-32"><LoadingComp /></div>
+  }
 
   return (
     <>
@@ -271,19 +246,19 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => navigateMonth(-1)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="btn btn-ghost rounded-lg"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={() => setCurrentDate(new Date())}
-              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="btn btn-sm btn-ghost rounded-lg"
             >
               Today
             </button>
             <button
               onClick={() => navigateMonth(1)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="btn btn-ghost rounded-lg"
             >
               <ChevronRight size={20} />
             </button>
@@ -355,7 +330,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
                                   {event.title}
                                 </span>
                                 {event.time && (
-                                  <span className="text-xs text-gray-600">
+                                  <span className="text-xs text-gray-600 font-bold">
                                     {event.time}
                                   </span>
                                 )}
@@ -379,105 +354,10 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
       </div>
       {/* View Event Modal */}
       {showViewEventModal && selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 mx-4">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold flex items-center">
-                  {selectedEvent.title || "Event"}
-                </h3>
-                <span className="text-sm text-gray-500 ml-2">
-                  created on{" "}
-                  {(() => {
-                    const raw =
-                      selectedEvent?.createdAt ||
-                      selectedEvent?._raw?.createdAt ||
-                      selectedEvent?._raw?.created_at ||
-                      selectedEvent?._raw?.created ||
-                      null;
-                    if (!raw) return "—";
-                    try {
-                      // show only the date portion (no time)
-                      return new Date(raw).toLocaleDateString();
-                    } catch (e) {
-                      return String(raw);
-                    }
-                  })()}
-                </span>
-              </div>
-              <button
-                onClick={() => {
-                  setShowViewEventModal(false);
-                  setSelectedEvent(null);
-                }}
-                aria-label="Close"
-                className="btn btn-circle btn-ghost"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <div className="text-xs text-gray-500">Time</div>
-                <div className="text-sm">{selectedEvent.time || "—"}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Type</div>
-                <div className="text-sm">{selectedEvent.type || "—"}</div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Description</div>
-                <div className="text-sm whitespace-pre-wrap">
-                  {selectedEvent.description || "No description"}
-                </div>
-              </div>
-
-              {/* <div className="flex justify-end">
-                <button
-                  onClick={() => {
-                    setShowViewEventModal(false);
-                    setSelectedEvent(null);
-                  }}
-                  className="btn btn-secondary btn-soft rounded-3xl"
-                >
-                  Close
-                </button>
-              </div> */}
-              <div className="flex justify-end">
-                <button
-                  onClick={async () => {
-                    if (!selectedEvent || !selectedEvent.id) return;
-                    const ok = window.confirm(
-                      "Delete this event? This cannot be undone."
-                    );
-                    if (!ok) return;
-                    try {
-                      await deleteMutation.mutateAsync(selectedEvent.id);
-                      // close modal on success
-                      setShowViewEventModal(false);
-                      setSelectedEvent(null);
-                      toast.success("Event deleted");
-                    } catch (err) {
-                      console.error("Failed to delete event", err);
-                      // optionally show a user-visible error here
-                    }
-                  }}
-                  className={`btn btn-error btn-soft rounded-3xl text-error hover:text-white ${
-                    deleteMutation.isLoading
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                  disabled={deleteMutation.isLoading}
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <EventModal
+          selectedEvent={selectedEvent}
+          onClose={() => setShowViewEventModal(false)}
+        />
       )}
     </>
   );

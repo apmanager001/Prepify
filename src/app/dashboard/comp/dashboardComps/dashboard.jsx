@@ -113,7 +113,7 @@ const DashboardPage = () => {
     return 0;
   })();
   // small radial shown next to header (quick glance) — uses same scale as StatusBar
-  const DAILY_GOAL_DASH = 100;
+  const DAILY_GOAL_DASH = 250;
   const dashPercent = Math.min(
     100,
     Math.round((DAILY_POINTS_NUM / Math.max(1, DAILY_GOAL_DASH)) * 100)

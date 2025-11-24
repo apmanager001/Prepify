@@ -8,6 +8,7 @@ import { User, Key } from "lucide-react";
 import useForgotPassword from "@/app/dashboard/comp/settings/accountTab/useForgotPassword";
 import toast from "react-hot-toast";
 import GoogleButton from "./googleButton";
+import { addScoreAndInvalidate } from "@/app/dashboard/comp/dashboardComps/useTotalScore";
 
 const Login = () => {
   const router = useRouter();
@@ -60,9 +61,12 @@ const Login = () => {
 
         setVerifying(false);
         if (ok) {
+          const { status } = await addScoreAndInvalidate("dailyLogin");
+          if (status === 201 || status === 214) {
+            toast.success("You earned daily login points");
+          } 
           router.push("/dashboard");
         } else {
-          // fallback: inform user and keep them on login to retry
           toast.error(
             "Login succeeded but we couldn't verify your session. Please try again or check server settings."
           );

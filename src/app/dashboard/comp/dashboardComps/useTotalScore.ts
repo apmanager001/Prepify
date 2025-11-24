@@ -140,7 +140,7 @@ export async function addScoreAndInvalidate(type: string) {
     body = text;
   }
 
-  if (!res.ok) {
+  if (!res.ok && res.status !== 206 && res.status !== 207) {
     const msg = extractMessage(body) ?? res.statusText;
     throw new Error(`Failed to add score: ${res.status} ${msg}`);
   }
@@ -149,5 +149,5 @@ export async function addScoreAndInvalidate(type: string) {
   queryClient.invalidateQueries({ queryKey: ["dailyScore"] });
   queryClient.invalidateQueries({ queryKey: ["totalScore"] });
 
-  return body;
+  return { status: res.status, body };
 }

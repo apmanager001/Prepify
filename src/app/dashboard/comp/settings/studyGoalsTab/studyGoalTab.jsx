@@ -97,13 +97,15 @@ const StudyGoalsTab = ({
   handleSave: propHandleSave,
   isLoading: propIsLoading = false,
 }) => {
-  const { data: studyGoalsData, isLoading: queryLoading, isError } =
-    useStudyGoalsQuery();
+  const {
+    data: studyGoalsData,
+    isLoading: queryLoading,
+    isError,
+  } = useStudyGoalsQuery();
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: updateStudyGoals,
     onSuccess: () => {
-      toast.success("Study goals saved");
       queryClient.invalidateQueries({ queryKey: ["studyGoals"] });
     },
     onError: (error) => {
@@ -111,7 +113,7 @@ const StudyGoalsTab = ({
       toast.error("Failed to save study goals");
     },
   });
-  
+
   const [localProfile, setLocalProfile] = useState(DEFAULT_PROFILE);
   const profile = propProfile || localProfile;
   const isLoading = propIsLoading;
@@ -167,23 +169,26 @@ const StudyGoalsTab = ({
     if (typeof propHandleSave === "function") return propHandleSave(name);
     // Use mutation to save to backend
     const payload = {
-      gradeLevel: profile.gradeLevel,
-      subjects: profile.subjects,
-      studyGoals: profile.studyGoals,
-      availability: profile.availability,
-      institution: profile.institution,
-      graduationYear: profile.graduationYear,
-      ageRange: profile.ageRange,
-      currentCourse: profile.currentCourse,
-      expectedExams: profile.expectedExams,
-      expectedExamsNA: profile.expectedExamsNA,
-      proficiency: profile.proficiency,
-      preferredStudyStyle: profile.preferredStudyStyle,
-      goalDeadline: profile.goalDeadline,
-      goalDeadlineNA: profile.goalDeadlineNA,
-      minutesPerWeek: profile.minutesPerWeek,
-      linkedin: profile.linkedin,
-      portfolio: profile.portfolio,
+      studyGoals: {
+        gradeLevel: profile.gradeLevel,
+        subjects: profile.subjects,
+        studyGoals: profile.studyGoals,
+        availability: profile.availability,
+        institution: profile.institution,
+        graduationYear: profile.graduationYear,
+        ageRange: profile.ageRange,
+        currentCourse: profile.currentCourse,
+        expectedExams: profile.expectedExams,
+        expectedExamsNA: profile.expectedExamsNA,
+        proficiency: profile.proficiency,
+        preferredStudyStyle: profile.preferredStudyStyle,
+        goalDeadline: profile.goalDeadline,
+        goalDeadlineNA: profile.goalDeadlineNA,
+        minutesPerWeek: profile.minutesPerWeek,
+        linkedin: profile.linkedin,
+        portfolio: profile.portfolio,
+      },
+      percentComplete: computeCompletion(),
     };
     mutation.mutate(payload);
   };
@@ -262,9 +267,12 @@ const StudyGoalsTab = ({
   //  const defaultTZ =
   //    Intl?.DateTimeFormat?.()?.resolvedOptions?.()?.timeZone || "";
 
-
   if (queryLoading) {
-    return <div className="text-gray-500 min-h-24 flex items-center justify-center"><LoadingComp /></div>;
+    return (
+      <div className="text-gray-500 min-h-24 flex items-center justify-center">
+        <LoadingComp />
+      </div>
+    );
   }
   if (isError) {
     return <div className="text-red-500 min-h-24">Error loading profile.</div>;

@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/lib/backendAPI";
-
+import { addScoreAndInvalidate } from "./dashboardComps/useTotalScore";
+import toast from "react-hot-toast";
 // API utility for /profile routes
 export async function getProfile() {
   const res = await fetch(`${API_BASE_URL}/profile`, {
@@ -30,14 +31,20 @@ export async function getStudyGoals() {
   return data;
 }
 
-export async function updateStudyGoals(studyGoals) {
-
+export async function updateStudyGoals({ studyGoals, percentComplete }) {
   const res = await fetch(`${API_BASE_URL}/studyGoals`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(studyGoals),
   });
+  if (percentComplete === 100) {
+    const { status } = await addScoreAndInvalidate("completeStudyGoal");
+    if (status === 201 || status === 214) {
+      toast.success("You have earned points for completing your study goals!");
+    } 
+  }
+  toast.success("Study goals saved");
   return await res.json();
 }
 
