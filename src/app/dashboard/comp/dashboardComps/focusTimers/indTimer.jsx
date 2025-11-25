@@ -49,9 +49,12 @@ const IndTimer = ({ index, onEdit }) => {
       <div className="absolute top-2 left-2 text-primary">
         <button
           className={`${
-            timer.isRunning ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+            timer.startedAt ? "cursor-pointer" : "cursor-not-allowed opacity-50"
           }`}
-          onClick={() => resetTimer(index)}
+          onClick={() => {
+            if (!timer.startedAt) return;
+            resetTimer(index);
+          }}
         >
           <RotateCcw size={20} />
         </button>
