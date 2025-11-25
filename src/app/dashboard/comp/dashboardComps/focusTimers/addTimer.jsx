@@ -1,97 +1,140 @@
+"use client";
 import React, { useState } from "react";
-import { useAddTimerMutation } from "./useAddTimerMutation";
-import { X } from "lucide-react";
+import { X, Plus, Minus } from "lucide-react";
+import { useTimerStore } from "@/store/useTimerStore";
+import toast from "react-hot-toast";
 
-const AddTimerModal = ({ isOpen, onClose, onCreate }) => {
+const AddTimerModal = ({ isOpen, onClose }) => {
+  // Store action for creating a timer
+  const createTimer = useTimerStore((s) => s.createTimer);
+
+  // Local form state
   const [name, setName] = useState("");
-  const [minutes, setMinutes] = useState(5);
+  const [studyMinutes, setStudyMinutes] = useState(0);
 
-  const addTimerMutation = useAddTimerMutation({
-    onSuccess: (data) => {
-      onCreate && onCreate(data);
-      setName("");
-      setMinutes(5);
-      onClose();
-    },
-  });
+  // Early return when modal is hidden
+  if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !minutes) return;
-    addTimerMutation.mutate({
-      name,
-      minutes: Number(minutes),
-    });
+  // Adjust minutes by predefined increments (min 0)
+  const modifyMinutes = (delta) => {
+    setStudyMinutes((prev) => Math.max(prev + delta, 0));
   };
 
-  if (!isOpen) return null;
+  // Accept only valid numeric input for manual minutes
+  const handleInputChange = (value) => {
+    const n = parseInt(value, 10);
+    if (!isNaN(n) && n >= 0 && n <= 120) setStudyMinutes(n);
+  };
+
+  // Validate and submit timer creation form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!name) {
+      toast.error("Timer name cannot be empty");
+      return;
+    }
+
+    if (studyMinutes <= 0) {
+      toast.error("Minutes must be greater than 0");
+      return;
+    }
+
+    await createTimer({ name, minutes: studyMinutes });
+
+    toast.success("Timer created successfully!");
+
+    // Reset form and close modal
+    setName("");
+    setStudyMinutes(0);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-96">
-        <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold ">Create New Timer</h2>
-            <button className="btn btn-circle btn-ghost">
-                <X className="fix top-4 right-4 cursor-pointer" size={20} onClick={onClose} />
-            </button>
+      <div className="bg-white rounded-xl shadow-lg p-8 w-106 space-y-6">
+        {/* Modal header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold">Create Timer</h2>
+          <button onClick={onClose} className="btn btn-circle btn-ghost">
+            <X size={20} />
+          </button>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4 ">
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Timer name field */}
           <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
+            <label className="block text-sm font-medium mb-1">Timer Name</label>
             <input
               type="text"
+              className="input w-full rounded-lg"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="input w-full rounded-lg"
               required
             />
           </div>
+
+          {/* Minutes input section */}
           <div>
-            <label className="block text-sm font-medium mb-1">Minutes</label>
-            <div className="flex gap-2 justify-center items-center mt-2 flex-wrap">
-              {[5, 10, 15, 20, 25, 30, 45, 60].map((min) => (
+            <label className="block text-sm font-medium mb-1">
+              Study Duration (Minutes)
+            </label>
+
+            {/* Quick-add buttons */}
+            <div className="flex gap-2 flex-wrap mb-2 justify-around">
+              {[1, 5, 10, 30].map((min) => (
                 <button
+                  key={`add-${min}`}
                   type="button"
-                  key={min}
-                  className={`btn rounded-2xl duration-100 ${
-                    minutes === min
-                      ? "bg-primary text-white border-primary"
-                      : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-primary/10"
-                  }`}
-                  onClick={() => setMinutes(min)}
+                  className="btn btn-sm btn-outline flex items-center gap-1"
+                  onClick={() => modifyMinutes(min)}
                 >
-                  {min}
+                  <Plus size={16} /> {min}
                 </button>
               ))}
-             
             </div>
-            <div className="w-full flex justify-center items-center mt-4">
-                <input
-                    type="number"
-                    min="1"
-                    max="120"
-                    value={minutes}
-                    onChange={(e) => setMinutes(Number(e.target.value))}
-                    className="w-16 px-2 py-2 border rounded-lg ml-2"
-                    required
-                />
-                <span className="ml-1 text-sm text-gray-500">min</span>
+
+            {/* Quick subtract buttons */}
+            <div className="flex gap-2 flex-wrap mb-2 justify-around">
+              {[1, 5, 15, 30].map((min) => (
+                <button
+                  key={`sub-${min}`}
+                  type="button"
+                  className="btn btn-sm btn-outline flex items-center gap-1"
+                  onClick={() => modifyMinutes(-min)}
+                >
+                  <Minus size={16} /> {min}
+                </button>
+              ))}
+            </div>
+
+            {/* Manual numeric input */}
+            <div className="flex justify-center items-center gap-2 mt-2">
+              <input
+                type="number"
+                className="w-24 px-2 py-1 border rounded-lg text-center"
+                value={studyMinutes}
+                min={0}
+                max={Infinity}
+                onChange={(e) => handleInputChange(e.target.value)}
+              />
+              <span className="text-sm text-gray-500">minutes</span>
             </div>
           </div>
+
+          {/* Action buttons */}
           <div className="flex justify-end gap-2 mt-4">
             <button
               type="button"
-              onClick={onClose}
               className="btn btn-primary btn-soft rounded-lg"
+              onClick={onClose}
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary rounded-lg"
-              disabled={addTimerMutation.isLoading}
-            >
-              {addTimerMutation.isLoading ? "Creating..." : "Create"}
+
+            <button type="submit" className="btn btn-primary rounded-lg">
+              Create Timer
             </button>
           </div>
         </form>
