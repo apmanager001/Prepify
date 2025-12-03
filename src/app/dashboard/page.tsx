@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
   LogOut,
@@ -34,7 +34,7 @@ import Calendar from "./comp/calendar/calendar";
 const Dashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
-  const { data: profileData, isLoading, isError, error } = useProfileQuery();
+  const { data: profileData } = useProfileQuery();
   const [userData, setUserData] = useState({
     profile: {
       username: "",

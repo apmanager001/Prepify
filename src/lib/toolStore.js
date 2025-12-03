@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 // Shared playback store for CompactPlayer <-> CurrentPlayer
-export const useToolStore = create((set, get) => ({
+export const useToolStore = create((set) => ({
   playlist: [
     {
       title: "Interstellar - Hans Zimmer",
