@@ -348,7 +348,7 @@ const Dashboard = () => {
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <div className="w-74 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
+        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
           {/* Logo Section */}
           <div className="border-b border-gray-100">
             <div className="flex flex-col items-center">
@@ -420,7 +420,9 @@ const Dashboard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-8 overflow-auto">{renderContent()}</div>
+        <div className="flex-1 p-8 overflow-y-auto h-screen">
+          {renderContent()}
+        </div>
       </div>
 
       {/* Mobile Main Content */}
