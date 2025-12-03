@@ -13,56 +13,71 @@ import {
   UsersRound,
   Settings,
 } from "lucide-react";
+import Stats from "./comp/dashboardComps/sidebarStats/stats";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import StudyGuides from "./comp/studyGuides/studyGuides";
 import Notes from "./comp/notes/notes";
 import Todo from "./comp/todo/todo";
+import { useProfileQuery } from "./comp/useProfileQuery";
 // import Main from "./comp/main";
-import DashboardPage from "./comp/dashboardComps/dashboard";
+// import DashboardPage from "./comp/dashboardComps/dashboard";
+import Overview from "./comp/dashboardComps/overview";
 import SettingsPage from "./comp/settings";
 import AdminPage from "./comp/adminPage";
 import Tools from "./comp/tools";
 import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
 
-// Define the user data type
-interface UserData {
-  username?: string;
-  email?: string;
-  userId?: string;
-  isAdmin?: boolean;
-}
 
 const Dashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
-  const [userData, setUserData] = useState<UserData>({});
+  const { data: profileData, isLoading, isError, error } = useProfileQuery();
+  const [userData, setUserData] = useState({
+    profile: {
+      username: "",
+      email: "",
+      isAdmin: false,
+      screenname: "",
+      createdAt: "",
+    },
+  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: api.logout,
     onSuccess: () => {
-      // Clear localStorage
-      localStorage.removeItem("userId");
-      localStorage.removeItem("username");
-      localStorage.removeItem("email");
-      localStorage.removeItem("isAdmin");
-      // Redirect to home page
+      // Redirect to home page after successful logout
       router.push("/");
     },
     onError: (error) => {
       console.error("Logout failed:", error);
-      // Even if logout fails, clear local data and redirect
-      localStorage.removeItem("userId");
-      localStorage.removeItem("username");
-      localStorage.removeItem("email");
-      localStorage.removeItem("isAdmin");
+      // Redirect to home page even if logout failed
       router.push("/");
     },
   });
+
+  React.useEffect(() => {
+    if (profileData) {
+      setUserData((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          // prefer values from profileData, fall back to existing state
+          username: profileData.username ?? prev.profile.username,
+          email: profileData.email ?? prev.profile.email,
+          isAdmin:
+            typeof profileData.isAdmin === "boolean"
+              ? profileData.isAdmin
+              : prev.profile.isAdmin,
+          screenname: profileData.screenname ?? prev.profile.screenname,
+          createdAt: profileData.createdAt ?? prev.profile.createdAt,
+        },
+      }));
+    }
+  }, [profileData]);
 
   // Sidebar items
   const sidebarItems = [
@@ -126,7 +141,7 @@ const Dashboard = () => {
       icon: () => <Settings size={24} />,
     },
     // Admin-only item
-    ...(userData.isAdmin
+    ...(userData?.profile?.isAdmin
       ? [
           {
             id: "admin",
@@ -136,28 +151,6 @@ const Dashboard = () => {
         ]
       : []),
   ];
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Get user data from localStorage
-      const userId = localStorage.getItem("userId");
-      const username = localStorage.getItem("username");
-      const email = localStorage.getItem("email");
-      const isAdmin = localStorage.getItem("isAdmin") === "true";
-
-      if (userId && username && email) {
-        setUserData({
-          userId,
-          username,
-          email,
-          isAdmin,
-        });
-      } else {
-        // If no user data, redirect to login
-        router.push("/login");
-      }
-    }
-  }, [router]);
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -170,7 +163,7 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <DashboardPage />;
+        return <Overview />;
       // <Main />;
       case "studyGuides":
         return <StudyGuides />;
@@ -284,12 +277,15 @@ const Dashboard = () => {
                 <Image
                   src="/logoSlogan.webp"
                   alt="Prepify"
-                  width={100}
-                  height={20}
-                  className="h-32 w-32"
+                  width={128}
+                  height={128}
+                  className="h-32 w-32 rounded-full object-cover object-center"
                   priority={true}
                 />
               </div>
+            </div>
+            <div className="flex flex-col justify-between">
+              <Stats />
             </div>
 
             {/* Navigation */}
@@ -320,12 +316,12 @@ const Dashboard = () => {
             <div className="p-6 border-t border-gray-100 flex-shrink-0">
               <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
                 <p className="text-sm font-semibold text-gray-900 mb-1">
-                  {userData.username || "User"}
+                  {userData?.profile?.username || "User"}
                 </p>
                 <p className="text-xs text-gray-600">
-                  {userData.email || "user@example.com"}
+                  {userData?.profile?.email || "user@example.com"}
                 </p>
-                {userData.isAdmin && (
+                {userData?.profile?.isAdmin && (
                   <p className="text-xs text-red-600 font-medium mt-1">
                     Administrator
                   </p>
@@ -349,27 +345,29 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-
       {/* Desktop Layout */}
-      <div className="hidden lg:flex">
+      <div className="hidden lg:flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col min-h-screen">
+        <div className="w-74 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
           {/* Logo Section */}
           <div className="border-b border-gray-100">
             <div className="flex flex-col items-center">
               <Image
                 src="/logoSlogan.webp"
                 alt="Prepify"
-                width={100}
-                height={20}
-                className="h-40 w-40 rounded-full"
+                width={160}
+                height={160}
+                className="h-20 w-20 rounded-full object-cover object-center"
                 priority={true}
               />
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-6 space-y-3 ">
+          <nav className="flex-1 p-6 md:p-3 space-y-3 overflow-y-auto">
+            <div className="flex-1 flex flex-col justify-between">
+              <Stats />
+            </div>
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -393,12 +391,12 @@ const Dashboard = () => {
           <div className="p-6 border-t border-gray-100">
             <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
               <p className="text-sm font-semibold text-gray-900 mb-1">
-                {userData.username || "User"}
+                {userData?.profile?.username || "User"}
               </p>
               <p className="text-xs text-gray-600">
-                {userData.email || "user@example.com"}
+                {userData?.profile?.email || "user@example.com"}
               </p>
-              {userData.isAdmin && (
+              {userData?.profile?.isAdmin && (
                 <p className="text-xs text-red-600 font-medium mt-1">
                   Administrator
                 </p>
@@ -426,7 +424,7 @@ const Dashboard = () => {
       </div>
 
       {/* Mobile Main Content */}
-      <div className="lg:hidden pt-20 px-4 pb-8">{renderContent()}</div>
+      <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
     </div>
   );
 };

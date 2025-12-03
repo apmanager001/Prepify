@@ -104,9 +104,43 @@ export async function deleteCalendarEvent(eventId) {
 // React Query hook to get calendar events. Use object form (v5).
 export function useCalendarEvents(options = {}) {
   // options can include: from, to, startDate, endDate, page, pageSize, sort, fields
+  const {
+    from,
+    to,
+    startDate,
+    endDate,
+    page = 1,
+    pageSize = 50,
+    sort,
+    fields,
+  } = options || {};
+
+  // build a stable, serializable query key so different ranges cache separately
+  const queryKey = [
+    "calendar",
+    from ?? null,
+    to ?? null,
+    startDate ?? null,
+    endDate ?? null,
+    page,
+    pageSize,
+    sort ?? null,
+    fields ?? null,
+  ];
+
   return useQuery({
-    queryKey: ["calendar", options],
-    queryFn: () => fetchCalendarEvents(options),
+    queryKey,
+    queryFn: () =>
+      fetchCalendarEvents({
+        from,
+        to,
+        startDate,
+        endDate,
+        page,
+        pageSize,
+        sort,
+        fields,
+      }),
     keepPreviousData: true,
     staleTime: 60 * 1000,
   });
@@ -118,7 +152,11 @@ export function useAddCalendarEvent() {
   return useMutation({
     mutationFn: (eventPayload) => postCalendarEvent(eventPayload),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["calendar"] });
+      // invalidate any calendar-related queries (day, month, etc.)
+      qc.invalidateQueries({
+        predicate: (query) =>
+          Array.isArray(query.queryKey) && query.queryKey[0] === "calendar",
+      });
     },
   });
 }
@@ -129,7 +167,10 @@ export function useDeleteCalendarEvent() {
   return useMutation({
     mutationFn: (eventId) => deleteCalendarEvent(eventId),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["calendar"] });
+      qc.invalidateQueries({
+        predicate: (query) =>
+          Array.isArray(query.queryKey) && query.queryKey[0] === "calendar",
+      });
     },
   });
 }

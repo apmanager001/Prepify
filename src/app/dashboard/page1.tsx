@@ -1,0 +1,444 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import {
+  LogOut,
+  Menu,
+  X,
+  Shield,
+  NotebookPen,
+  CheckSquare,
+  ChartNoAxesColumn,
+  Calendar as CalendarIcon,
+  UsersRound,
+  Settings,
+} from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { useProfileQuery } from "./comp/useProfileQuery";
+import { useRouter } from "next/navigation";
+import StudyGuides from "./comp/studyGuides/studyGuides";
+import Notes from "./comp/notes/notes";
+import Todo from "./comp/todo/todo";
+// import Main from "./comp/main";
+import DashboardPage from "./comp/dashboardComps/dashboard";
+import SettingsPage from "./comp/settings";
+import AdminPage from "./comp/adminPage";
+import Tools from "./comp/tools";
+import Community from "./comp/community.jsx/community";
+import Calendar from "./comp/calendar/calendar";
+
+const Dashboard = () => {
+  const router = useRouter();
+  const { data: profileData, isLoading, isError, error } = useProfileQuery();
+  const [userData, setUserData] = useState({
+    profile: {
+      username: "",
+      email: "",
+      isAdmin: false,
+      screenname: "",
+      createdAt: "",
+    },
+  });
+
+  const [activeTab, setActiveTab] = useState("overview");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  console.log("Profile Data:", profileData);
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: api.logout,
+    onSuccess: () => {
+      // Redirect to home page after successful logout
+      router.push("/");
+    },
+    onError: (error) => {
+      console.error("Logout failed:", error);
+      // Redirect to home page even if logout failed
+      router.push("/");
+    },
+  });
+
+  // Redirect to login if profile query returns 401
+  // useEffect(() => {
+  //   try {
+  //     if (isError) {
+  //       // `settingsApi.handleResponse` throws an Error with a `status` property
+  //       const e = error as any;
+  //       if (e && e.status === 401) {
+  //         router.push("/login");
+  //       }
+  //     }
+  //   } catch (err) {
+  //     // fallback: navigate to login on any unexpected failure
+  //     router.push("/login");
+  //   }
+  // }, [isError, error, router]);
+
+  // React.useEffect(() => {
+  //   if (profileData) {
+  //     setUserData((prev) => ({
+  //       ...prev,
+  //       profile: {
+  //         ...prev.profile,
+  //         // prefer values from profileData, fall back to existing state
+  //         username: profileData.username ?? prev.profile.username,
+  //         email: profileData.email ?? prev.profile.email,
+  //         isAdmin:
+  //           typeof profileData.isAdmin === "boolean"
+  //             ? profileData.isAdmin
+  //             : prev.profile.isAdmin,
+  //         screenname: profileData.screenname ?? prev.profile.screenname,
+  //         createdAt: profileData.createdAt ?? prev.profile.createdAt,
+  //       },
+  //     }));
+  //   }
+  // }, [profileData]);
+
+  // Sidebar items
+  const sidebarItems = [
+    {
+      id: "overview",
+      label: "Overview",
+      icon: () => <ChartNoAxesColumn size={24} />,
+    },
+    // {
+    //   id: "studyGuides",
+    //   label: "Study Guides",
+    //   icon: () => (
+    //     <svg
+    //       className="w-6 h-6"
+    //       fill="none"
+    //       stroke="currentColor"
+    //       viewBox="0 0 24 24"
+    //     >
+    //       <path
+    //         strokeLinecap="round"
+    //         strokeLinejoin="round"
+    //         strokeWidth={2}
+    //         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+    //       />
+    //     </svg>
+    //   ),
+    // },
+    // {
+    //   id: "tools",
+    //   label: "Study Tools",
+    //   icon: () => <Hammer size={24} />,
+    // },
+    {
+      id: "notes",
+      label: "Notes",
+      icon: () => <NotebookPen size={24} />,
+    },
+    {
+      id: "todo",
+      label: "To-Do",
+      icon: () => <CheckSquare size={24} />,
+    },
+    {
+      id: "calendar",
+      label: "Calendar",
+      icon: () => <CalendarIcon size={24} />,
+    },
+    // {
+    //   id: "resources",
+    //   label: "Resources",
+    //   icon: () => <FolderClosed size={24} />,
+    // },
+    {
+      id: "community",
+      label: "Community",
+      icon: () => <UsersRound size={24} />,
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: () => <Settings size={24} />,
+    },
+    // Admin-only item
+    ...(userData?.profile?.isAdmin
+      ? [
+          {
+            id: "admin",
+            label: "Admin Panel",
+            icon: () => <Shield size={24} />,
+          },
+        ]
+      : []),
+  ];
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return <DashboardPage />;
+      // <Main />;
+      case "studyGuides":
+        return <StudyGuides />;
+      case "notes":
+        return <Notes />;
+      case "todo":
+        return <Todo />;
+      case "tools":
+        return <Tools />;
+      case "calendar":
+        return <Calendar />;
+      case "resources":
+        return (
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Resources
+              </h1>
+              <p className="text-lg text-gray-600">
+                Access study materials and learning resources
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+              <div className="text-center py-12">
+                <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg
+                    className="w-12 h-12 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2m14 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v4"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Learning Resources
+                </h3>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  Browse through a comprehensive collection of study materials,
+                  practice tests, and educational resources.
+                </p>
+                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                  Browse Resources
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      case "community":
+        return <Community />;
+      case "settings":
+        return <SettingsPage />;
+      case "admin":
+        return <AdminPage />;
+      default:
+        return (
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Dashboard
+              </h1>
+              <p className="text-lg text-gray-600">
+                Welcome to your personalized learning dashboard
+              </p>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <label
+          htmlFor="menu-toggle"
+          className="swap swap-rotate btn rounded-lg"
+        >
+          <input
+            id="menu-toggle"
+            type="checkbox"
+            checked={isMobileMenuOpen}
+            onChange={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          />
+
+          <Menu size={24} className="swap-off text-gray-700" />
+          <X size={24} className="swap-on text-gray-700" />
+        </label>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={closeMobileMenu}
+          />
+
+          {/* Sidebar */}
+          <div className="absolute left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+            {/* Logo Section */}
+            <div className="border-b border-gray-100  flex-shrink-0">
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/logoSlogan.webp"
+                  alt="Prepify"
+                  width={100}
+                  height={20}
+                  className="h-32 w-32"
+                  priority={true}
+                />
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 p-6 space-y-3 overflow-y-auto">
+              {sidebarItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      closeMobileMenu();
+                    }}
+                    className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
+                      activeTab === item.id
+                        ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
+                        : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                    }`}
+                  >
+                    <Icon />
+                    <span className="font-semibold">{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* User Section & Logout */}
+            <div className="p-6 border-t border-gray-100 flex-shrink-0">
+              <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                <p className="text-sm font-semibold text-gray-900 mb-1">
+                  {userData?.profile?.username || "User"}
+                </p>
+                <p className="text-xs text-gray-600">
+                  {userData?.profile?.email || "user@example.com"}
+                </p>
+                {userData?.profile?.isAdmin && (
+                  <p className="text-xs text-red-600 font-medium mt-1">
+                    Administrator
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleLogout}
+                disabled={logoutMutation.isPending}
+                className="w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
+              >
+                {logoutMutation.isPending ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <LogOut size={22} />
+                )}
+                <span className="font-semibold">
+                  {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex h-screen overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
+          {/* Logo Section */}
+          <div className="border-b border-gray-100">
+            <div className="flex flex-col items-center">
+              <Image
+                src="/logoSlogan.webp"
+                alt="Prepify"
+                width={100}
+                height={20}
+                className="h-40 w-40 rounded-full"
+                priority={true}
+              />
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 p-6 space-y-3 ">
+            {sidebarItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
+                    activeTab === item.id
+                      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
+                      : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                  }`}
+                >
+                  <Icon />
+                  <span className="font-semibold">{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* User Section & Logout */}
+          <div className="p-6 border-t border-gray-100">
+            <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+              <p className="text-sm font-semibold text-gray-900 mb-1">
+                {userData?.profile?.username || "User"}
+              </p>
+              <p className="text-xs text-gray-600">
+                {userData?.profile?.email || "user@example.com"}
+              </p>
+              {userData?.profile?.isAdmin && (
+                <p className="text-xs text-red-600 font-medium mt-1">
+                  Administrator
+                </p>
+              )}
+            </div>
+            <button
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+              className="cursor-pointer w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
+            >
+              {logoutMutation.isPending ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                <LogOut size={22} />
+              )}
+              <span className="font-semibold">
+                {logoutMutation.isPending ? "Logging out..." : "Logout"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 p-8 overflow-y-auto h-screen">
+          {renderContent()}
+        </div>
+      </div>
+
+      {/* Mobile Main Content */}
+      <div className="lg:hidden pt-20 px-4 pb-8">{renderContent()}</div>
+    </div>
+  );
+};
+
+export default Dashboard;

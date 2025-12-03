@@ -131,11 +131,9 @@ const DashboardPage = () => {
             <h1 className="text-2xl md:text-3xl font-extrabold text-primary">
               Dashboard
             </h1>
-            <div className="text-sm text-gray-500">
-              Overview & quick actions
-            </div>
+            <div className="text-sm text-gray-500">Quick Tools & Stats</div>
           </div>
-          <div className="flex items-center gap-3 min-w-[150px]">
+          <div className="flex items-center gap-3 min-w-[180px]">
             <div
               className={`radial-progress ${dashColor} bg-indigo-50 font-extrabold text-xl`}
               style={{
@@ -150,10 +148,14 @@ const DashboardPage = () => {
             </div>
 
             <div className="flex flex-col text-left">
-              <div className="text-xs text-gray-500">Daily points</div>
-              <div className="text-sm font-semibold text-indigo-700">
+              <div className="text-sm font-bold text-indigo-800 uppercase tracking-wide">
+                Daily Points
+              </div>
+              <div className="text-lg font-extrabold text-indigo-900">
                 {dailyLoading ? "…" : dailyError ? "—" : DAILY_POINTS_NUM || 0}{" "}
-                pts
+                <span className="text-sm font-semibold text-indigo-700">
+                  pts
+                </span>
               </div>
             </div>
           </div>
