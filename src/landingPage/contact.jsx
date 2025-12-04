@@ -13,8 +13,7 @@ const Contact = () => {
 
   const contactMutation = useMutation({
     mutationFn: submitContactMessage,
-    onSuccess: (data) => {
-      console.log("Message sent successfully:", data);
+    onSuccess: () => {
       // Reset form on success
       setFormData({ name: "", email: "", message: "" });
       // You could add a toast notification here

@@ -39,10 +39,6 @@ paths:
                   "userId": "66ce0c8dc538303360039d01",
                   "username": "EasterBunny",
                   "email": "EasterBunny@example.com",
-                  "bio": "I haven't decided what to put in my bio yet.",
-                  "publishEmail": false,
-                  "darkMode": false,
-                  "emailVerified": false,
                 }
         "400":
           description: "If any of the fields are missing, too long, or too short, return an error."
@@ -100,17 +96,7 @@ paths:
                   "userId": "66ce0c8dc538303360039d01",
                   "username": "EasterBunny",
                   "email": "EasterBunny@example.com",
-                  "admin": false,
-                  "moderator": false,
-                  "bio": "I haven't decided what to put in my bio yet.",
-                  "publishEmail": false,
-                  "darkMode": false,
-                  "locked": false,
-                  "emailVerified": true,
-                  "publishedChapters": [],
-                  "followedAuthors": [],
-                  "likedChapters": [],
-                  "bookmarkedChapters": [],
+                  "createdAt": "2025-08-19T16:25:14.149+00:00",
                 }
         "400":
           description: "Missing field."
@@ -126,6 +112,33 @@ paths:
           content:
             application/json:
               example: { "error": "Incorrect name or password." }
+        default:
+          description: Default error sample response
+  /profile:
+    summary: Return user's profile.
+    get:
+      tags:
+        - User
+      summary: Return user's profile.
+      description: Return the privateProfile() of the logged in user, or if there is no logged in user, an error.
+      operationId: get_profile
+      responses:
+        "200":
+          description: Success!
+          content:
+            application/json:
+              example:
+                {
+                  "userId": "66ce0c8dc538303360039d01",
+                  "username": "EasterBunny",
+                  "email": "EasterBunny@example.com",
+                  "createdAt": "2025-08-19T16:25:14.149+00:00",
+                }
+        "401":
+          description: No logged in user.
+          content:
+            application/json:
+              example: { "error": "No logged in user." }
         default:
           description: Default error sample response
   /logout:
@@ -242,6 +255,208 @@ paths:
                 { "error": "Failed to submit message. Please try again." }
         default:
           description: Default error sample response
+  /admin/newsletter:
+    summary: Get all newsletter subscribers
+    get:
+      tags:
+        - Admin
+      summary: Get all newsletter subscribers
+      description: Returns a list of all email addresses subscribed to the newsletter.
+      operationId: get_newsletter_subscribers
+      responses:
+        "200":
+          description: List of newsletter subscribers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscribers:
+                    type: array
+                    items:
+                      type: string
+                      format: email
+              example:
+                [
+                  {
+                    _id: "68af63e0f1607877ec6e3e37",
+                    email: "Freddy@example.com",
+                    createdAt: "2025-08-27T21:00:32.371Z",
+                    updatedAt: "2025-08-27T21:00:32.371Z",
+                    __v: 0,
+                  },
+                  {
+                    _id: "7877ec6e3e3768af63e0f160",
+                    email: "Bob@example.com",
+                    createdAt: "2025-08-27T20:00:32.371Z",
+                    updatedAt: "2025-08-27T20:00:32.371Z",
+                    __v: 0,
+                  },
+                ]
+        "401":
+          description: Unauthorized access.
+          content:
+            application/json:
+              example: { "error": "No logged in admin user." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example:
+                {
+                  "error": "Failed to retrieve newsletter subscribers. Please try again.",
+                }
+        default:
+          description: Default error sample response
+  /admin/message:
+    summary: Get all submitted messages
+    get:
+      tags:
+        - Admin
+      summary: Get all submitted messages
+      description: Returns a list of all messages submitted via the contact form.
+      operationId: get_messages
+      responses:
+        "200":
+          description: List of submitted messages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    email:
+                      type: string
+                      format: email
+                    name:
+                      type: string
+                    message:
+                      type: string
+                    read:
+                      type: boolean
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+              example:
+                [
+                  {
+                    "_id": "66ce0c8dc538303360039d01",
+                    "email": "john.doe@example.com",
+                    "name": "John Doe",
+                    "message": "Hello, I would like to inquire about your services.",
+                    "read": false,
+                    "createdAt": "2025-08-19T16:25:14.149+00:00",
+                    "updatedAt": "2025-08-19T16:25:14.149+00:00",
+                  },
+                ]
+        "401":
+          description: Unauthorized access.
+          content:
+            application/json:
+              example: { "error": "No logged in admin user." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example:
+                { "error": "Failed to retrieve messages. Please try again." }
+        default:
+          description: Default error sample response
+  /admin/message/{messageId}:
+    summary: Update the read status of a message
+    put:
+      tags:
+        - Admin
+      summary: Update the read status of a message
+      description: Allows an admin to update the 'read' status of a message by its ID.
+      operationId: update_message_read_status
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the message to update.
+      requestBody:
+        description: Set the read status of the message.
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - read
+              type: object
+              properties:
+                read:
+                  type: boolean
+                  description: The new read status for the message.
+            example: { "read": true }
+      responses:
+        "200":
+          description: Successfully updated the message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  name:
+                    type: string
+                  message:
+                    type: string
+                  read:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                {
+                  "_id": "66ce0c8dc538303360039d01",
+                  "email": "john.doe@example.com",
+                  "name": "John Doe",
+                  "message": "Hello, I would like to inquire about your services.",
+                  "read": true,
+                  "createdAt": "2025-08-19T16:25:14.149+00:00",
+                  "updatedAt": "2025-08-19T16:30:00.000+00:00",
+                }
+        "400":
+          description: Invalid request (missing or invalid 'read' field).
+          content:
+            application/json:
+              examples:
+                invalidReadType:
+                  value: { "error": "The 'read' field must be a boolean." }
+        "401":
+          description: Unauthorized access.
+          content:
+            application/json:
+              example: { "error": "No logged in admin user." }
+        "404":
+          description: Message not found.
+          content:
+            application/json:
+              example: { "error": "There is no message with that messageId." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example:
+                { "error": "Failed to update message. Please try again." }
+        default:
+          description: Default error sample response
 components:
   schemas:
     Register:
@@ -261,7 +476,7 @@ components:
         - username
         - password
       properties:
-        name:
+        username:
           type: string
         password:
           type: string

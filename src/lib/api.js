@@ -1,7 +1,4 @@
-// API utility functions for authentication
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND;
-
+import { API_BASE_URL } from "@/lib/backendAPI";
 export const api = {
   // Register user
   register: async (userData) => {
@@ -10,6 +7,7 @@ export const api = {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // Include cookies
       body: JSON.stringify(userData),
     });
 
@@ -23,20 +21,38 @@ export const api = {
 
   // Login user
   login: async (credentials) => {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const requestId = Math.random().toString(36).substr(2, 9);
+    const loginUrl = `${API_BASE_URL}/login`;
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Login failed");
+    if (!API_BASE_URL) {
+      throw new Error(
+        "Backend API URL not configured. Please check your environment variables."
+      );
     }
 
-    return response.json();
+    try {
+      const response = await fetch(loginUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.error(`❌ [${requestId}] Login API error response:`, error);
+        throw new Error(error.message || "Login failed");
+      }
+
+      const responseData = await response.json();
+
+      return responseData;
+    } catch (error) {
+      console.error(`❌ [${requestId}] Fetch error:`, error);
+      throw error;
+    }
   },
 
   // Logout user
@@ -46,6 +62,7 @@ export const api = {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // Include cookies
     });
 
     if (!response.ok) {
@@ -62,10 +79,28 @@ export const api = {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // Include cookies
     });
 
     if (!response.ok) {
       throw new Error("Failed to get user data");
+    }
+
+    return response.json();
+  },
+
+  // Get user profile (alternative endpoint)
+  getProfile: async () => {
+    const response = await fetch(`${API_BASE_URL}/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to get profile data: ${response.status}`);
     }
 
     return response.json();

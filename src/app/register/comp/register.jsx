@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Eye, EyeOff, User, Mail, Lock, Loader2 } from "lucide-react";
-import { api } from "../../../lib/api";
+import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import GoogleButton from "../../login/comp/googleButton";
 
 const Register = () => {
   const router = useRouter();
@@ -132,8 +133,9 @@ const Register = () => {
                 <span>{error}</span>
               </div>
             )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
+              <GoogleButton />
+              <div className="divider divider-primary mb-4">OR</div>
+              <form onSubmit={handleSubmit} className="space-y-6">
               {/* Username Field */}
               <fieldset className="fieldset">
                 <legend className="label">

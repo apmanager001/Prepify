@@ -1,489 +1,442 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import {
-  Home,
-  BookOpen,
-  Target,
-  BarChart3,
-  Settings,
-  LogOut,
-  User,
-  Calendar,
-  Award,
-} from "lucide-react";
+import React, { useState } from "react";
 import Image from "next/image";
+import {
+  LogOut,
+  Menu,
+  X,
+  Shield,
+  NotebookPen,
+  CheckSquare,
+  ChartNoAxesColumn,
+  Calendar as CalendarIcon,
+  UsersRound,
+  Settings,
+} from "lucide-react";
+import Stats from "./comp/dashboardComps/sidebarStats/stats";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import StudyGuides from "./comp/studyGuides/studyGuides";
+import Notes from "./comp/notes/notes";
+import Todo from "./comp/todo/todo";
+import { useProfileQuery } from "./comp/useProfileQuery";
+// import Main from "./comp/main";
+// import DashboardPage from "./comp/dashboardComps/dashboard";
+import Overview from "./comp/dashboardComps/overview";
+import SettingsPage from "./comp/settings";
+import AdminPage from "./comp/adminPage";
+import Tools from "./comp/tools";
+import Community from "./comp/community.jsx/community";
+import Calendar from "./comp/calendar/calendar";
+import LoadingComp from "@/lib/loading";
 
 const Dashboard = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+  const { data: profileData, isLoading: profileLoading } = useProfileQuery();
   const [userData, setUserData] = useState({
-    username: "",
-    email: "",
-    userId: "",
+    profile: {
+      username: "",
+      email: "",
+      isAdmin: false,
+      screenname: "",
+      createdAt: "",
+    },
+  });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: api.logout,
+    onSuccess: () => {
+      // Redirect to home page after successful logout
+      router.push("/");
+    },
+    onError: (error) => {
+      console.error("Logout failed:", error);
+      // Redirect to home page even if logout failed
+      router.push("/");
+    },
   });
 
-  // Safely access localStorage only on client side
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserData({
-        username: localStorage.getItem("username") || "",
-        email: localStorage.getItem("email") || "",
-        userId: localStorage.getItem("userId") || "",
-      });
+  React.useEffect(() => {
+    if (profileData) {
+      setUserData((prev) => ({
+        ...prev,
+        profile: {
+          ...prev.profile,
+          // prefer values from profileData, fall back to existing state
+          username: profileData.username ?? prev.profile.username,
+          email: profileData.email ?? prev.profile.email,
+          isAdmin:
+            typeof profileData.isAdmin === "boolean"
+              ? profileData.isAdmin
+              : prev.profile.isAdmin,
+          screenname: profileData.screenname ?? prev.profile.screenname,
+          createdAt: profileData.createdAt ?? prev.profile.createdAt,
+        },
+      }));
     }
-  }, []);
+  }, [profileData]);
 
-  // Sidebar navigation items
+  // Sidebar items
   const sidebarItems = [
-    { id: "overview", label: "Overview", icon: Home },
-    { id: "study-plans", label: "Study Plans", icon: BookOpen },
-    { id: "goals", label: "Goals", icon: Target },
-    { id: "progress", label: "Progress", icon: BarChart3 },
-    { id: "achievements", label: "Achievements", icon: Award },
-    { id: "calendar", label: "Calendar", icon: Calendar },
-    { id: "profile", label: "Profile", icon: User },
-    { id: "settings", label: "Settings", icon: Settings },
+    {
+      id: "overview",
+      label: "Overview",
+      icon: () => <ChartNoAxesColumn size={24} />,
+    },
+    // {
+    //   id: "studyGuides",
+    //   label: "Study Guides",
+    //   icon: () => (
+    //     <svg
+    //       className="w-6 h-6"
+    //       fill="none"
+    //       stroke="currentColor"
+    //       viewBox="0 0 24 24"
+    //     >
+    //       <path
+    //         strokeLinecap="round"
+    //         strokeLinejoin="round"
+    //         strokeWidth={2}
+    //         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+    //       />
+    //     </svg>
+    //   ),
+    // },
+    // {
+    //   id: "tools",
+    //   label: "Study Tools",
+    //   icon: () => <Hammer size={24} />,
+    // },
+    {
+      id: "notes",
+      label: "Notes",
+      icon: () => <NotebookPen size={24} />,
+    },
+    {
+      id: "todo",
+      label: "To-Do",
+      icon: () => <CheckSquare size={24} />,
+    },
+    {
+      id: "calendar",
+      label: "Calendar",
+      icon: () => <CalendarIcon size={24} />,
+    },
+    // {
+    //   id: "resources",
+    //   label: "Resources",
+    //   icon: () => <FolderClosed size={24} />,
+    // },
+    {
+      id: "community",
+      label: "Community",
+      icon: () => <UsersRound size={24} />,
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: () => <Settings size={24} />,
+    },
+    // Admin-only item
+    ...(userData?.profile?.isAdmin
+      ? [
+          {
+            id: "admin",
+            label: "Admin Panel",
+            icon: () => <Shield size={24} />,
+          },
+        ]
+      : []),
   ];
 
-  // Content components for each tab
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return (
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                  Welcome back, {userData.username || "Student"}! 👋
-                </h1>
-                <p className="text-lg text-gray-600">
-                  Here&apos;s your study progress for today
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Today&apos;s Date</p>
-                <p className="text-lg font-semibold text-gray-900">
-                  {new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              </div>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-lg text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-blue-100 text-sm font-medium">
-                      Study Streak
-                    </p>
-                    <p className="text-3xl font-bold">7 days</p>
-                  </div>
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <Award size={24} />
-                  </div>
-                </div>
-                <p className="text-blue-100 text-sm mt-2">🔥 Keep it up!</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl shadow-lg text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-green-100 text-sm font-medium">
-                      Hours Studied
-                    </p>
-                    <p className="text-3xl font-bold">24.5</p>
-                  </div>
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <BarChart3 size={24} />
-                  </div>
-                </div>
-                <p className="text-green-100 text-sm mt-2">📚 This week</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl shadow-lg text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-purple-100 text-sm font-medium">
-                      Goals Completed
-                    </p>
-                    <p className="text-3xl font-bold">3</p>
-                  </div>
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <Target size={24} />
-                  </div>
-                </div>
-                <p className="text-purple-100 text-sm mt-2">✅ Out of 5</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl shadow-lg text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-orange-100 text-sm font-medium">
-                      Study Sessions
-                    </p>
-                    <p className="text-3xl font-bold">12</p>
-                  </div>
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <Calendar size={24} />
-                  </div>
-                </div>
-                <p className="text-orange-100 text-sm mt-2">📅 This month</p>
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Recent Activity
-              </h2>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <BookOpen size={20} className="text-green-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">
-                      Completed Math Module 3
-                    </p>
-                    <p className="text-sm text-gray-600">2 hours ago</p>
-                  </div>
-                  <span className="text-green-600 font-semibold">+25 XP</span>
-                </div>
-
-                <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Target size={20} className="text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-lg font-medium text-gray-900">
-                      Achieved Daily Goal
-                    </p>
-                    <p className="text-sm text-gray-600">4 hours ago</p>
-                  </div>
-                  <span className="text-blue-600 font-semibold">Goal Met!</span>
-                </div>
-
-                <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                    <Award size={20} className="text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">
-                      Earned &ldquo;Consistent Learner&rdquo; Badge
-                    </p>
-                    <p className="text-sm text-gray-600">1 day ago</p>
-                  </div>
-                  <span className="text-purple-600 font-semibold">
-                    New Badge!
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case "study-plans":
-        return (
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Study Plans
-              </h1>
-              <p className="text-lg text-gray-600">
-                Your personalized learning roadmap
-              </p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <BookOpen size={48} className="text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Create Your First Study Plan
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Get personalized study recommendations based on your goals and
-                  learning style.
-                </p>
-                <button className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl font-semibold hover:from-primary/90 hover:to-secondary/90 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Get Started
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
-      case "goals":
-        return (
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Learning Goals
-              </h1>
-              <p className="text-lg text-gray-600">
-                Set targets and track your progress
-              </p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Target size={48} className="text-green-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Set Your First Goal
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Define what you want to achieve and we&apos;ll help you get
-                  there step by step.
-                </p>
-                <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Create Goal
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
-      case "progress":
-        return (
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Progress Analytics
-              </h1>
-              <p className="text-lg text-gray-600">
-                Track your learning journey
-              </p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <BarChart3 size={48} className="text-blue-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  View Your Progress
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Detailed analytics and insights to help you understand your
-                  learning patterns.
-                </p>
-                <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  View Analytics
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
-      case "achievements":
-        return (
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Achievements
-              </h1>
-              <p className="text-lg text-gray-600">Celebrate your milestones</p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Award size={48} className="text-yellow-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Earn Your First Badge
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Complete challenges and unlock achievements as you progress in
-                  your studies.
-                </p>
-                <button className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  View Challenges
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
+        return <Overview />;
+      // <Main />;
+      case "studyGuides":
+        return <StudyGuides />;
+      case "notes":
+        return <Notes />;
+      case "todo":
+        return <Todo />;
+      case "tools":
+        return <Tools />;
       case "calendar":
+        return <Calendar />;
+      case "resources":
         return (
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Study Calendar
+                Resources
               </h1>
               <p className="text-lg text-gray-600">
-                Plan your learning schedule
+                Access study materials and learning resources
               </p>
             </div>
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
               <div className="text-center py-12">
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Calendar size={48} className="text-purple-600" />
+                  <svg
+                    className="w-12 h-12 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2m14 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v4"
+                    />
+                  </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Schedule Study Sessions
+                  Learning Resources
                 </h3>
                 <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Organize your study time and never miss a learning
-                  opportunity.
+                  Browse through a comprehensive collection of study materials,
+                  practice tests, and educational resources.
                 </p>
-                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-500 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Open Calendar
+                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                  Browse Resources
                 </button>
               </div>
             </div>
           </div>
         );
-
-      case "profile":
-        return (
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Profile</h1>
-              <p className="text-lg text-gray-600">Manage your account</p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-indigo-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <User size={48} className="text-indigo-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Update Your Profile
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Keep your information up to date and customize your learning
-                  experience.
-                </p>
-                <button className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Edit Profile
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
+      case "community":
+        return <Community />;
       case "settings":
+        return <SettingsPage />;
+      case "admin":
+        return <AdminPage />;
+      default:
         return (
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Settings
+                Dashboard
               </h1>
-              <p className="text-lg text-gray-600">Customize your experience</p>
-            </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-gray-500/10 to-gray-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Settings size={48} className="text-gray-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Configure Preferences
-                </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Adjust notifications, privacy settings, and other preferences
-                  to suit your needs.
-                </p>
-                <button className="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Open Settings
-                </button>
-              </div>
+              <p className="text-lg text-gray-600">
+                Welcome to your personalized learning dashboard
+              </p>
             </div>
           </div>
         );
-
-      default:
-        return (
-          <div className="space-y-8">
-            <h1 className="text-4xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-lg text-gray-600">
-              Select a section from the sidebar to get started.
-            </p>
-          </div>
-        );
     }
-  };
-
-  const handleLogout = () => {
-    // Clear localStorage only on client side
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("userId");
-      localStorage.removeItem("username");
-      localStorage.removeItem("email");
-    }
-    // Redirect to home page
-    window.location.href = "/";
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/30 flex">
-      {/* Sidebar */}
-      <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col">
-        {/* Logo Section */}
-        <div className="border-b border-gray-100 pb-4">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/logoNoSlogan.webp"
-              alt="Prepify"
-              width={100}
-              height={20}
-              className="h-40 w-40"
-              priority={true}
-            />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <label
+          htmlFor="menu-toggle"
+          className="swap swap-rotate btn rounded-lg"
+        >
+          <input
+            id="menu-toggle"
+            type="checkbox"
+            checked={isMobileMenuOpen}
+            onChange={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          />
 
-            <p className="text-sm text-primary/80 font-medium">Ace Your Prep</p>
-          </div>
-        </div>
+          <Menu size={24} className="swap-off text-gray-700" />
+          <X size={24} className="swap-on text-gray-700" />
+        </label>
+      </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-6 space-y-3">
-          {sidebarItems.map((item) => {
-            const Icon = item.icon;
-            return (
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={closeMobileMenu}
+          />
+
+          {/* Sidebar */}
+          <div className="absolute left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+            {/* Logo Section */}
+            <div className="border-b border-gray-100  flex-shrink-0">
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/logoSlogan.webp"
+                  alt="Prepify"
+                  width={128}
+                  height={128}
+                  className="h-32 w-32 rounded-full object-cover object-center"
+                  priority={true}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col justify-between">
+              <Stats />
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 p-6 space-y-3 overflow-y-auto">
+              {sidebarItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      closeMobileMenu();
+                    }}
+                    className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
+                      activeTab === item.id
+                        ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
+                        : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                    }`}
+                  >
+                    <Icon />
+                    <span className="font-semibold">{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* User Section & Logout */}
+            <div className="p-6 border-t border-gray-100 flex-shrink-0">
+              <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                <p className="text-sm font-semibold text-gray-900 mb-1">
+                  {userData?.profile?.username?.startsWith("\\google")
+                    ? ""
+                    : userData?.profile?.username || "User"}
+                </p>
+                <p className="text-xs text-gray-600">
+                  {userData?.profile?.email || "user@example.com"}
+                </p>
+                {userData?.profile?.isAdmin && (
+                  <p className="text-xs text-red-600 font-medium mt-1">
+                    Administrator
+                  </p>
+                )}
+              </div>
               <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group ${
-                  activeTab === item.id
-                    ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
-                    : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
-                }`}
+                onClick={handleLogout}
+                disabled={logoutMutation.isPending}
+                className="w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
               >
-                <Icon size={22} className="flex-shrink-0" />
-                <span className="font-semibold">{item.label}</span>
+                {logoutMutation.isPending ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <LogOut size={22} />
+                )}
+                <span className="font-semibold">
+                  {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                </span>
               </button>
-            );
-          })}
-        </nav>
-
-        {/* User Section & Logout */}
-        <div className="p-6 border-t border-gray-100">
-          <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-            <p className="text-sm font-semibold text-gray-900 mb-1">
-              {userData.username || "User"}
-            </p>
-            <p className="text-xs text-gray-600">
-              {userData.email || "user@example.com"}
-            </p>
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group"
-          >
-            <LogOut size={22} />
-            <span className="font-semibold">Logout</span>
-          </button>
+        </div>
+      )}
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex h-screen overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
+          {/* Logo Section */}
+          <div className="border-b border-gray-100">
+            <div className="flex flex-col items-center">
+              <Image
+                src="/logoSlogan.webp"
+                alt="Prepify"
+                width={160}
+                height={160}
+                className="h-20 w-20 rounded-full object-cover object-center"
+                priority={true}
+              />
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 p-6 md:p-3 space-y-3 overflow-y-auto">
+            <div className="flex-1 flex flex-col justify-between">
+              <Stats />
+            </div>
+            {sidebarItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
+                    activeTab === item.id
+                      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
+                      : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                  }`}
+                >
+                  <Icon />
+                  <span className="font-semibold">{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* User Section & Logout */}
+          <div className="p-6 border-t border-gray-100">
+            <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+              {profileLoading ? (
+                <LoadingComp />
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-gray-900 mb-1">
+                      {userData?.profile?.username?.startsWith("\\google")
+                        ? ""
+                        : userData?.profile?.username || "User"}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {userData?.profile?.email || "user@example.com"}
+                    </p>
+                    {userData?.profile?.isAdmin && (
+                      <p className="text-xs text-red-600 font-medium mt-1">
+                        Administrator
+                      </p>
+                    )}
+                  </>
+              )}
+            </div>
+            <button
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+              className="cursor-pointer w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
+            >
+              {logoutMutation.isPending ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                <LogOut size={22} />
+              )}
+              <span className="font-semibold">
+                {logoutMutation.isPending ? "Logging out..." : "Logout"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 p-8 overflow-y-auto h-screen">
+          {renderContent()}
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-8 max-w-7xl mx-auto">{renderContent()}</div>
-      </div>
+      {/* Mobile Main Content */}
+      <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
     </div>
   );
 };
