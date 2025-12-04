@@ -1,83 +1,63 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Img from "next/image";
-import Link from "next/link";
 import { Play, Pause, Undo, Redo } from "lucide-react";
-
-const songs = [
-  {
-    title: "Interstellar - Hans Zimmer",
-    image: "/albumnArt/interstellar.webp",
-    audio: "/audio/interstellar.mp3",
-  },
-  {
-    title: "Social Network - Trent Reznor",
-    image: "/albumnArt/socialNetwork.webp",
-    audio: "/audio/social.mp3",
-  },
-  {
-    title: "Inception - Hans Zimmer",
-    image: "/albumnArt/inception.webp",
-    audio: "/ambient/inception.mp3",
-    duration: "1:00:00",
-  },
-  {
-    title: "Rain - Ambient",
-    image: "/albumnArt/rain.webp",
-    audio: "/ambient/rain.mp3",
-    duration: "59:59",
-  },
-  {
-    title: "40Hz",
-    image: "/albumnArt/40hz.webp",
-    audio: "/ambient/40hz.mp3",
-    duration: "30:06",
-  },
-];
+import useToolStore from "@/lib/toolStore";
 
 const CurrentPlayer = () => {
-  const [currentSong, setCurrentSong] = useState(songs[2]);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const playlist = useToolStore((s) => s.playlist);
+  const currentIndex = useToolStore((s) => s.currentIndex);
+  const isPlaying = useToolStore((s) => s.isPlaying);
+  const setIndex = useToolStore((s) => s.setIndex);
+  const play = useToolStore((s) => s.play);
+  const pause = useToolStore((s) => s.pause);
+  const toggle = useToolStore((s) => s.toggle);
+  const next = useToolStore((s) => s.next);
+  const prev = useToolStore((s) => s.prev);
+
+  const currentSong = playlist?.[currentIndex] ||
+    playlist?.[0] || {
+      title: "No song",
+      image: "/albumnArt/studyPicture.webp",
+      audio: "",
+    };
+
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  // const audioRefs = useRef({});
+  const audioRef = useRef(null);
 
   const timeStringToSeconds = (time) => {
     if (!time) return 0;
     const parts = time.split(":").map(Number);
     if (parts.length === 3) {
-      // HH:MM:SS
       return parts[0] * 3600 + parts[1] * 60 + parts[2];
     } else if (parts.length === 2) {
-      // MM:SS
       return parts[0] * 60 + parts[1];
     } else if (parts.length === 1) {
-      // SS
       return parts[0];
     }
     return 0;
   };
 
-  const togglePlay = () => {
-    const audio = document.querySelector("audio");
+  useEffect(() => {
+    const audio = audioRef.current;
     if (!audio) return;
-
+    audio.src = currentSong.audio || "";
     if (isPlaying) {
-      audio.pause();
+      audio.play().catch(() => {});
     } else {
-      audio.play();
+      audio.pause();
     }
-    setIsPlaying(!isPlaying);
-  };
+  }, [currentSong.audio, currentIndex, isPlaying]);
 
-  const changeSong = (song) => {
-    setCurrentSong(song);
-    setIsPlaying(false);
+  const changeSong = (song, idx) => {
+    setIndex(idx);
+    pause();
     setCurrentTime(0);
   };
 
   const seekAudio = (delta) => {
-    const audio = document.querySelector("audio");
+    const audio = audioRef.current;
     if (!audio) return;
     let newTime = Math.max(
       0,
@@ -94,15 +74,16 @@ const CurrentPlayer = () => {
           <Img
             src={currentSong.image}
             alt="Album Art"
-            fill
-            className="object-cover rounded-t-xl overflow-hidden"
+            width={700}
+            height={700}
+            className="h-full w-full object-cover rounded-t-xl overflow-hidden"
           />
           <audio
+            ref={audioRef}
             src={currentSong.audio}
-            autoPlay={isPlaying}
             onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
             onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-            onEnded={() => setIsPlaying(false)}
+            onEnded={() => pause()}
             className="hidden"
           />
           <div className="absolute inset-0 bg-black/50 rounded-t-lg z-10 h-[250px]"></div>
@@ -112,10 +93,10 @@ const CurrentPlayer = () => {
               Change Song
             </summary>
             <ul className="menu dropdown-content bg-gray-800 text-white rounded-lg w-48 p-2">
-              {songs.map((song, index) => (
+              {playlist.map((song, index) => (
                 <li key={index}>
                   <button
-                    onClick={() => changeSong(song)}
+                    onClick={() => changeSong(song, index)}
                     className="hover:bg-gray-700 rounded-md p-2"
                   >
                     {song.title}
@@ -160,7 +141,7 @@ const CurrentPlayer = () => {
 
               <div
                 className="bg-primary hover:bg-primary/80 z-30 rounded-full p-3 inline-block cursor-pointer "
-                onClick={togglePlay}
+                onClick={toggle}
               >
                 {isPlaying ? (
                   <Pause className="text-white" />
