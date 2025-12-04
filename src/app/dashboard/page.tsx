@@ -29,12 +29,12 @@ import AdminPage from "./comp/adminPage";
 import Tools from "./comp/tools";
 import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
-
+import LoadingComp from "@/lib/loading";
 
 const Dashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
-  const { data: profileData } = useProfileQuery();
+  const { data: profileData, isLoading: profileLoading } = useProfileQuery();
   const [userData, setUserData] = useState({
     profile: {
       username: "",
@@ -316,7 +316,9 @@ const Dashboard = () => {
             <div className="p-6 border-t border-gray-100 flex-shrink-0">
               <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
                 <p className="text-sm font-semibold text-gray-900 mb-1">
-                  {userData?.profile?.username || "User"}
+                  {userData?.profile?.username?.startsWith("\\google")
+                    ? ""
+                    : userData?.profile?.username || "User"}
                 </p>
                 <p className="text-xs text-gray-600">
                   {userData?.profile?.email || "user@example.com"}
@@ -390,16 +392,24 @@ const Dashboard = () => {
           {/* User Section & Logout */}
           <div className="p-6 border-t border-gray-100">
             <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-              <p className="text-sm font-semibold text-gray-900 mb-1">
-                {userData?.profile?.username || "User"}
-              </p>
-              <p className="text-xs text-gray-600">
-                {userData?.profile?.email || "user@example.com"}
-              </p>
-              {userData?.profile?.isAdmin && (
-                <p className="text-xs text-red-600 font-medium mt-1">
-                  Administrator
-                </p>
+              {profileLoading ? (
+                <LoadingComp />
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-gray-900 mb-1">
+                      {userData?.profile?.username?.startsWith("\\google")
+                        ? ""
+                        : userData?.profile?.username || "User"}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {userData?.profile?.email || "user@example.com"}
+                    </p>
+                    {userData?.profile?.isAdmin && (
+                      <p className="text-xs text-red-600 font-medium mt-1">
+                        Administrator
+                      </p>
+                    )}
+                  </>
               )}
             </div>
             <button
