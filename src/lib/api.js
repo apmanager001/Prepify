@@ -72,23 +72,6 @@ export const api = {
     return response.json();
   },
 
-  // Get current user
-  getCurrentUser: async () => {
-    const response = await fetch(`${API_BASE_URL}/me`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to get user data");
-    }
-
-    return response.json();
-  },
-
   // Get user profile (alternative endpoint)
   getProfile: async () => {
     const response = await fetch(`${API_BASE_URL}/profile`, {
