@@ -1,39 +1,12 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useProfileQuery } from "@/app/dashboard/comp/useProfileQuery";
 
 const Header = () => {
+  const { data: profileData, error: profileError } = useProfileQuery();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Check if user is logged in
-  useEffect(() => {
-    const checkLoginStatus = () => {
-      if (typeof window !== "undefined") {
-        const userId = localStorage.getItem("userId");
-        setIsLoggedIn(!!userId);
-      }
-    };
-
-    // Check initial status
-    checkLoginStatus();
-
-    // Listen for storage changes (when user logs in/out from other tabs)
-    const handleStorageChange = (e) => {
-      if (e.key === "userId") {
-        checkLoginStatus();
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
 
   // Navigation links array - single source of truth
   const navigationLinks = [
@@ -44,10 +17,12 @@ const Header = () => {
     { href: "#donations", label: "Donate" },
     { href: "#contact", label: "Contact" },
   ];
+  
+
 
   const loginLink = (
     <div>
-      {isLoggedIn ? (
+      {profileError ? (
         <Link
           href="/dashboard"
           className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"

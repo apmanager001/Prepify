@@ -26,30 +26,8 @@ const Main = () => {
     retry: 1,
     onError: (error) => {
       console.error("Profile fetch error:", error);
-      if (
-        error.message.includes("401") ||
-        error.message.includes("Unauthorized")
-      ) {
-        // Session expired or invalid, redirect to login
-        localStorage.removeItem("userId");
-        localStorage.removeItem("username");
-        localStorage.removeItem("email");
-        router.push("/login");
-      }
     },
   });
-
-  useEffect(() => {
-    // First try to get data from localStorage for immediate display
-    if (typeof window !== "undefined") {
-      const storedData = {
-        username: localStorage.getItem("username") || "",
-        email: localStorage.getItem("email") || "",
-        userId: localStorage.getItem("userId") || "",
-      };
-      setUserData(storedData);
-    }
-  }, []);
 
   // Update user data when profile is fetched
   useEffect(() => {
