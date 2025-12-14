@@ -14,8 +14,8 @@ const todayEvents = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
 const Overview = () => {
   const { data: fetchEventData, isLoading: calendarLoading } =
     useCalendarEvents({
-      from: todayEvents,
-      to: todayEvents,
+      from: startToday,
+      to: endToday,
     });
   const { data: notes, isLoading: notesLoading } = useNotes();
   const { data: todos, isLoading: todosLoading } = useTodos();
@@ -182,7 +182,7 @@ const Overview = () => {
       {/* <footer className="mx-0 w-full"> */}
       <footer className="flex items-center justify-between p-4 rounded-md shadow-sm fixed bottom-0 bg-base-200 mr-6">
         <ToolsFooter />
-      </footer>
+      </footer> */}
     </div>
   );
 };

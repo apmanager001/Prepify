@@ -274,6 +274,7 @@ const StudyGoalsTab = ({
       </div>
     );
   }
+  
   if (isError) {
     return <div className="text-red-500 min-h-24">Error loading profile.</div>;
   }

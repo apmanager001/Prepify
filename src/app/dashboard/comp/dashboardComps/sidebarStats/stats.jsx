@@ -195,7 +195,7 @@ const Stats = () => {
         return (
           <div
             key={s.key}
-            className={`${s.cardBg} flex items-center gap-3 p-3 rounded-md border border-black text-neutral-content`}
+            className={`${s.cardBg} flex items-center gap-3 p-1 rounded-md border border-gray-200`}
           >
             <div
               className={`${s.iconBg} w-9 h-9 rounded-full flex items-center justify-center`}

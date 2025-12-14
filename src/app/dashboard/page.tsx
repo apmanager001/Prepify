@@ -12,6 +12,7 @@ import {
   Calendar as CalendarIcon,
   UsersRound,
   Settings,
+  Fullscreen,
 } from "lucide-react";
 import Stats from "./comp/dashboardComps/sidebarStats/stats";
 import { useMutation } from "@tanstack/react-query";
@@ -30,6 +31,9 @@ import Tools from "./comp/tools";
 import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
+import FeedbackWidget from "./cornerTools/feedbackWidget";
+import ToolsButton from "./cornerTools/tools";
+import CornerWidgets from "./cornerTools/cornerWidgets";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -61,6 +65,15 @@ const Dashboard = () => {
 
   React.useEffect(() => {
     if (profileData) {
+      // If the response includes a status field and it's not OK, redirect to login
+      if (
+        typeof profileData.status === "number" &&
+        profileData.status !== 200
+      ) {
+        router.push("/login");
+        return;
+      }
+
       setUserData((prev) => ({
         ...prev,
         profile: {
@@ -77,7 +90,15 @@ const Dashboard = () => {
         },
       }));
     }
-  }, [profileData]);
+  }, [profileData, router]);
+
+  if (profileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100">
+        <LoadingComp />
+      </div>
+    );
+  }
 
   // Sidebar items
   const sidebarItems = [
@@ -270,21 +291,20 @@ const Dashboard = () => {
           />
 
           {/* Sidebar */}
-          <div className="absolute left-0 top-0 h-full w-80 bg-neutral backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
-            {/* Logo Section */}
-            <div className="border-b border-gray-100  flex-shrink-0">
-              <div className="flex flex-col items-center">
-                <Image
-                  src="/logoSlogan.webp"
-                  alt="Prepify"
-                  width={128}
-                  height={128}
-                  className="h-32 w-32 rounded-full object-cover object-center"
-                  priority={true}
-                />
-              </div>
+          <div className="absolute left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+            <div className="flex flex-col items-center">
+              <Image
+                src="/logoSlogan.webp"
+                alt="Prepify"
+                width={128}
+                height={128}
+                className="h-32 w-32 rounded-full object-cover object-center"
+                priority={true}
+              />
             </div>
-            <div className="flex flex-col justify-between">
+
+            {/* Logo Section */}
+            <div className="flex flex-col justify-between mt-2">
               <Stats />
             </div>
 
@@ -313,36 +333,44 @@ const Dashboard = () => {
             </nav>
 
             {/* User Section & Logout */}
-            <div className="p-6 border-t border-gray-900 flex-shrink-0">
-              <div className="mb-4 p-4 bg-gradient-to-br from-gray-950 to-gray-800 rounded-xl border border-gray-800">
-                <p className="text-sm font-semibold text-gray-100 mb-1">
-                  {userData?.profile?.username?.startsWith("\\google")
-                    ? ""
-                    : userData?.profile?.username || "User"}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {userData?.profile?.email || "user@example.com"}
-                </p>
-                {userData?.profile?.isAdmin && (
-                  <p className="text-xs text-red-600 font-medium mt-1">
-                    Administrator
-                  </p>
-                )}
+            <div className="p-6 border-t border-gray-100 flex-shrink-0">
+              <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 mb-1 truncate">
+                      {userData?.profile?.username?.startsWith("\\google")
+                        ? ""
+                        : userData?.profile?.username || "User"}
+                    </p>
+                    <p className="text-xs text-gray-600 truncate">
+                      {userData?.profile?.email || "user@example.com"}
+                    </p>
+                    {userData?.profile?.isAdmin && (
+                      <p className="text-xs text-red-600 font-medium mt-1">
+                        Administrator
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex-shrink-0 ml-2">
+                    <button
+                      onClick={handleLogout}
+                      disabled={logoutMutation.isPending}
+                      className="flex items-center space-x-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 hover:shadow transition-all duration-200 disabled:opacity-50"
+                      aria-label="Logout"
+                    >
+                      {logoutMutation.isPending ? (
+                        <span className="loading loading-spinner loading-sm"></span>
+                      ) : (
+                        <LogOut size={18} />
+                      )}
+                      <span className="hidden sm:inline font-semibold">
+                        {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={handleLogout}
-                disabled={logoutMutation.isPending}
-                className="w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
-              >
-                {logoutMutation.isPending ? (
-                  <span className="loading loading-spinner loading-sm"></span>
-                ) : (
-                  <LogOut size={22} />
-                )}
-                <span className="font-semibold">
-                  {logoutMutation.isPending ? "Logging out..." : "Logout"}
-                </span>
-              </button>
             </div>
           </div>
         </div>
@@ -364,7 +392,6 @@ const Dashboard = () => {
               />
             </div>
           </div>
-
           {/* Navigation */}
           <nav className="flex-1 p-6 md:p-3 space-y-3 overflow-y-auto">
             <div className="flex-1 flex flex-col justify-between">
@@ -390,42 +417,50 @@ const Dashboard = () => {
           </nav>
 
           {/* User Section & Logout */}
-          <div className="p-6 border-t border-gray-100">
-            <div className="mb-4 p-4 bg-gradient-to-br from-gray-950 to-gray-800 rounded-xl border border-gray-800">
-              {profileLoading ? (
-                <LoadingComp />
-              ) : (
-                <>
-                  <p className="text-sm font-semibold text-gray-100 mb-1">
-                    {userData?.profile?.username?.startsWith("\\google")
-                      ? ""
-                      : userData?.profile?.username || "User"}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {userData?.profile?.email || "user@example.com"}
-                  </p>
-                  {userData?.profile?.isAdmin && (
-                    <p className="text-xs text-red-600 font-medium mt-1">
-                      Administrator
-                    </p>
+          <div className="pt-1 px-4 border-t border-gray-100">
+            <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  {profileLoading ? (
+                    <LoadingComp />
+                  ) : (
+                    <>
+                      <p className="text-sm font-semibold text-gray-900 mb-1 truncate">
+                        {userData?.profile?.username?.startsWith("\\google")
+                          ? ""
+                          : userData?.profile?.username || "User"}
+                      </p>
+                      <p className="text-xs text-gray-600 truncate">
+                        {userData?.profile?.email || "user@example.com"}
+                      </p>
+                      {userData?.profile?.isAdmin && (
+                        <p className="text-xs text-red-600 font-medium mt-1">
+                          Administrator
+                        </p>
+                      )}
+                    </>
                   )}
-                </>
-              )}
+                </div>
+
+                <div className="flex-shrink-0 ml-2">
+                  <button
+                    onClick={handleLogout}
+                    disabled={logoutMutation.isPending}
+                    className="btn btn-error btn-soft rounded-2xl"
+                    aria-label="Logout"
+                  >
+                    {logoutMutation.isPending ? (
+                      <span className="loading loading-spinner loading-sm"></span>
+                    ) : (
+                      <LogOut size={18} />
+                    )}
+                    <span className="hidden sm:inline font-semibold">
+                      {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                    </span>
+                  </button>
+                </div>
+              </div>
             </div>
-            <button
-              onClick={handleLogout}
-              disabled={logoutMutation.isPending}
-              className="cursor-pointer w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-error hover:bg-error hover:text-error-content hover:border-[#2C2C2C] hover:shadow-md transition-all duration-300 group disabled:opacity-50"
-            >
-              {logoutMutation.isPending ? (
-                <span className="loading loading-spinner loading-sm"></span>
-              ) : (
-                <LogOut size={22} />
-              )}
-              <span className="font-semibold">
-                {logoutMutation.isPending ? "Logging out..." : "Logout"}
-              </span>
-            </button>
           </div>
         </div>
 
@@ -436,9 +471,10 @@ const Dashboard = () => {
       </div>
 
       {/* Mobile Main Content */}
-      <div className="lg:hidden pt-20 px-4 pb-12 bg-base-100">
-        {renderContent()}
-      </div>
+      <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
+      {/* <FeedbackWidget />
+      <ToolsButton /> */}
+      <CornerWidgets />
     </div>
   );
 };

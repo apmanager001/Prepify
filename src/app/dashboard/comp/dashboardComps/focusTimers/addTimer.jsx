@@ -65,21 +65,23 @@ const AddTimerModal = ({ isOpen, onClose }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Timer name field */}
           <div>
-            <label className="block text-sm font-medium mb-1">Timer Name</label>
+            <label htmlFor="timer-name" className="block text-sm font-medium mb-1">Timer Name</label>
             <input
               type="text"
-              className="input w-full rounded-lg bg-base-200"
+              id='timer-name'
+              className="input w-full rounded-lg"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              maxLength={40}
               required
             />
           </div>
 
           {/* Minutes input section */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <span className="block text-sm font-medium mb-1">
               Study Duration (Minutes)
-            </label>
+            </span>
 
             {/* Quick-add buttons */}
             <div className="flex gap-2 flex-wrap mb-2 justify-around">

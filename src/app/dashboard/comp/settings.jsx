@@ -127,9 +127,10 @@ const SettingsPage = () => {
                   "Receive promotional and marketing emails"}
               </p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label htmlFor={`notification-toggle-${key}`} className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
+                id={`notification-toggle-${key}`}
                 checked={value}
                 onChange={(e) =>
                   handleInputChange("notifications", key, e.target.checked)
@@ -197,9 +198,10 @@ const SettingsPage = () => {
                     "Share anonymous data to improve the platform"}
                 </p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
+              <label htmlFor={`privacy-toggle-${key}`} className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
+                  id={`privacy-toggle-${key}`}
                   checked={value}
                   onChange={(e) =>
                     handleInputChange("privacy", key, e.target.checked)
@@ -228,10 +230,11 @@ const SettingsPage = () => {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="theme-select" className="block text-sm font-medium text-gray-700 mb-2">
             Theme
           </label>
           <select
+            id="theme-select"
             value={userData.appearance.theme}
             onChange={(e) =>
               handleInputChange("appearance", "theme", e.target.value)
