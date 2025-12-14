@@ -22,7 +22,7 @@ import { useTimerStore } from "@/store/useTimerStore";
 const ToolCard = ({ Icon, title, subtitle }) => (
   <button className="w-full text-left bg-white p-3 rounded-md border border-gray-100 shadow-sm hover:shadow-md transition">
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-md bg-gray-50 flex items-center justify-center">
+      <div className="w-10 h-10 rounded-md flex items-center justify-center">
         <Icon size={18} className="text-gray-700" />
       </div>
       <div>
@@ -147,7 +147,7 @@ const ToolsFooter = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="">
+    <div className="relative">
       {/* Header row - collapsed content + toggle */}
       <div className="relative flex items-center justify-between px-4  gap-4">
         <div className="flex flex-col md:flex-row justify-between items-center gap-3 w-full">

@@ -43,7 +43,7 @@ export default function Leaderboard() {
 
   const isEmpty = !query.isLoading && leaderboard.length === 0;
   return (
-    <section className="p-4 bg-white rounded-lg shadow-sm">
+    <section className="p-4 bg-base-200 rounded-lg shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-indigo-50 rounded-md">

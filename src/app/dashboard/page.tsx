@@ -207,7 +207,7 @@ const Dashboard = () => {
                 Access study materials and learning resources
               </p>
             </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <div className="bg-base-100 rounded-2xl shadow-lg border border-gray-100 p-8">
               <div className="text-center py-12">
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <svg
@@ -321,8 +321,8 @@ const Dashboard = () => {
                     }}
                     className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
                       activeTab === item.id
-                        ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
-                        : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                        ? "bg-primary text-primary-content shadow-lg transform scale-105"
+                        : "text-neutral-content hover:bg-base-100/30 hover:shadow-md"
                     }`}
                   >
                     <Icon />
@@ -378,16 +378,16 @@ const Dashboard = () => {
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
+        <div className="w-72 bg-neutral backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
           {/* Logo Section */}
           <div className="border-b border-gray-100">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center ">
               <Image
-                src="/logoSlogan.webp"
+                src="/WhiteLogoWithSlogan.png"
                 alt="Prepify"
                 width={160}
                 height={160}
-                className="h-20 w-20 rounded-full object-cover object-center"
+                className="h-24 w-24 rounded-full object-cover object-center"
                 priority={true}
               />
             </div>
@@ -405,8 +405,8 @@ const Dashboard = () => {
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
                     activeTab === item.id
-                      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
-                      : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                      ? "bg-primary text-primary-content shadow-lg transform scale-105"
+                      : "text-neutral-content hover:bg-base-100/30 hover:shadow-md"
                   }`}
                 >
                   <Icon />
@@ -465,7 +465,7 @@ const Dashboard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-8 overflow-y-auto h-screen">
+        <div className="flex-1 bg-base-100 p-8 overflow-y-auto h-screen">
           {renderContent()}
         </div>
       </div>

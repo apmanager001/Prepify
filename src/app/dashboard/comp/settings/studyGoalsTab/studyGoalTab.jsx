@@ -281,7 +281,7 @@ const StudyGoalsTab = ({
 
   return (
     <div className="space-y-6">
-      <div className="p-6 bg-white/80 rounded-lg shadow-sm border border-gray-100 flex justify-between gap-4">
+      <div className="p-6 bg-base-100 rounded-lg shadow-sm border border-gray-100 flex justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">Study Goals & Preferences</h2>
           <p className="text-sm text-gray-600 mt-1 max-w-2xl">
@@ -320,7 +320,7 @@ const StudyGoalsTab = ({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-3 p-4 bg-white rounded-lg shadow">
+        <div className="lg:col-span-3 p-4 bg-base-100 rounded-lg shadow">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -330,7 +330,7 @@ const StudyGoalsTab = ({
                 </div>
               </label>
               <select
-                className="select w-full"
+                className="select w-full bg-base-200"
                 value={gradeLevel || ""}
                 onChange={(e) =>
                   handleInputChange("profile", "gradeLevel", e.target.value)
@@ -361,7 +361,9 @@ const StudyGoalsTab = ({
                       type="button"
                       onClick={() => toggleArrayField("profile", "subjects", s)}
                       className={`btn btn-sm rounded-full ${
-                        selected ? "btn-primary text-white" : "btn-ghost"
+                        selected
+                          ? "bg-base-200 text-black border border-black"
+                          : "text-gray-500 hover:text-black border border-black/30 hover:bg-base-200"
                       }`}
                     >
                       {s}
@@ -403,7 +405,7 @@ const StudyGoalsTab = ({
           </div>
         </div>
 
-        <div className="lg:col-span-3 p-4 bg-white rounded-lg shadow">
+        <div className="lg:col-span-3 p-4 bg-base-100 rounded-lg shadow">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <div className="flex items-center gap-2">
               <Clock size={16} />
@@ -448,7 +450,7 @@ const StudyGoalsTab = ({
           </div>
         </div>
 
-        <div className="lg:col-span-3 p-4 bg-white rounded-lg shadow">
+        <div className="lg:col-span-3 p-4 bg-base-100 rounded-lg shadow">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -459,7 +461,7 @@ const StudyGoalsTab = ({
               </label>
               <input
                 type="text"
-                className="input w-full"
+                className="input w-full bg-base-200"
                 value={institution || ""}
                 onChange={(e) =>
                   handleInputChange("profile", "institution", e.target.value)
@@ -475,7 +477,7 @@ const StudyGoalsTab = ({
                 </div>
               </label>
               <select
-                className="select w-full"
+                className="select w-full bg-base-200"
                 value={graduationYear || ""}
                 onChange={(e) =>
                   handleInputChange("profile", "graduationYear", e.target.value)
@@ -498,7 +500,7 @@ const StudyGoalsTab = ({
                 </div>
               </label>
               <select
-                className="select w-full"
+                className="select w-full bg-base-200"
                 value={ageRange || ""}
                 onChange={(e) =>
                   handleInputChange("profile", "ageRange", e.target.value)
@@ -522,7 +524,7 @@ const StudyGoalsTab = ({
               </label>
               <input
                 type="text"
-                className="input w-full"
+                className="input w-full bg-base-200"
                 value={currentCourse || ""}
                 onChange={(e) =>
                   handleInputChange("profile", "currentCourse", e.target.value)
@@ -532,7 +534,7 @@ const StudyGoalsTab = ({
           </div>
         </div>
 
-        <div className="lg:col-span-3 p-4 bg-white rounded-lg shadow">
+        <div className="lg:col-span-3 p-4 bg-base-100 rounded-lg shadow">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-3">
               <div className="flex justify-between items-center">
@@ -570,8 +572,12 @@ const StudyGoalsTab = ({
                         toggleArrayField("profile", "expectedExams", ex)
                       }
                       disabled={disabled}
-                      className={`btn btn-sm rounded-full ${
-                        sel ? "btn-primary text-white" : "btn-ghost"
+                      className={`btn btn-sm rounded-full border ${
+                        sel ? "border-black" : "border-black/30"
+                      }  ${
+                        sel
+                          ? "bg-base-200 text-black"
+                          : "text-gray-500 hover:text-black hover:bg-base-200"
                       } ${disabled ? "opacity-40 cursor-not-allowed" : ""}`}
                     >
                       {ex}
@@ -589,7 +595,7 @@ const StudyGoalsTab = ({
                 </div>
               </label>
               <select
-                className="select w-full"
+                className="select w-full bg-base-200"
                 value={proficiency || ""}
                 onChange={(e) =>
                   handleInputChange("profile", "proficiency", e.target.value)
@@ -619,8 +625,12 @@ const StudyGoalsTab = ({
                       onClick={() =>
                         toggleArrayField("profile", "preferredStudyStyle", s)
                       }
-                      className={`btn btn-sm rounded-full ${
-                        sel ? "btn-primary text-white" : "btn-ghost"
+                      className={`btn btn-sm rounded-full border ${
+                        sel ? "border-black" : "border-black/30"
+                      }  ${
+                        sel
+                          ? "bg-base-200 text-black"
+                          : "text-gray-500 hover:text-black hover:bg-base-200"
                       }`}
                     >
                       {s}
@@ -632,7 +642,7 @@ const StudyGoalsTab = ({
           </div>
         </div>
 
-        <div className="lg:col-span-3 p-4 bg-white rounded-lg shadow">
+        <div className="lg:col-span-3 p-4 bg-base-100 rounded-lg shadow">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div>
               <div className="flex justify-between items-center">
@@ -661,7 +671,7 @@ const StudyGoalsTab = ({
               <div className="flex items-center gap-3">
                 <input
                   type="date"
-                  className="input w-full"
+                  className="input w-full bg-base-200"
                   value={goalDeadline || ""}
                   onChange={(e) =>
                     handleInputChange("profile", "goalDeadline", e.target.value)
@@ -679,7 +689,7 @@ const StudyGoalsTab = ({
                 </div>
               </label>
               <select
-                className="select w-full"
+                className="select w-full bg-base-200"
                 value={minutesPerWeek || ""}
                 onChange={(e) =>
                   handleInputChange("profile", "minutesPerWeek", e.target.value)
@@ -705,7 +715,7 @@ const StudyGoalsTab = ({
                 </div>
               </label>
               <select
-                className="select w-full"
+                className="select w-full bg-base-200"
                 value={
                   timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
                 }
@@ -724,7 +734,7 @@ const StudyGoalsTab = ({
           </div>
         </div>
 
-        <div className="lg:col-span-3 p-4 bg-white rounded-lg shadow">
+        <div className="lg:col-span-3 p-4 bg-base-100 rounded-lg shadow">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -735,7 +745,7 @@ const StudyGoalsTab = ({
               </label>
               <input
                 type="url"
-                className="input validator w-full"
+                className="input validator w-full bg-base-200"
                 placeholder="https://"
                 value={linkedin || ""}
                 onChange={(e) =>
@@ -754,7 +764,7 @@ const StudyGoalsTab = ({
               </label>
               <input
                 type="url"
-                className="input validator w-full"
+                className="input validator w-full bg-base-200"
                 placeholder="https://"
                 value={portfolio || ""}
                 onChange={(e) =>

@@ -51,8 +51,8 @@ const AddTimerModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 md:px-4">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-106 space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-base-100 rounded-xl shadow-lg p-8 w-106 space-y-6">
         {/* Modal header */}
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">Create Timer</h2>
@@ -89,7 +89,7 @@ const AddTimerModal = ({ isOpen, onClose }) => {
                 <button
                   key={`add-${min}`}
                   type="button"
-                  className="btn btn-sm btn-outline flex items-center gap-1"
+                  className="btn btn-sm btn-outline flex items-center gap-1 hover:bg-base-200 border border-black rounded-sm"
                   onClick={() => modifyMinutes(min)}
                 >
                   <Plus size={16} /> {min}
@@ -103,7 +103,7 @@ const AddTimerModal = ({ isOpen, onClose }) => {
                 <button
                   key={`sub-${min}`}
                   type="button"
-                  className="btn btn-sm btn-outline flex items-center gap-1"
+                  className="btn btn-sm btn-outline flex items-center gap-1 hover:bg-base-200 border border-black rounded-sm"
                   onClick={() => modifyMinutes(-min)}
                 >
                   <Minus size={16} /> {min}
@@ -115,14 +115,13 @@ const AddTimerModal = ({ isOpen, onClose }) => {
             <div className="flex justify-center items-center gap-2 mt-2">
               <input
                 type="number"
-                id='minutes-input'
-                className="w-24 px-2 py-1 border rounded-lg text-center"
+                className="w-24 px-2 py-1 border rounded-lg text-center bg-base-200"
                 value={studyMinutes}
                 min={0}
                 max={Infinity}
                 onChange={(e) => handleInputChange(e.target.value)}
               />
-              <span className="text-sm text-gray-500">minutes</span>
+              <span className="text-sm ">minutes</span>
             </div>
           </div>
 
@@ -130,13 +129,16 @@ const AddTimerModal = ({ isOpen, onClose }) => {
           <div className="flex justify-end gap-2 mt-4">
             <button
               type="button"
-              className="btn btn-primary btn-soft rounded-lg"
+              className="btn rounded-lg hover:bg-base-300"
               onClick={onClose}
             >
               Cancel
             </button>
 
-            <button type="submit" className="btn btn-primary rounded-lg">
+            <button
+              type="submit"
+              className="btn text-success rounded-lg hover:bg-base-300"
+            >
               Create Timer
             </button>
           </div>

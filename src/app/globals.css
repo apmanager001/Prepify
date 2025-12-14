@@ -1,6 +1,41 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: bumblebee --default;
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "prepify";
+  default: true;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: #fff3d7;
+  --color-base-200: #fee6ae;
+  --color-base-300: #feda86;
+  /* There are 2 darker colors used that could be base 400 and base 500 in the admin page */
+  --color-base-border: #1a1a1a;
+  --color-base-content: #1a1a1a;
+  --color-primary: #fdc135;
+  --color-primary-content: #1a1a1a;
+  --color-secondary: #fdcb58;
+  --color-secondary-content: #1a1a1a;
+  --color-accent: #fdb50d;
+  --color-accent-content: #1a1a1a;
+  --color-neutral: #25272d;
+  --color-neutral-content: #fee6ae;
+  --color-nuetral-border: #ffe5ad;
+  --color-info: #432dd7;
+  --color-info-content: #1a1a1a;
+  --color-success: oklch(76% 0.177 163.223);
+  --color-success-content: #1a1a1a;
+  --color-warning: #fdbb21;
+  --color-warning-content: #1a1a1a;
+  --color-error: #ef4444;
+  --color-error-content: oklch(39% 0.141 25.723);
+  --radius-selector: 1rem;
+  --radius-field: 1rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 1;
 }
 
 /* Section blending and transitions */

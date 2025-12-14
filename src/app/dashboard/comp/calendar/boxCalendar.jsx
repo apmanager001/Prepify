@@ -1,12 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import EventModal from "./eventModal";
-import { useCalendarEvents} from "./lib/calendar";
+import { useCalendarEvents } from "./lib/calendar";
 import LoadingComp from "@/lib/loading";
 
 const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
@@ -128,7 +124,6 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
     to: endOfMonthIso,
   });
 
-
   useEffect(() => {
     if (!fetchedData) return;
     // normalize fetchedData to an array of events
@@ -233,12 +228,16 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   }, [fetchedData]);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-32"><LoadingComp /></div>
+    return (
+      <div className="flex justify-center items-center min-h-32">
+        <LoadingComp />
+      </div>
+    );
   }
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
@@ -246,19 +245,19 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => navigateMonth(-1)}
-              className="btn btn-ghost rounded-lg"
+              className="btn bg-base-200 hover:bg-base-300 rounded-lg"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={() => setCurrentDate(new Date())}
-              className="btn btn-sm btn-ghost rounded-lg"
+              className="btn btn-sm bg-base-200 hover:bg-base-300 rounded-lg"
             >
               Today
             </button>
             <button
               onClick={() => navigateMonth(1)}
-              className="btn btn-ghost rounded-lg"
+              className="btn bg-base-200 hover:bg-base-300 rounded-lg"
             >
               <ChevronRight size={20} />
             </button>
@@ -285,9 +284,9 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
             return (
               <div
                 key={index}
-                className={`md:min-h-[100px] p-2 border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                  isToday(date) ? "bg-blue-50 border-blue-200" : ""
-                } ${isSelected(date) ? "bg-blue-100 border-blue-300" : ""}`}
+                className={`md:min-h-[100px] p-2 border border-base-border cursor-pointer hover:bg-base-300 transition-colors ${
+                  isToday(date) ? "bg-primary" : ""
+                } ${isSelected(date) ? "bg-base-300" : ""}`}
                 onClick={() => {
                   handleDateClick(date);
                   onAddEvent(date);
