@@ -22,7 +22,7 @@ const Header = () => {
 
   const loginLink = (
     <div>
-      {profileError ? (
+      {profileData ? (
         <Link
           href="/dashboard"
           className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"

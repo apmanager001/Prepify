@@ -51,7 +51,7 @@ const AddTimerModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 md:px-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-106 space-y-6">
         {/* Modal header */}
         <div className="flex items-center justify-between">
@@ -65,21 +65,23 @@ const AddTimerModal = ({ isOpen, onClose }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Timer name field */}
           <div>
-            <label className="block text-sm font-medium mb-1">Timer Name</label>
+            <label htmlFor="timer-name" className="block text-sm font-medium mb-1">Timer Name</label>
             <input
               type="text"
+              id='timer-name'
               className="input w-full rounded-lg"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              maxLength={40}
               required
             />
           </div>
 
           {/* Minutes input section */}
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <span className="block text-sm font-medium mb-1">
               Study Duration (Minutes)
-            </label>
+            </span>
 
             {/* Quick-add buttons */}
             <div className="flex gap-2 flex-wrap mb-2 justify-around">
@@ -113,6 +115,7 @@ const AddTimerModal = ({ isOpen, onClose }) => {
             <div className="flex justify-center items-center gap-2 mt-2">
               <input
                 type="number"
+                id='minutes-input'
                 className="w-24 px-2 py-1 border rounded-lg text-center"
                 value={studyMinutes}
                 min={0}

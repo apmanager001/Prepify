@@ -31,7 +31,9 @@ import Tools from "./comp/tools";
 import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
-import FeedbackWidget from "./feedbackWidget";
+import FeedbackWidget from "./cornerTools/feedbackWidget";
+import ToolsButton from "./cornerTools/tools";
+import CornerWidgets from "./cornerTools/cornerWidgets";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -290,6 +292,17 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="absolute left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+            <div className="flex flex-col items-center">
+              <Image
+                src="/logoSlogan.webp"
+                alt="Prepify"
+                width={128}
+                height={128}
+                className="h-32 w-32 rounded-full object-cover object-center"
+                priority={true}
+              />
+            </div>
+
             {/* Logo Section */}
             <div className="flex flex-col justify-between mt-2">
               <Stats />
@@ -357,18 +370,6 @@ const Dashboard = () => {
                     </button>
                   </div>
                 </div>
-                <div className="border-b border-gray-100">
-                  <div className="flex flex-col items-center">
-                    <Image
-                      src="/sidebarlogoSlogan.webp"
-                      alt="Prepify"
-                      width={200}
-                      height={160}
-                      className="h-full w-full object-cover object-center"
-                      priority={true}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -382,11 +383,11 @@ const Dashboard = () => {
           <div className="border-b border-gray-100">
             <div className="flex flex-col items-center">
               <Image
-                src="/sidebarlogoSlogan.webp"
+                src="/logoSlogan.webp"
                 alt="Prepify"
-                width={200}
+                width={160}
                 height={160}
-                className="h-full w-full object-cover object-center"
+                className="h-20 w-20 rounded-full object-cover object-center"
                 priority={true}
               />
             </div>
@@ -459,18 +460,6 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
-              {/* <div className="border-b border-gray-100">
-                <div className="flex flex-col items-center">
-                  <Image
-                    src="/sidebarlogoSlogan.webp"
-                    alt="Prepify"
-                    width={200}
-                    height={160}
-                    className="h-full w-full object-cover object-center"
-                    priority={true}
-                  />
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
@@ -483,8 +472,9 @@ const Dashboard = () => {
 
       {/* Mobile Main Content */}
       <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
-
-      <FeedbackWidget />
+      {/* <FeedbackWidget />
+      <ToolsButton /> */}
+      <CornerWidgets />
     </div>
   );
 };

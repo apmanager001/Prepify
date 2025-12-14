@@ -200,3 +200,6 @@ const ToolsFooter = () => {
 };
 
 export default ToolsFooter;
+
+// Re-export useful small components so other dashboard UI (like the FAB) can reuse them
+export { CompactPlayer, TimerMini };

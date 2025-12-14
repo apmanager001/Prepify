@@ -26,9 +26,12 @@ export async function getStudyGoals() {
     method: "GET",
     credentials: "include",
   });
-
-  return await handleResponse(res);
+   if (!res.ok) {
+     throw new Error(`HTTP error! status: ${res.status}`);
+   }
+  return await res.json();
 }
+
 
 export async function updateStudyGoals({ studyGoals, percentComplete }) {
   const res = await fetch(`${API_BASE_URL}/studyGoals`, {
