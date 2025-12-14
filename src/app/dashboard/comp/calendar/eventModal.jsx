@@ -3,7 +3,6 @@ import { X, Calendar, Clock, Tag, FileText, Trash2 } from "lucide-react";
 import { useDeleteCalendarEvent } from "./lib/calendar";
 import toast from "react-hot-toast";
 
-
 const EventModal = ({ selectedEvent, onClose }) => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const deleteMutation = useDeleteCalendarEvent();

@@ -71,7 +71,7 @@ const RenderAccountTab = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div className="bg-base-200 border border-yellow-200 rounded-lg p-4">
         <div className="flex">
           <div className="flex-shrink-0">
             <Shield className="h-5 w-5 text-yellow-400" />
@@ -136,7 +136,7 @@ const RenderAccountTab = () => {
               onChange={(e) =>
                 handleInputChange("profile", "email", e.target.value)
               }
-              className="input flex-1 w-full"
+              className="input flex-1 w-full bg-base-100"
               disabled={isLoading}
               autoComplete="off"
             />

@@ -7,15 +7,9 @@ import LoadingComp from "@/lib/loading";
 
 const todaysDate = new Date().toLocaleDateString("en-US");
 
-const todayEvents = new Date(
-  new Date().getFullYear(),
-  new Date().getMonth(),
-  1
-)
+const todayEvents = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   .toISOString()
   .split("T")[0];
-
-
 
 const Overview = () => {
   const { data: fetchEventData, isLoading: calendarLoading } =
@@ -38,7 +32,7 @@ const Overview = () => {
 
   return (
     <div className="flex flex-col gap-4 mb-24 xl:mb-10">
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-white rounded-md shadow-sm">
+      <header className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-base-200 rounded-md shadow-sm">
         <div className="flex-1 flex items-center justify-between md:justify-start gap-4 w-full">
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-primary">
@@ -51,7 +45,7 @@ const Overview = () => {
       <div className="flex flex-col md:flex-row md:flex-wrap md:-mx-2 md:px-4 w-full">
         {/* Calendar card - render raw event objects */}
         <div className="md:w-1/2 px-2 mb-4">
-          <div className="bg-white rounded-md overflow-hidden border border-gray-200 shadow-sm">
+          <div className="bg-base-200 rounded-md overflow-hidden border border-gray-200 shadow-sm">
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">{`Today's Calendar Events ${todaysDate}`}</div>
             <div className="p-4 min-h-[18rem]">
               {calendarLoading ? (
@@ -95,7 +89,7 @@ const Overview = () => {
 
         {/* Notes card - render recent notes objects */}
         <div className="md:w-1/2 px-2 mb-4">
-          <div className="bg-white rounded-md overflow-hidden border border-gray-200 shadow-sm">
+          <div className="bg-base-200 rounded-md overflow-hidden border border-gray-200 shadow-sm">
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">
               Notes
             </div>
@@ -111,7 +105,7 @@ const Overview = () => {
                   {notesList.slice(0, 6).map((n, i) => (
                     <div
                       key={n._id || i}
-                      className="p-3 border border-base-200 rounded-md bg-warning/10"
+                      className="p-3 border border-base-300 rounded-md bg-warning/10"
                     >
                       <div className="text-sm font-semibold text-gray-800">
                         {n.title || n.noteTitle}
@@ -136,7 +130,7 @@ const Overview = () => {
 
         {/* Todos card - render todo objects */}
         <div className="md:w-1/2 px-2 mb-14">
-          <div className="bg-white rounded-md overflow-hidden border border-base-200 shadow-sm">
+          <div className="bg-base-200 rounded-md overflow-hidden border border-base-200 shadow-sm">
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">
               To Do
             </div>
@@ -186,7 +180,7 @@ const Overview = () => {
       </div>
 
       {/* <footer className="mx-0 w-full"> */}
-      <footer className="flex items-center justify-between p-4 rounded-md shadow-sm fixed bottom-0 bg-base-100 mr-6">
+      <footer className="flex items-center justify-between p-4 rounded-md shadow-sm fixed bottom-0 bg-base-200 mr-6">
         <ToolsFooter />
       </footer>
     </div>

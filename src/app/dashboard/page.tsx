@@ -186,7 +186,7 @@ const Dashboard = () => {
                 Access study materials and learning resources
               </p>
             </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <div className="bg-base-100 rounded-2xl shadow-lg border border-gray-100 p-8">
               <div className="text-center py-12">
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <svg
@@ -270,7 +270,7 @@ const Dashboard = () => {
           />
 
           {/* Sidebar */}
-          <div className="absolute left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+          <div className="absolute left-0 top-0 h-full w-80 bg-neutral backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
             {/* Logo Section */}
             <div className="border-b border-gray-100  flex-shrink-0">
               <div className="flex flex-col items-center">
@@ -301,8 +301,8 @@ const Dashboard = () => {
                     }}
                     className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
                       activeTab === item.id
-                        ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
-                        : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                        ? "bg-primary text-primary-content shadow-lg transform scale-105"
+                        : "text-neutral-content hover:bg-base-100/30 hover:shadow-md"
                     }`}
                   >
                     <Icon />
@@ -313,14 +313,14 @@ const Dashboard = () => {
             </nav>
 
             {/* User Section & Logout */}
-            <div className="p-6 border-t border-gray-100 flex-shrink-0">
-              <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                <p className="text-sm font-semibold text-gray-900 mb-1">
+            <div className="p-6 border-t border-gray-900 flex-shrink-0">
+              <div className="mb-4 p-4 bg-gradient-to-br from-gray-950 to-gray-800 rounded-xl border border-gray-800">
+                <p className="text-sm font-semibold text-gray-100 mb-1">
                   {userData?.profile?.username?.startsWith("\\google")
                     ? ""
                     : userData?.profile?.username || "User"}
                 </p>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-400">
                   {userData?.profile?.email || "user@example.com"}
                 </p>
                 {userData?.profile?.isAdmin && (
@@ -350,16 +350,16 @@ const Dashboard = () => {
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
+        <div className="w-72 bg-neutral backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
           {/* Logo Section */}
           <div className="border-b border-gray-100">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center ">
               <Image
-                src="/logoSlogan.webp"
+                src="/WhiteLogoWithSlogan.png"
                 alt="Prepify"
                 width={160}
                 height={160}
-                className="h-20 w-20 rounded-full object-cover object-center"
+                className="h-24 w-24 rounded-full object-cover object-center"
                 priority={true}
               />
             </div>
@@ -378,8 +378,8 @@ const Dashboard = () => {
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
                     activeTab === item.id
-                      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
-                      : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                      ? "bg-primary text-primary-content shadow-lg transform scale-105"
+                      : "text-neutral-content hover:bg-base-100/30 hover:shadow-md"
                   }`}
                 >
                   <Icon />
@@ -391,31 +391,31 @@ const Dashboard = () => {
 
           {/* User Section & Logout */}
           <div className="p-6 border-t border-gray-100">
-            <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+            <div className="mb-4 p-4 bg-gradient-to-br from-gray-950 to-gray-800 rounded-xl border border-gray-800">
               {profileLoading ? (
                 <LoadingComp />
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold text-gray-900 mb-1">
-                      {userData?.profile?.username?.startsWith("\\google")
-                        ? ""
-                        : userData?.profile?.username || "User"}
+              ) : (
+                <>
+                  <p className="text-sm font-semibold text-gray-100 mb-1">
+                    {userData?.profile?.username?.startsWith("\\google")
+                      ? ""
+                      : userData?.profile?.username || "User"}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {userData?.profile?.email || "user@example.com"}
+                  </p>
+                  {userData?.profile?.isAdmin && (
+                    <p className="text-xs text-red-600 font-medium mt-1">
+                      Administrator
                     </p>
-                    <p className="text-xs text-gray-600">
-                      {userData?.profile?.email || "user@example.com"}
-                    </p>
-                    {userData?.profile?.isAdmin && (
-                      <p className="text-xs text-red-600 font-medium mt-1">
-                        Administrator
-                      </p>
-                    )}
-                  </>
+                  )}
+                </>
               )}
             </div>
             <button
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="cursor-pointer w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-red-600 hover:bg-red-50 hover:shadow-md transition-all duration-300 group disabled:opacity-50"
+              className="cursor-pointer w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left text-error hover:bg-error hover:text-error-content hover:border-[#2C2C2C] hover:shadow-md transition-all duration-300 group disabled:opacity-50"
             >
               {logoutMutation.isPending ? (
                 <span className="loading loading-spinner loading-sm"></span>
@@ -430,13 +430,15 @@ const Dashboard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-8 overflow-y-auto h-screen">
+        <div className="flex-1 bg-base-100 p-8 overflow-y-auto h-screen">
           {renderContent()}
         </div>
       </div>
 
       {/* Mobile Main Content */}
-      <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
+      <div className="lg:hidden pt-20 px-4 pb-12 bg-base-100">
+        {renderContent()}
+      </div>
     </div>
   );
 };

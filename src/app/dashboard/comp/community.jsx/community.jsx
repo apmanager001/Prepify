@@ -18,7 +18,7 @@ const Community = () => {
           Connect with fellow students and study groups on Discord
         </p>
       </div>
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-8">
         <div className="text-center py-12">
           <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg
@@ -62,7 +62,7 @@ const Community = () => {
       {/* Community Features */}
       <div className="flex flex-col md:flex-row gap-6 md:gap-4 justify-center">
         <div className="flex-1 flex flex-wrap gap-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
                 <GraduationCap className="text-blue-600" />
@@ -77,7 +77,7 @@ const Community = () => {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                 <MessageCircleMore className="text-green-600" />
@@ -92,7 +92,7 @@ const Community = () => {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                 <CircleCheck className="text-purple-600" />

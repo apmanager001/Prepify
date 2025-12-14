@@ -6,13 +6,7 @@ import RenderProfileTab from "./settings/profileTab/renderProfileTab";
 import StudyGoalsTab from "./settings/studyGoalsTab/studyGoalTab";
 import { sendVerificationEmail } from "./settingsApi";
 import { toast } from "react-hot-toast";
-import {
-  User,
-  Key,
-  Save,
-  Trophy,
-  GraduationCap
-} from "lucide-react";
+import { User, Key, Save, Trophy, GraduationCap } from "lucide-react";
 import RenderAccountTab from "./settings/accountTab/renderAccountTab";
 import Scoreboard from "./settings/scoreboardTab/renderScoreboardTab";
 
@@ -105,8 +99,6 @@ const SettingsPage = () => {
     // { id: "appearance", label: "Appearance", icon: Palette },
     { id: "account", label: "Account", icon: Key },
   ];
-
-  
 
   const renderNotificationsTab = () => (
     <div className="space-y-6">
@@ -300,7 +292,7 @@ const SettingsPage = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "profile":
-        return <RenderProfileTab />
+        return <RenderProfileTab />;
       case "scoreboard":
         return <Scoreboard />;
       case "studyGoals":
@@ -314,7 +306,7 @@ const SettingsPage = () => {
       case "account":
         return <RenderAccountTab email={userData.profile.email} />;
       default:
-        return renderProfileTab();
+        return RenderProfileTab();
     }
   };
 
@@ -328,9 +320,12 @@ const SettingsPage = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100">
         <div className="border-b border-gray-200">
-          <nav className="flex flex-col md:flex-row space-x-8 px-6" aria-label="Tabs">
+          <nav
+            className="flex flex-col md:flex-row space-x-8 px-6"
+            aria-label="Tabs"
+          >
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
@@ -339,8 +334,8 @@ const SettingsPage = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`cursor-pointer py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
                     activeTab === tab.id
-                      ? "border-primary text-primary"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      ? "border-black text-black"
+                      : "border-black/30 text-gray-500 hover:text-black hover:border-black"
                   }`}
                 >
                   <Icon size={18} />
