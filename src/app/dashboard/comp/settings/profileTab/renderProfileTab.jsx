@@ -94,7 +94,7 @@ const RenderProfileTab = () => {
         {/* Avatar Section */}
         <div className="flex items-center space-x-6">
           <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+            <div className="w-24 h-24 bg-linear-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
               {userData.profile.avatar ? (
                 <img
                   src={userData.profile.avatar}

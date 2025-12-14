@@ -26,7 +26,7 @@ const CurrentPlayer = () => {
 
   return (
     <div className="w-full max-h-[400px] flex justify-center md:justify-left ">
-      <div className="w-[350px] bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl h-full shadow-2xl border border-gray-700">
+      <div className="w-[350px] bg-linear-to-br from-gray-800 via-gray-900 to-black rounded-2xl h-full shadow-2xl border border-gray-700">
         <div className="h-[250px] rounded-t-2xl flex items-center justify-center relative">
           <Img
             src={currentSong.image}

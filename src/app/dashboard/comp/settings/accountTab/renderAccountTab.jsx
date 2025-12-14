@@ -73,7 +73,7 @@ const RenderAccountTab = () => {
     <div className="space-y-6">
       <div className="bg-base-200 border border-yellow-200 rounded-lg p-4">
         <div className="flex">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <Shield className="h-5 w-5 text-yellow-400" />
           </div>
           <div className="ml-3">

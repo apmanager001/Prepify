@@ -94,7 +94,7 @@ const Dashboard = () => {
 
   if (profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100">
         <LoadingComp />
       </div>
     );
@@ -209,7 +209,7 @@ const Dashboard = () => {
             </div>
             <div className="bg-base-100 rounded-2xl shadow-lg border border-gray-100 p-8">
               <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-24 h-24 bg-linear-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <svg
                     className="w-12 h-12 text-purple-600"
                     fill="none"
@@ -231,7 +231,7 @@ const Dashboard = () => {
                   Browse through a comprehensive collection of study materials,
                   practice tests, and educational resources.
                 </p>
-                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                <button className="bg-linear-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Browse Resources
                 </button>
               </div>
@@ -261,7 +261,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-100">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <label
@@ -333,8 +333,8 @@ const Dashboard = () => {
             </nav>
 
             {/* User Section & Logout */}
-            <div className="p-6 border-t border-gray-100 flex-shrink-0">
-              <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+            <div className="p-6 border-t border-gray-100 shrink-0">
+              <div className="mb-4 p-4 bg-linear-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900 mb-1 truncate">
@@ -352,7 +352,7 @@ const Dashboard = () => {
                     )}
                   </div>
 
-                  <div className="flex-shrink-0 ml-2">
+                  <div className="shrink-0 ml-2">
                     <button
                       onClick={handleLogout}
                       disabled={logoutMutation.isPending}
@@ -418,7 +418,7 @@ const Dashboard = () => {
 
           {/* User Section & Logout */}
           <div className="pt-1 px-4 border-t border-gray-100">
-            <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+            <div className="mb-4 p-4 bg-base-200 rounded-xl border border-gray-200">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   {profileLoading ? (
@@ -442,7 +442,7 @@ const Dashboard = () => {
                   )}
                 </div>
 
-                <div className="flex-shrink-0 ml-2">
+                <div className="shrink-0 ml-2">
                   <button
                     onClick={handleLogout}
                     disabled={logoutMutation.isPending}
@@ -472,8 +472,6 @@ const Dashboard = () => {
 
       {/* Mobile Main Content */}
       <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
-      {/* <FeedbackWidget />
-      <ToolsButton /> */}
       <CornerWidgets />
     </div>
   );

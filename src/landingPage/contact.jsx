@@ -39,7 +39,7 @@ const Contact = () => {
   return (
     <section
       id="contact"
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+      className="py-20 bg-linear-to-br from-gray-50 to-blue-50"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -174,7 +174,7 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={contactMutation.isPending}
-                className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-lg font-semibold cursor-pointer transform hover:scale-105 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                className="w-full bg-linear-to-r from-primary to-secondary text-white py-3 px-6 rounded-lg font-semibold cursor-pointer transform hover:scale-105 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
               >
                 {contactMutation.isPending ? (
                   <>
@@ -215,7 +215,7 @@ const Contact = () => {
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 bg-linear-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
                     <svg
                       className="w-6 h-6 text-white"
                       fill="none"
@@ -248,7 +248,7 @@ const Contact = () => {
                   href="https://www.instagram.com/its_prepify/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center hover:from-purple-700 hover:to-pink-700 transition-colors duration-200"
+                  className="w-12 h-12 bg-linear-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center hover:from-purple-700 hover:to-pink-700 transition-colors duration-200"
                 >
                   <svg
                     className="w-6 h-6 text-white"

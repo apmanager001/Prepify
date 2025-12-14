@@ -4,12 +4,12 @@ const Donations = () => {
   return (
     <div
       id="donations"
-      className="bg-gradient-to-br from-primary/5 via-secondary/5 to-primary/10 py-16 h-full"
+      className="bg-linear-to-br from-primary/5 via-secondary/5 to-primary/10 py-16 h-full"
     >
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
             Make an Impact
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">

@@ -184,10 +184,6 @@ const Stats = () => {
           <div className="text-sm font-bold text-neutral-content uppercase text-wrap">
             Daily Points
           </div>
-          {/* <div className="text-lg font-extrabold text-indigo-900">
-            {dailyLoading ? "…" : dailyError ? "—" : DAILY_POINTS_NUM || 0}{" "}
-            <span className="text-sm font-semibold text-indigo-700">pts</span>
-          </div> */}
         </div>
       </div>
       {statsList.map((s) => {
@@ -195,7 +191,7 @@ const Stats = () => {
         return (
           <div
             key={s.key}
-            className={`${s.cardBg} flex items-center gap-3 p-1 rounded-md border border-gray-200`}
+            className={`${s.cardBg} flex items-center gap-3 p-1 rounded-md shadow-sm border border-white/10 text-white/80`}
           >
             <div
               className={`${s.iconBg} w-9 h-9 rounded-full flex items-center justify-center`}
@@ -203,7 +199,7 @@ const Stats = () => {
               <Icon className={s.iconClass} size={18} />
             </div>
 
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center text-center">
               <div className="text-xs truncate">{s.label}</div>
               <div className={`text-sm font-semibold truncate ${s.valueClass}`}>
                 {s.value()}{" "}

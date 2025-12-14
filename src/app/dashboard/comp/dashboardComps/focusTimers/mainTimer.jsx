@@ -68,7 +68,7 @@ const MainTimer = () => {
           displayedTimers.map((timer, index) => (
             <div
               key={timer.id ?? index}
-              className="relative rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-auto transition-all duration-300 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white hover:shadow-2xl hover:scale-105"
+              className="relative rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-auto transition-all duration-300 bg-linear-to-br from-gray-800 via-gray-900 to-black text-white hover:shadow-2xl hover:scale-105"
             >
               <IndTimer
                 index={index}

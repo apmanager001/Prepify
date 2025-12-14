@@ -4,13 +4,13 @@ import Image from "next/image";
 const Hero = () => {
   return (
     <section
-      className="relative bg-gradient-to-br from-base-100 via-base-50 to-primary/5 min-h-screen flex items-center"
+      className="relative bg-linear-to-br from-base-100 via-base-50 to-primary/5 min-h-screen flex items-center"
       id="home"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-secondary/20 to-primary/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-72 h-72 bg-linear-to-r from-primary/20 to-secondary/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-linear-to-r from-secondary/20 to-primary/20 rounded-full blur-3xl"></div>
       </div>
 
       {/* Animated Flying Bees */}
@@ -58,7 +58,7 @@ const Hero = () => {
           <div className="text-center lg:text-left">
             {/* Main headline */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-base-content mb-6">
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Ace Your Prep
               </span>
             </h1>
@@ -137,7 +137,7 @@ const Hero = () => {
                 />
 
                 {/* Glow effect behind bee */}
-                <div className="absolute inset-0 bg-gradient-to-r from-warning/30 to-warning/10 rounded-full blur-3xl scale-110"></div>
+                <div className="absolute inset-0 bg-linear-to-r from-warning/30 to-warning/10 rounded-full blur-3xl scale-110"></div>
               </div>
 
               {/* Floating elements around bee */}
@@ -166,7 +166,7 @@ const Hero = () => {
       </div>
 
       {/* Bottom wave decoration */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-base-200/50 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-base-200/50 to-transparent"></div>
     </section>
   );
 };

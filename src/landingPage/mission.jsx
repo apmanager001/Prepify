@@ -4,7 +4,7 @@ const Mission = () => {
   return (
     <section
       id="mission"
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+      className="py-20 bg-linear-to-br from-gray-50 to-blue-50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -77,7 +77,7 @@ const Mission = () => {
         </div>
 
         {/* Why We Do This */}
-        <div className="bg-gradient-to-r from-primary/60 to-secondary/60 rounded-3xl p-8 md:p-12 text-black">
+        <div className="bg-linear-to-r from-primary/60 to-secondary/60 rounded-3xl p-8 md:p-12 text-black">
           <div className="max-w-4xl mx-auto text-center">
             <h3 className="text-3xl md:text-4xl font-bold mb-6">
               The Problem We&apos;re Solving

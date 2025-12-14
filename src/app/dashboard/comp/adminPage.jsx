@@ -97,7 +97,7 @@ const AdminPage = () => {
           <button
             onClick={copyAllEmails}
             disabled={newsletterLoading || newsletterEmails.length === 0}
-            className="btn bg-gradient-to-r cursor-copy from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn bg-linear-to-r cursor-copy from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {copied ? (
               <>
@@ -203,7 +203,7 @@ const AdminPage = () => {
       </div>
       <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-8">
         <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-linear-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Users size={48} className="text-purple-600" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -213,7 +213,7 @@ const AdminPage = () => {
             View user accounts, manage permissions, and handle user-related
             administrative tasks.
           </p>
-          <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <button className="bg-linear-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
             Manage Users
           </button>
         </div>
@@ -231,7 +231,7 @@ const AdminPage = () => {
       </div>
       <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-8">
         <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-linear-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Settings size={48} className="text-green-600" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -241,7 +241,7 @@ const AdminPage = () => {
             Configure system settings, manage integrations, and control
             application behavior.
           </p>
-          <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <button className="bg-linear-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl">
             Configure Settings
           </button>
         </div>
@@ -276,7 +276,7 @@ const AdminPage = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-gradient-to-r from-primary to-secondary text-base-content shadow-lg"
+                    ? "bg-linear-to-r from-primary to-secondary text-base-content shadow-lg"
                     : "text-gray-600 hover:bg-base-300 hover:text-base-content"
                 }`}
               >

@@ -146,7 +146,7 @@ export default function Leaderboard() {
             return (
               <li key={idx} className="py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-700 font-bold">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-linear-to-br from-indigo-100 to-indigo-50 text-indigo-700 font-bold">
                     {typeof (user?.name ?? displayName) === "string"
                       ? initials(String(user?.name ?? displayName))
                       : "U"}

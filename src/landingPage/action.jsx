@@ -92,14 +92,14 @@ const Action = () => {
 
   return (
     <div
-      className="bg-gradient-to-br from-primary/10 via-secondary/5 to-primary/15 min-h-screen overflow-hidden relative"
+      className="bg-linear-to-br from-primary/10 via-secondary/5 to-primary/15 min-h-screen overflow-hidden relative"
       id="getStarted"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-linear-to-r from-primary/10 to-secondary/10 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
       {/* Blurred background text */}
@@ -119,12 +119,12 @@ const Action = () => {
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
         {/* Progress Box */}
         <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-8 md:p-12 max-w-96 w-full border border-white/30 shadow-2xl relative overflow-hidden group hover:shadow-primary/20 transition-all duration-500">
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          {/* linear overlay */}
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
           <div className="text-center relative z-10">
             {/* Title */}
-            <h2 className="text-xl md:text-2xl font-bold text-primary mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text">
+            <h2 className="text-xl md:text-2xl font-bold text-primary mb-4 bg-linear-to-r from-primary to-secondary bg-clip-text">
               Your Study Tools Are Coming to Life
             </h2>
             <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-6">
@@ -136,11 +136,11 @@ const Action = () => {
             <div className="mb-8">
               <div className="w-full bg-white/30 rounded-full h-4 mb-4 overflow-hidden shadow-inner">
                 <div
-                  className="bg-gradient-to-r from-primary via-secondary to-primary h-4 rounded-full transition-all duration-500 ease-out shadow-lg relative overflow-hidden"
+                  className="bg-linear-to-r from-primary via-secondary to-primary h-4 rounded-full transition-all duration-500 ease-out shadow-lg relative overflow-hidden"
                   style={{ width: `${progress}%` }}
                 >
                   {/* Animated shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
                 </div>
               </div>
               <div className="flex justify-between text-sm text-gray-600 font-medium">
@@ -191,25 +191,25 @@ const Action = () => {
         {/* Newsletter Section */}
         <div className="my-8 md:my-12 max-w-md w-full">
           <div className="bg-white/25 backdrop-blur-xl rounded-3xl p-8 border border-white/30 shadow-2xl relative overflow-hidden group hover:shadow-secondary/20 transition-all duration-500">
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            {/* linear overlay */}
+            <div className="absolute inset-0 bg-linear-to-br from-secondary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
             <div className="relative z-10">
-              <h3 className="text-xl font-bold text-primary mb-4 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <h3 className="text-xl font-bold text-primary mb-4 text-center bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Sign up for our Weekly Study Boost newsletter to get:
               </h3>
               <div className="mb-6">
                 <ol className="text-left space-y-2 text-gray-700">
                   <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
                     <span>Science-backed focus techniques</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-secondary rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-secondary rounded-full mt-2 shrink-0"></div>
                     <span>The best free online resources for test prep</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
                     <span>Simple tips to study smarter and manage stress</span>
                   </li>
                 </ol>
@@ -278,13 +278,13 @@ const Action = () => {
                     disabled={newsletterMutation.isPending}
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <div className="w-5 h-5 bg-gradient-to-r from-primary to-secondary rounded-full opacity-60"></div>
+                    <div className="w-5 h-5 bg-linear-to-r from-primary to-secondary rounded-full opacity-60"></div>
                   </div>
                 </div>
                 <button
                   type="submit"
                   disabled={newsletterMutation.isPending}
-                  className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 px-6 rounded-xl font-bold hover:from-primary/90 hover:to-secondary/90 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                  className="w-full bg-linear-to-r from-primary to-secondary text-white py-4 px-6 rounded-xl font-bold hover:from-primary/90 hover:to-secondary/90 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
                 >
                   {newsletterMutation.isPending ? (
                     <>
@@ -315,7 +315,7 @@ const Action = () => {
                       <span className="relative z-10">
                         Subscribe to Newsletter
                       </span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute inset-0 bg-linear-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </>
                   )}
                 </button>

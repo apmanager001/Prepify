@@ -7,9 +7,9 @@ import LoadingComp from "@/lib/loading";
 
 const todaysDate = new Date().toLocaleDateString("en-US");
 
-const todayEvents = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  .toISOString()
-  .split("T")[0];
+const today = new Date().toISOString().split("T")[0];
+const startToday = today;
+const endToday = today;
 
 const Overview = () => {
   const { data: fetchEventData, isLoading: calendarLoading } =
@@ -178,11 +178,6 @@ const Overview = () => {
           </div>
         </div>
       </div>
-
-      {/* <footer className="mx-0 w-full"> */}
-      <footer className="flex items-center justify-between p-4 rounded-md shadow-sm fixed bottom-0 bg-base-200 mr-6">
-        <ToolsFooter />
-      </footer> */}
     </div>
   );
 };

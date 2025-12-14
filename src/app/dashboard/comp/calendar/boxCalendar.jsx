@@ -319,7 +319,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
                               setShowViewEventModal(true);
                             }}
                           >
-                            <EventIcon size={12} className="flex-shrink-0" />
+                            <EventIcon size={12} className="shrink-0" />
                             <div className="hidden md:flex md:flex-1 md:min-w-0">
                               <div className="flex flex-col justify-center items-start min-w-0">
                                 <span
