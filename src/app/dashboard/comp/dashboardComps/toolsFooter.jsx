@@ -22,7 +22,7 @@ import { useTimerStore } from "@/store/useTimerStore";
 const ToolCard = ({ Icon, title, subtitle }) => (
   <button className="w-full text-left bg-white p-3 rounded-md border border-gray-100 shadow-sm hover:shadow-md transition">
     <div className="flex items-center gap-3">
-      <div className="w-10 h-10 rounded-md bg-gray-50 flex items-center justify-center">
+      <div className="w-10 h-10 rounded-md flex items-center justify-center">
         <Icon size={18} className="text-gray-700" />
       </div>
       <div>
@@ -145,15 +145,16 @@ const ToolsFooter = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="">
+    <div className="relative">
       {/* Header row - collapsed content + toggle */}
       <div className="flex items-center justify-between px-4  gap-4">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-3 w-full">
+        <div className="flex flex-col md:flex-row items-center gap-3 w-full">
           {/* Quick icons - always visible */}
-          <div className="flex-1 items-center gap-2 bg-gray-50 px-2 py-1 rounded-md">
+          <div className="flex items-center gap-2 px-2 py-1 rounded-md">
             <CompactPlayer />
           </div>
-          <div className="flex-2 items-center gap-2 bg-gray-50 px-2 py-1 rounded-md w-full justify-center">
+
+          <div className="flex items-center gap-2 px-2 py-1 rounded-md">
             <TimerMini />
           </div>
         </div>
@@ -163,12 +164,11 @@ const ToolsFooter = () => {
             <button
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
-              className="btn rounded-lg border border-gray-200 -mt-8 z-20"
+              className="btn rounded-lg border border-gray-200 z-20 absolute top-0 right-0 bg-base-300 hover:bg-[#FDCD5D]"
               aria-label={open ? "Collapse tools" : "Expand tools"}
             >
               {open ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
             </button>
-            <div className="font-bold text-gray-500 mt-1">Tools</div>
           </div>
         </div>
       </div>
@@ -183,10 +183,10 @@ const ToolsFooter = () => {
           <div className="max-h-[440px] overflow-y-auto pr-2">
             {/* Expanded content: larger widgets */}
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 px-1">
-              <div className="bg-white rounded-md p-3 border border-gray-100 shadow-sm">
+              <div className=" rounded-md p-3 border border-gray-100 shadow-sm">
                 <CurrentPlayer />
               </div>
-              <div className="bg-white rounded-md p-3 border border-gray-100 shadow-sm">
+              <div className="rounded-md p-3 border border-gray-100 shadow-sm">
                 <MainTimer />
               </div>
             </div>

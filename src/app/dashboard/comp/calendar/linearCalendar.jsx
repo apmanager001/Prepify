@@ -160,19 +160,19 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
     { time: "04:00 PM", title: "Team Sync" },
   ];
 
-   if (isLoading) {
-     return (
-       <div className="flex justify-center items-center min-h-32">
-         <LoadingComp />;
-       </div>
-     );
-   }
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-32">
+        <LoadingComp />;
+      </div>
+    );
+  }
   return (
     <div>
       {/* 7-Day Calendar */}
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4 px-2">
         <button
-          className="btn btn-sm btn-primary rounded-lg"
+          className="btn btn-sm bg-base-200 hover:bg-base-300 rounded-lg"
           onClick={() => changeWeek(-1)}
         >
           &lt;
@@ -186,8 +186,8 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
               <button
                 key={index}
                 onClick={() => setSelectedDay(day)}
-                className={`btn btn-sm text-xs py-2 transition-all duration-200 rounded-lg flex flex-col md:flex-row items-center gap-1 btn-outline ${
-                  isSelected ? "bg-primary" : ""
+                className={`btn btn-sm text-xs py-2 transition-all duration-200 rounded-lg flex flex-col md:flex-row items-center gap-1 btn-outline border border-black ${
+                  isSelected ? "bg-primary" : "bg-base-200 hover:bg-base-300"
                 }`}
               >
                 <span>
@@ -202,7 +202,7 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
         </div>
 
         <button
-          className="btn btn-sm btn-primary rounded-lg"
+          className="btn btn-sm bg-base-200 hover:bg-base-300 rounded-lg"
           onClick={() => changeWeek(1)}
         >
           &gt;
@@ -210,7 +210,7 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
       </div>
       <div className="flex justify-end m-2">
         <button
-          className="btn btn-primary btn-soft rounded-2xl"
+          className="btn bg-base-200 hover:bg-base-300 rounded-2xl"
           onClick={() => onAddEvent(selectedDay)}
         >
           <Plus size={16} className="inline mr-2" />
@@ -218,7 +218,7 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
         </button>
       </div>
       {/* Events for selected day */}
-      <div className="bg-white rounded-lg p-4 shadow-sm">
+      <div className="bg-base-200 rounded-lg p-4 shadow-sm">
         <h4 className="text-sm font-semibold mb-2">
           Events on {selectedDay.toLocaleDateString()}
         </h4>

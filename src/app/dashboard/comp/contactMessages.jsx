@@ -165,7 +165,7 @@ const ContactMessages = () => {
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+        <div className="bg-base-200 border border-red-200 rounded-xl p-4">
           <div className="flex items-center space-x-3">
             <AlertCircle size={20} className="text-red-600" />
             <div>
@@ -186,7 +186,7 @@ const ContactMessages = () => {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12">
+        <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-12">
           <div className="text-center">
             {/* <RefreshCw
               size={48}
@@ -206,7 +206,7 @@ const ContactMessages = () => {
 
       {/* Content State */}
       {!isLoading && !error && (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="bg-base-300 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           {contactMessages.length === 0 ? (
             <div className="text-center py-12">
               <MessageSquare size={48} className="text-gray-400 mx-auto mb-4" />
@@ -221,7 +221,7 @@ const ContactMessages = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200 text-center">
+                <thead className="bg-base-300 border-b border-gray-200 text-center">
                   <tr>
                     <th className="px-6 py-4 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                       Status
@@ -243,17 +243,17 @@ const ContactMessages = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[#FDCD5D] divide-y divide-gray-200">
                   {contactMessages.map((message) => (
                     <React.Fragment key={message._id}>
-                      <tr className="hover:bg-gray-50">
+                      <tr className="">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-2">
                             <span
                               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 !message.read
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-green-100 text-green-800"
+                                  ? "text-red-800"
+                                  : "text-green-800"
                               }`}
                             >
                               {!message.read ? "Unread" : "Read"}
@@ -262,7 +262,7 @@ const ContactMessages = () => {
                               <button
                                 onClick={() => markAsRead(message._id)}
                                 disabled={updateMessageMutation.isPending}
-                                className="tooltip tooltip-right cursor-pointer p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="tooltip tooltip-right cursor-pointer p-1.5 text-gray-500 hover:text-blue-600 hover:bg-base-300 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                 title="Mark as read"
                                 data-tip="Mark as read"
                               >
@@ -286,7 +286,7 @@ const ContactMessages = () => {
                         <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
                           <button
                             onClick={() => toggleMessageExpansion(message._id)}
-                            className="text-left w-full hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200 cursor-pointer"
+                            className="text-left w-full hover:bg-base-300 p-2 rounded-lg transition-colors duration-200 cursor-pointer"
                           >
                             <div className="truncate" title={message.message}>
                               {message.message}
@@ -305,7 +305,7 @@ const ContactMessages = () => {
                           <button
                             onClick={() => handleDeleteClick(message)}
                             disabled={deleteMessageMutation.isPending}
-                            className="text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="text-red-600 hover:text-red-800 hover:bg-base-300 p-1.5 rounded-lg transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Delete message"
                           >
                             <Trash2 size={16} />
@@ -317,9 +317,9 @@ const ContactMessages = () => {
                         <tr key={`${message._id}-expanded`}>
                           <td
                             colSpan="6"
-                            className="px-6 py-4 bg-gray-50 border-t border-gray-200"
+                            className="px-6 py-4 bg-base-300 border-t border-gray-200"
                           >
-                            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+                            <div className="bg-[#FDCD5D] rounded-lg p-4 border border-gray-200 shadow-sm">
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-semibold text-gray-900">
                                   Full Message
@@ -333,7 +333,7 @@ const ContactMessages = () => {
                                   Collapse
                                 </button>
                               </div>
-                              <div className="bg-gray-50 rounded-lg p-4">
+                              <div className="bg-base-300 rounded-lg p-4">
                                 <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
                                   {message.message}
                                 </p>

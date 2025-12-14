@@ -47,7 +47,7 @@ const MainTimer = () => {
           </p>
         </div>
         <button
-          className="btn btn-sm btn-primary rounded-lg mx-2"
+          className="btn btn-sm text-base-content hover:bg-base-300 rounded-lg mx-2"
           onClick={handleAddNew}
           disabled={timers.length >= MAX_TIMERS}
         >
@@ -83,13 +83,11 @@ const MainTimer = () => {
         {/* Add Timer Card */}
         {timers.length < MAX_TIMERS && (
           <div
-            className="relative rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-pointer transition-all duration-300 bg-gray-200 border-2 border-dotted border-gray-400 hover:scale-105 hover:shadow-lg"
+            className="relative rounded-2xl h-40 w-40 shadow-xl flex flex-col items-center justify-center text-2xl font-bold cursor-pointer transition-all duration-300 bg-base-200 border-2 border-dotted border-base-border hover:scale-105 hover:shadow-lg hover:bg-base-300"
             onClick={handleAddNew}
           >
-            <div className="text-gray-600 text-2xl font-semibold mb-2">
-              Add Timer
-            </div>
-            <Plus className="text-gray-600" size={24} />
+            <div className="text-2xl font-semibold mb-2">Add Timer</div>
+            <Plus size={24} />
           </div>
         )}
       </div>
