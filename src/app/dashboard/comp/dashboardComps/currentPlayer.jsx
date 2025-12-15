@@ -25,9 +25,9 @@ const CurrentPlayer = () => {
   }, []);
 
   return (
-    <div className="w-full max-h-[400px] flex justify-center md:justify-left ">
-      <div className="w-[350px] bg-linear-to-br from-gray-800 via-gray-900 to-black rounded-2xl h-full shadow-2xl border border-gray-700">
-        <div className="h-[250px] rounded-t-2xl flex items-center justify-center relative">
+    <div className="w-full max-h-96 flex justify-center md:justify-left ">
+      <div className="w-80 bg-linear-to-br from-gray-800 via-gray-900 to-black rounded-2xl h-full shadow-2xl border border-gray-700">
+        <div className="h-60 rounded-t-2xl flex items-center justify-center relative">
           <Img
             src={currentSong.image}
             alt="Album Art"
@@ -35,7 +35,7 @@ const CurrentPlayer = () => {
             height={700}
             className="h-full w-full object-cover rounded-t-xl overflow-hidden"
           />
-          <div className="absolute inset-0 bg-black/50 rounded-t-lg z-10 h-[250px]"></div>
+          <div className="absolute inset-0 bg-black/50 rounded-t-lg z-10 h-60"></div>
 
           <details className="dropdown dropdown-right absolute top-2 left-2 z-10">
             <summary className="btn btn-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600">
@@ -55,7 +55,7 @@ const CurrentPlayer = () => {
             </ul>
           </details>
         </div>
-        <div className="h-[150px] text-center text-white border-t-2 border-white/40">
+        <div className="h-36 text-center text-white border-t-2 border-white/40">
           <span className="text-xl font-semibold h-1/3 flex items-center justify-center">
             {currentSong.title || "No song is playing"}
           </span>

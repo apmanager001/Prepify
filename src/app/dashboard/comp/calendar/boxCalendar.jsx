@@ -270,7 +270,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
           {dayNames.map((day) => (
             <div
               key={day}
-              className="p-3 text-center text-sm font-medium text-gray-500"
+              className="p-3 text-center text-sm font-bold text-neutral"
             >
               {day}
             </div>
@@ -284,7 +284,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
             return (
               <div
                 key={index}
-                className={`md:min-h-[100px] p-2 border border-base-border cursor-pointer hover:bg-base-300 transition-colors ${
+                className={`md:min-h-24 p-2 border border-neutral/40 cursor-pointer hover:bg-base-300 transition-colors ${
                   isToday(date) ? "bg-primary" : ""
                 } ${isSelected(date) ? "bg-base-300" : ""}`}
                 onClick={() => {
@@ -296,7 +296,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
                   <>
                     <div
                       className={`text-sm font-medium mb-1 ${
-                        isToday(date) ? "text-blue-600" : "text-gray-900"
+                        isToday(date) ? "text-neutral" : "text-neutral/50"
                       }`}
                     >
                       {date.getDate()}
@@ -323,13 +323,13 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
                             <div className="hidden md:flex md:flex-1 md:min-w-0">
                               <div className="flex flex-col justify-center items-start min-w-0">
                                 <span
-                                  className="truncate block font-medium text-xs md:text-sm text-gray-900 max-w-full"
+                                  className="truncate block font-medium text-xs md:text-sm text-neutral max-w-full"
                                   title={event.title}
                                 >
                                   {event.title}
                                 </span>
                                 {event.time && (
-                                  <span className="text-xs text-gray-600 font-bold">
+                                  <span className="text-xs text-neutral/80 font-bold">
                                     {event.time}
                                   </span>
                                 )}
@@ -339,7 +339,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
                         );
                       })}
                       {dayEvents.length > 2 && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-neutral/70 font-medium">
                           +{dayEvents.length - 2} more
                         </div>
                       )}

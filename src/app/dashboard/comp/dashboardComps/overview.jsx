@@ -1,9 +1,15 @@
 import React from "react";
 import ToolsFooter from "./toolsFooter";
+import { Roboto } from "next/font/google";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
 import { useTodos } from "../todo/lib/todoAPI";
 import LoadingComp from "@/lib/loading";
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+});
 
 const todaysDate = new Date().toLocaleDateString("en-US");
 
@@ -19,6 +25,8 @@ const Overview = () => {
     });
   const { data: notes, isLoading: notesLoading } = useNotes();
   const { data: todos, isLoading: todosLoading } = useTodos();
+
+
 
   // normalize notes to an array regardless of shape
   const notesList = Array.isArray(notes)
@@ -38,16 +46,18 @@ const Overview = () => {
             <h1 className="text-2xl md:text-3xl font-extrabold text-primary">
               Dashboard
             </h1>
-            <div className="text-sm text-gray-500">Quick Tools & Stats</div>
+            <div className="text-sm text-base-content/80">Quick Tools & Stats</div>
           </div>
         </div>
       </header>
-      <div className="flex flex-col md:flex-row md:flex-wrap md:-mx-2 md:px-4 w-full">
+      <div
+        className={`flex flex-col md:flex-row md:flex-wrap md:-mx-2 md:px-4 w-full ${roboto.className}`}
+      >
         {/* Calendar card - render raw event objects */}
         <div className="md:w-1/2 px-2 mb-4">
           <div className="bg-base-200 rounded-md overflow-hidden border border-gray-200 shadow-sm">
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">{`Today's Calendar Events ${todaysDate}`}</div>
-            <div className="p-4 min-h-[18rem]">
+            <div className="p-4 min-h-32">
               {calendarLoading ? (
                 <div className="text-sm text-gray-500 w-full">
                   <LoadingComp />
@@ -93,7 +103,7 @@ const Overview = () => {
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">
               Notes
             </div>
-            <div className="p-4 min-h-[18rem]">
+            <div className="p-4 min-h-32">
               {notesLoading ? (
                 <div className="text-sm text-gray-500 w-full">
                   <LoadingComp />
@@ -134,7 +144,7 @@ const Overview = () => {
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">
               To Do
             </div>
-            <div className="p-4 min-h-[18rem]">
+            <div className="p-4 min-h-32">
               {todosLoading ? (
                 <div className="text-sm text-gray-500 w-full">
                   <LoadingComp />

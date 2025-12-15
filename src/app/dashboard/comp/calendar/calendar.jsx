@@ -102,7 +102,7 @@ const Calendar = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Study Calendar
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-neutral/70">
             Plan and schedule your study sessions, exams, and study groups
           </p>
         </div>
@@ -119,10 +119,10 @@ const Calendar = () => {
               checked={calendarSelect}
               onChange={() => setCalendarSelect(!calendarSelect)}
             />
-            <div className="swap-on flex justify-center items-center text-base-content">
+            <div className="swap-on flex justify-center items-center text-info/90">
               <Rows3 strokeWidth={4} className="w-6 h-6" />
             </div>
-            <div className="swap-off flex justify-center items-center text-base-content">
+            <div className="swap-off flex justify-center items-center text-info/90">
               <CalendarIcon strokeWidth={4} className="w-6 h-6" />
             </div>
           </label>
@@ -141,7 +141,7 @@ const Calendar = () => {
         </div>
       </div>
       {/* Event Types Legend */}
-      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
+      {/* <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
         <h3 className="text-lg font-semibold text-base-content mb-4">
           Event Types
         </h3>
@@ -158,7 +158,7 @@ const Calendar = () => {
             );
           })}
         </div>
-      </div>
+      </div> */}
 
       {calendarSelect ? (
         <BoxCalendar

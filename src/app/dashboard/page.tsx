@@ -291,20 +291,20 @@ const Dashboard = () => {
           />
 
           {/* Sidebar */}
-          <div className="absolute left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
-            <div className="flex flex-col items-center">
+          <div className="absolute left-0 top-0 h-full w-80 bg-neutral backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+            <div className="flex flex-col items-center border-b border-gray-100">
               <Image
-                src="/logoSlogan.webp"
+                src="/WhiteLogoWithSlogan.webp"
                 alt="Prepify"
                 width={128}
                 height={128}
-                className="h-32 w-32 rounded-full object-cover object-center"
+                className="rounded-full object-cover object-center"
                 priority={true}
               />
             </div>
 
             {/* Logo Section */}
-            <div className="flex flex-col justify-between mt-2">
+            <div className="flex flex-col justify-between mt-2 mx-2">
               <Stats />
             </div>
 
@@ -334,7 +334,7 @@ const Dashboard = () => {
 
             {/* User Section & Logout */}
             <div className="p-6 border-t border-gray-100 shrink-0">
-              <div className="mb-4 p-4 bg-linear-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+              <div className="mb-4 p-4 bg-base-200 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900 mb-1 truncate">
@@ -383,11 +383,11 @@ const Dashboard = () => {
           <div className="border-b border-gray-100">
             <div className="flex flex-col items-center ">
               <Image
-                src="/WhiteLogoWithSlogan.png"
+                src="/WhiteLogoWithSlogan.webp"
                 alt="Prepify"
                 width={160}
                 height={160}
-                className="h-24 w-24 rounded-full object-cover object-center"
+                className="rounded-full object-cover object-center"
                 priority={true}
               />
             </div>

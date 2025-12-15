@@ -22,14 +22,14 @@ const EventModal = ({ selectedEvent, onClose }) => {
   return (
     <>
       <div className="modal modal-open">
-        <div className="modal-box max-w-lg">
+        <div className="modal-box max-w-lg bg-neutral text-neutral-content border border-base-border shadow-lg">
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
               <h3 className="font-bold text-xl flex items-center gap-2">
                 <Calendar size={20} />
                 {selectedEvent.title || "Event"}
               </h3>
-              <p className="text-sm text-base-content/60 mt-1">
+              <p className="text-sm text-neutral-content/60 mt-1">
                 Created:{" "}
                 {(() => {
                   const raw =
@@ -60,7 +60,7 @@ const EventModal = ({ selectedEvent, onClose }) => {
             <div className="flex items-center gap-3">
               <Clock size={16} className="text-primary" />
               <div>
-                <div className="text-xs font-medium text-base-content/70 uppercase tracking-wide">
+                <div className="text-xs font-medium text-neutral-content/70 uppercase tracking-wide">
                   Time
                 </div>
                 <div className="text-sm font-semibold">
@@ -72,7 +72,7 @@ const EventModal = ({ selectedEvent, onClose }) => {
             <div className="flex items-center gap-3">
               <Tag size={16} className="text-secondary" />
               <div>
-                <div className="text-xs font-medium text-base-content/70 uppercase tracking-wide">
+                <div className="text-xs font-medium text-neutral-content/70 uppercase tracking-wide">
                   Type
                 </div>
                 <div className="badge badge-primary badge-outline">
@@ -84,10 +84,10 @@ const EventModal = ({ selectedEvent, onClose }) => {
             <div className="flex gap-3">
               <FileText size={16} className="text-accent mt-1" />
               <div className="flex-1">
-                <div className="text-xs font-medium text-base-content/70 uppercase tracking-wide">
+                <div className="text-xs font-medium text-neutral-content/70 uppercase tracking-wide">
                   Description
                 </div>
-                <div className="text-sm whitespace-pre-wrap bg-base-200 p-3 rounded-lg max-h-32 overflow-y-auto">
+                <div className="text-sm whitespace-pre-wrap p-3 rounded-lg max-h-32 overflow-y-auto">
                   {selectedEvent.description || "No description"}
                 </div>
               </div>

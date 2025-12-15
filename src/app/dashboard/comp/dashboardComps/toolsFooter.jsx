@@ -53,7 +53,7 @@ const CompactPlayer = () => {
       />
       <div className="flex flex-col items-center w-full">
         <div className="flex-1 hidden sm:flex sm:items-center sm:gap-2">
-          <div className="text-sm font-medium text-gray-800 truncate max-w-[12rem] text-overflow-hidden">
+          <div className="text-sm font-medium text-gray-800 truncate max-w-3xs text-overflow-hidden">
             {current?.title}
           </div>
         </div>
@@ -178,11 +178,11 @@ const ToolsFooter = () => {
       {/* Expanded panel */}
       <div
         className={`transition-all duration-300 overflow-hidden ${
-          open ? "max-h-[520px] py-4" : "max-h-0"
+          open ? "max-h-520px py-4" : "max-h-0"
         }`}
       >
         <div className="px-3 pb-4">
-          <div className="max-h-[440px] overflow-y-auto pr-2">
+          <div className="max-h-440px overflow-y-auto pr-2">
             {/* Expanded content: larger widgets */}
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 px-1">
               <div className="bg-white rounded-md p-3 border border-gray-100 shadow-sm">
