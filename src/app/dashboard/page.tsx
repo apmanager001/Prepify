@@ -38,7 +38,11 @@ import CornerWidgets from "./cornerTools/cornerWidgets";
 const Dashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
-  const { data: profileData, isLoading: profileLoading, error: profileError } = useProfileQuery();
+  const {
+    data: profileData,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useProfileQuery();
   const [userData, setUserData] = useState({
     profile: {
       username: "",
