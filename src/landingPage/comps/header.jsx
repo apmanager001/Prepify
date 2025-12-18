@@ -17,12 +17,12 @@ const Header = () => {
     { href: "#donations", label: "Donate" },
     { href: "#contact", label: "Contact" },
   ];
-  
 
+  console.log("Profile Data:", profileError);
 
   const loginLink = (
     <div>
-      {profileData ? (
+      {profileData && !profileData.error && !profileError ? (
         <Link
           href="/dashboard"
           className="btn bg-linear-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"

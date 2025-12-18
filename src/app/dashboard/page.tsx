@@ -38,7 +38,7 @@ import CornerWidgets from "./cornerTools/cornerWidgets";
 const Dashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
-  const { data: profileData, isLoading: profileLoading } = useProfileQuery();
+  const { data: profileData, isLoading: profileLoading, error: profileError } = useProfileQuery();
   const [userData, setUserData] = useState({
     profile: {
       username: "",
@@ -65,6 +65,11 @@ const Dashboard = () => {
 
   React.useEffect(() => {
     if (profileData) {
+      // If the response contains an error object, treat as unauthenticated
+      if (profileData.error || profileError) {
+        router.push("/login");
+        return;
+      }
       // If the response includes a status field and it's not OK, redirect to login
       if (
         typeof profileData.status === "number" &&
