@@ -52,7 +52,7 @@ export default function Todo() {
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="input input-bordered flex-1"
+            className="input input-bordered flex-1 bg-base-200"
             placeholder="Add a task"
             aria-label="New todo"
             maxLength={240}
@@ -60,7 +60,7 @@ export default function Todo() {
           <button
             type="submit"
             disabled={!text.trim() || (todos || []).length >= TODO_LIMIT}
-            className={`btn btn-primary rounded ${
+            className={`btn bg-base-200 hover:bg-base-300 rounded-full ${
               !text.trim() || (todos || []).length >= TODO_LIMIT
                 ? "btn-disabled"
                 : ""
@@ -80,7 +80,7 @@ export default function Todo() {
         </div>
       </form>
 
-      <div className="bg-white rounded-lg shadow-sm w-full">
+      <div className="bg-base-200 rounded-lg shadow-sm w-full">
         <div className="p-3 border-b flex items-center justify-between">
           <div className="text-sm text-gray-600">
             {(todos || []).length} items
@@ -98,19 +98,19 @@ export default function Todo() {
                 className="p-3 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+                  <div className="w-10 h-10 rounded-full bg-base-200 animate-pulse" />
                   <div className="min-w-0 flex-1">
-                    <div className="h-4 bg-gray-200 rounded w-32 animate-pulse mb-2" />
-                    <div className="h-3 bg-gray-200 rounded w-20 animate-pulse" />
+                    <div className="h-4 bg-base-200 rounded w-32 animate-pulse mb-2" />
+                    <div className="h-3 bg-base-200 rounded w-20 animate-pulse" />
                   </div>
                 </div>
 
                 <div className="w-48 md:w-64 flex items-center gap-3">
                   <div className="flex-1 bg-gray-100 rounded-full h-2">
-                    <div className="bg-gray-200 h-2 rounded-full w-1/3 animate-pulse" />
+                    <div className="bg-base-200 h-2 rounded-full w-1/3 animate-pulse" />
                   </div>
                   <div className="w-20 text-right text-sm font-semibold">
-                    <div className="h-4 bg-gray-200 rounded w-12 ml-auto animate-pulse" />
+                    <div className="h-4 bg-base-200 rounded w-12 ml-auto animate-pulse" />
                   </div>
                 </div>
               </li>
@@ -126,7 +126,7 @@ export default function Todo() {
             (todos || []).map((t) => (
               <li
                 key={t.id}
-                className={`p-3 flex items-center justify-between hover:bg-gray-50 ${
+                className={`p-3 flex items-center justify-between hover:bg-base-300 ${
                   t.completed ? "opacity-80" : ""
                 }`}
               >
@@ -163,7 +163,7 @@ export default function Todo() {
                       onDelete(t.id);
                     }}
                     aria-label={`Delete ${t.text}`}
-                    className="btn btn-ghost rounded btn-sm"
+                    className="btn bg-base-200 hover:bg-base-300 rounded btn-sm"
                   >
                     <Trash size={14} className="text-error" />
                   </button>

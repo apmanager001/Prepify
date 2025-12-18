@@ -84,7 +84,6 @@ export default function Notes() {
       // if server returned the created note, select it
       const id = created?._id || created?.note?._id;
       if (id) setSelectedId(id);
-      
     } catch (err) {
       console.error("create note failed", err);
       // optionally toast error
@@ -115,6 +114,7 @@ export default function Notes() {
     setEditTitle("");
     setEditBody("");
   };
+
   const saveEdit = async () => {
     if (!editId) return;
     try {
@@ -159,10 +159,10 @@ export default function Notes() {
           <form onSubmit={addNote} className="space-y-3 mb-4">
             <div className="flex items-center gap-2">
               <input
-                id='title'
+                id="title"
                 type="text"
-                className="input input-bordered flex-1"
-                placeholder="Title"
+                className="input input-bordered flex-1 bg-base-200"
+                placeholder="Title*"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={120}
@@ -170,7 +170,7 @@ export default function Notes() {
               <button
                 type="submit"
                 disabled={!isAddEnabled}
-                className={`btn btn-primary rounded-xl ${
+                className={`btn btn-base-200 rounded-xl ${
                   !isAddEnabled ? "btn-disabled" : ""
                 }`}
                 aria-disabled={!isAddEnabled}
@@ -179,9 +179,9 @@ export default function Notes() {
               </button>
             </div>
             <textarea
-              id='body'
+              id="body"
               type="text"
-              className="textarea textarea-bordered w-full"
+              className="textarea textarea-bordered w-full bg-base-200"
               placeholder="Write your note..."
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -197,12 +197,12 @@ export default function Notes() {
             </div>
           </form>
 
-          <div className="bg-white rounded-lg shadow-sm w-full ">
+          <div className="bg-base-200 rounded-lg shadow-sm w-full ">
             <ul className="divide-y w-full">
               {notes.map((n) => (
                 <li
                   key={n._id}
-                  className={`p-3 cursor-pointer flex justify-between items-center hover:bg-gray-50 w-full ${
+                  className={`p-3 cursor-pointer flex justify-between items-center hover:bg-base-300 w-full ${
                     n._id === selectedId ? "bg-primary/5" : ""
                   }`}
                 >
@@ -245,7 +245,7 @@ export default function Notes() {
 
         {/* Right: detail view — on mobile this becomes a panel that can be toggled */}
         <div
-          className={`md:col-span-2 bg-white rounded-lg shadow p-4 ${
+          className={`md:col-span-2 bg-base-200 rounded-lg shadow p-4 ${
             showDetailsOnMobile ? "" : "hidden md:block"
           }`}
         >
@@ -278,7 +278,10 @@ export default function Notes() {
                     </span>
                   </div>
                   {selectedNote?.updatedAt && (
-                    <div className="text-xs text-gray-500 flex items-center gap-2 tooltip cursor-default" data-tip={"Note last updated on date"}>
+                    <div
+                      className="text-xs text-gray-500 flex items-center gap-2 tooltip cursor-default"
+                      data-tip={"Note last updated on date"}
+                    >
                       <span>
                         <Pencil size={14} />
                       </span>
@@ -290,7 +293,7 @@ export default function Notes() {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <button
-                    className="btn btn-sm btn-ghost rounded"
+                    className="btn btn-sm bg-base-200 hover:bg-base-300 rounded"
                     onClick={() => {
                       // open modal and prefill fields
                       setEditId(selectedNote._id);
@@ -350,7 +353,7 @@ function EditModal({
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg w-full max-w-2xl p-4 shadow-lg">
+      <div className="bg-base-200 rounded-lg w-full max-w-2xl p-4 shadow-lg">
         <h3 className="text-lg font-semibold mb-2">Edit Note</h3>
         <div className="space-y-2">
           <input
@@ -391,7 +394,7 @@ function DeleteModal({ open, title, onClose, onConfirm, confirming }) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg w-full max-w-md p-4 shadow-lg">
+      <div className="bg-base-100 rounded-lg w-full max-w-md p-4 shadow-lg">
         <h3 className="text-lg font-semibold mb-2">Delete Note</h3>
         <div className="text-sm text-gray-700 mb-4">
           Are you sure you want to delete <strong>{title}</strong>? This action

@@ -143,14 +143,14 @@ const TopCarousel = ({ onGuideSelect, isCollapsed, onToggle }) => {
             <div
               key={guide.id}
               onClick={() => handleGuideClick(guide)}
-              className={`flex-shrink-0 w-48 h-52 bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-gray-200 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+              className={`shrink-0 w-48 h-52 bg-linear-to-br from-primary/10 to-secondary/10 border-2 border-gray-200 rounded-xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
                 index === currentIndex
                   ? "border-primary shadow-lg"
                   : "hover:border-primary/50"
               }`}
             >
               {/* Placeholder Image */}
-              <div className="w-full h-32 bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-xl flex items-center justify-center">
+              <div className="w-full h-32 bg-linear-to-br from-gray-200 to-gray-300 rounded-t-xl flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-2">
                     <BookOpen className="w-8 h-8 text-primary" />

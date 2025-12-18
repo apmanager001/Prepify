@@ -37,9 +37,7 @@ const AdminPage = () => {
 
       // Extract emails from the response based on the OpenAPI spec
       // The API returns an array of subscriber objects with email, createdAt, etc.
-      const emails = response[0]
-        ? response.map((sub) => sub.email)
-        : [];
+      const emails = response[0] ? response.map((sub) => sub.email) : [];
       setNewsletterEmails(emails);
     } catch (error) {
       console.error("Failed to fetch newsletter subscribers:", error);
@@ -88,7 +86,7 @@ const AdminPage = () => {
           <button
             onClick={fetchNewsletterSubscribers}
             disabled={newsletterLoading}
-            className="p-2 text-gray-500 cursor-pointer hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-500 cursor-pointer hover:text-blue-600 hover:bg-base-300 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh subscribers"
           >
             <RefreshCw
@@ -99,7 +97,7 @@ const AdminPage = () => {
           <button
             onClick={copyAllEmails}
             disabled={newsletterLoading || newsletterEmails.length === 0}
-            className="btn bg-gradient-to-r cursor-copy from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn bg-linear-to-r cursor-copy from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {copied ? (
               <>
@@ -118,7 +116,7 @@ const AdminPage = () => {
 
       {/* Error State */}
       {newsletterError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+        <div className="bg-base-300 border border-red-200 rounded-xl p-4">
           <div className="flex items-center space-x-3">
             <AlertCircle size={20} className="text-red-600" />
             <div>
@@ -139,7 +137,7 @@ const AdminPage = () => {
 
       {/* Loading State */}
       {newsletterLoading && (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12">
+        <div className="bg-base-300 rounded-2xl shadow-lg border border-gray-100 p-12">
           <div className="text-center">
             <RefreshCw
               size={48}
@@ -152,7 +150,7 @@ const AdminPage = () => {
 
       {/* Content State */}
       {!newsletterLoading && !newsletterError && (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+        <div className="bg-base-300 rounded-2xl shadow-lg border border-gray-100 p-6">
           {newsletterEmails.length === 0 ? (
             <div className="text-center py-12">
               <Mail size={48} className="text-gray-400 mx-auto mb-4" />
@@ -168,7 +166,7 @@ const AdminPage = () => {
               {newsletterEmails.map((email, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors duration-200"
+                  className="flex items-center justify-between p-4 bg-base-300 rounded-xl border border-gray-200 hover:bg-[#fdcd5d] transition-colors duration-200"
                 >
                   {/* Left side: icon + email */}
                   <div className="flex items-center space-x-3 flex-grow min-w-0">
@@ -181,7 +179,7 @@ const AdminPage = () => {
                   {/* Right side: copy button */}
                   <button
                     onClick={() => copyEmail(email)}
-                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-copy shrink-0"
+                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-[#FDB50D] rounded-lg transition-colors duration-200 cursor-copy shrink-0"
                     title="Copy email"
                   >
                     <Copy size={16} />
@@ -195,9 +193,7 @@ const AdminPage = () => {
     </div>
   );
 
-  const renderMessagesTab = () => (
-    <ContactMessages />
-  );
+  const renderMessagesTab = () => <ContactMessages />;
 
   const renderUsersTab = () => (
     <div className="space-y-6">
@@ -205,9 +201,9 @@ const AdminPage = () => {
         <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
         <p className="text-gray-600">Manage user accounts and permissions</p>
       </div>
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-8">
         <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-linear-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Users size={48} className="text-purple-600" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -217,7 +213,7 @@ const AdminPage = () => {
             View user accounts, manage permissions, and handle user-related
             administrative tasks.
           </p>
-          <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <button className="bg-linear-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
             Manage Users
           </button>
         </div>
@@ -233,9 +229,9 @@ const AdminPage = () => {
           Configure system-wide settings and preferences
         </p>
       </div>
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-8">
         <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-linear-to-br from-green-500/10 to-green-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Settings size={48} className="text-green-600" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -245,7 +241,7 @@ const AdminPage = () => {
             Configure system settings, manage integrations, and control
             application behavior.
           </p>
-          <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <button className="bg-linear-to-r from-green-500 to-green-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl">
             Configure Settings
           </button>
         </div>
@@ -270,7 +266,7 @@ const AdminPage = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-2">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-2">
         <div className="flex space-x-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -280,8 +276,8 @@ const AdminPage = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg"
-                    : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                    ? "bg-linear-to-r from-primary to-secondary text-base-content shadow-lg"
+                    : "text-gray-600 hover:bg-base-300 hover:text-base-content"
                 }`}
               >
                 <Icon size={20} />
@@ -293,7 +289,7 @@ const AdminPage = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-8">
         {activeTab === "newsletter" && renderNewsletterTab()}
         {activeTab === "messages" && renderMessagesTab()}
         {activeTab === "users" && renderUsersTab()}

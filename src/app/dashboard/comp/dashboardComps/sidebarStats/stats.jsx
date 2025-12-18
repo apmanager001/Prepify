@@ -168,7 +168,7 @@ const Stats = () => {
     <div className="grid grid-cols-2 gap-3 px-4 md:px-0">
       <div className="flex flex-col justify-center items-center gap-3 row-span-2 h-full">
         <div
-          className={`radial-progress ${dashColor} bg-info/10 font-extrabold text-lg`}
+          className={`radial-progress ${dashColor} bg-info/30 font-extrabold text-lg`}
           style={{
             "--value": String(dashPercent),
             "--size": "4.5rem",
@@ -181,13 +181,9 @@ const Stats = () => {
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <div className="text-sm font-bold text-info-content uppercase text-wrap">
+          <div className="text-sm font-bold text-neutral-content uppercase text-wrap">
             Daily Points
           </div>
-          {/* <div className="text-lg font-extrabold text-indigo-900">
-            {dailyLoading ? "…" : dailyError ? "—" : DAILY_POINTS_NUM || 0}{" "}
-            <span className="text-sm font-semibold text-indigo-700">pts</span>
-          </div> */}
         </div>
       </div>
       {statsList.map((s) => {
@@ -195,7 +191,7 @@ const Stats = () => {
         return (
           <div
             key={s.key}
-            className={`${s.cardBg} flex items-center gap-3 p-3 rounded-md border border-gray-200`}
+            className={`${s.cardBg} flex items-center gap-3 p-1 rounded-md shadow-sm border border-white/10 text-white/80`}
           >
             <div
               className={`${s.iconBg} w-9 h-9 rounded-full flex items-center justify-center`}
@@ -203,13 +199,11 @@ const Stats = () => {
               <Icon className={s.iconClass} size={18} />
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="text-xs text-gray-500 truncate">{s.label}</div>
+            <div className="flex flex-col items-center text-center">
+              <div className="text-xs truncate">{s.label}</div>
               <div className={`text-sm font-semibold truncate ${s.valueClass}`}>
                 {s.value()}{" "}
-                {s.suffix ? (
-                  <span className="text-xs text-gray-500">{s.suffix}</span>
-                ) : null}
+                {s.suffix ? <span className="text-xs">{s.suffix}</span> : null}
               </div>
             </div>
           </div>

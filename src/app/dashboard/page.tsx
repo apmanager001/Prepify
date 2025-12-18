@@ -31,12 +31,18 @@ import Tools from "./comp/tools";
 import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
-import FeedbackWidget from "./feedbackWidget";
+import FeedbackWidget from "./cornerTools/feedbackWidget";
+import ToolsButton from "./cornerTools/tools";
+import CornerWidgets from "./cornerTools/cornerWidgets";
 
 const Dashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
-  const { data: profileData, isLoading: profileLoading } = useProfileQuery();
+  const {
+    data: profileData,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useProfileQuery();
   const [userData, setUserData] = useState({
     profile: {
       username: "",
@@ -63,6 +69,11 @@ const Dashboard = () => {
 
   React.useEffect(() => {
     if (profileData) {
+      // If the response contains an error object, treat as unauthenticated
+      if (profileData.error || profileError) {
+        router.push("/login");
+        return;
+      }
       // If the response includes a status field and it's not OK, redirect to login
       if (
         typeof profileData.status === "number" &&
@@ -92,7 +103,7 @@ const Dashboard = () => {
 
   if (profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100">
         <LoadingComp />
       </div>
     );
@@ -205,9 +216,9 @@ const Dashboard = () => {
                 Access study materials and learning resources
               </p>
             </div>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <div className="bg-base-100 rounded-2xl shadow-lg border border-gray-100 p-8">
               <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-24 h-24 bg-linear-to-br from-purple-500/10 to-purple-600/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <svg
                     className="w-12 h-12 text-purple-600"
                     fill="none"
@@ -229,7 +240,7 @@ const Dashboard = () => {
                   Browse through a comprehensive collection of study materials,
                   practice tests, and educational resources.
                 </p>
-                <button className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                <button className="bg-linear-to-r from-purple-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Browse Resources
                 </button>
               </div>
@@ -259,7 +270,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-100">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <label
@@ -289,9 +300,20 @@ const Dashboard = () => {
           />
 
           {/* Sidebar */}
-          <div className="absolute left-0 top-0 h-full w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+          <div className="absolute left-0 top-0 h-full w-80 bg-neutral backdrop-blur-xl shadow-2xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col">
+            <div className="flex flex-col items-center border-b border-gray-100">
+              <Image
+                src="/WhiteLogoWithSlogan.webp"
+                alt="Prepify"
+                width={128}
+                height={128}
+                className="rounded-full object-cover object-center"
+                priority={true}
+              />
+            </div>
+
             {/* Logo Section */}
-            <div className="flex flex-col justify-between mt-2">
+            <div className="flex flex-col justify-between mt-2 mx-2">
               <Stats />
             </div>
 
@@ -308,8 +330,8 @@ const Dashboard = () => {
                     }}
                     className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
                       activeTab === item.id
-                        ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
-                        : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                        ? "bg-primary text-primary-content shadow-lg transform scale-105"
+                        : "text-neutral-content hover:bg-base-100/30 hover:shadow-md"
                     }`}
                   >
                     <Icon />
@@ -320,8 +342,8 @@ const Dashboard = () => {
             </nav>
 
             {/* User Section & Logout */}
-            <div className="p-6 border-t border-gray-100 flex-shrink-0">
-              <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+            <div className="p-6 border-t border-gray-100 shrink-0">
+              <div className="mb-4 p-4 bg-base-200 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900 mb-1 truncate">
@@ -339,7 +361,7 @@ const Dashboard = () => {
                     )}
                   </div>
 
-                  <div className="flex-shrink-0 ml-2">
+                  <div className="shrink-0 ml-2">
                     <button
                       onClick={handleLogout}
                       disabled={logoutMutation.isPending}
@@ -357,18 +379,6 @@ const Dashboard = () => {
                     </button>
                   </div>
                 </div>
-                <div className="border-b border-gray-100">
-                  <div className="flex flex-col items-center">
-                    <Image
-                      src="/sidebarlogoSlogan.webp"
-                      alt="Prepify"
-                      width={200}
-                      height={160}
-                      className="h-full w-full object-cover object-center"
-                      priority={true}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -377,16 +387,16 @@ const Dashboard = () => {
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <div className="w-72 bg-white/80 backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
+        <div className="w-72 bg-neutral backdrop-blur-xl shadow-2xl border-r border-white/20 flex flex-col h-screen overflow-y-auto">
           {/* Logo Section */}
           <div className="border-b border-gray-100">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center ">
               <Image
-                src="/sidebarlogoSlogan.webp"
+                src="/WhiteLogoWithSlogan.webp"
                 alt="Prepify"
-                width={200}
+                width={160}
                 height={160}
-                className="h-full w-full object-cover object-center"
+                className="rounded-full object-cover object-center"
                 priority={true}
               />
             </div>
@@ -404,8 +414,8 @@ const Dashboard = () => {
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
                     activeTab === item.id
-                      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105"
-                      : "text-gray-700 hover:bg-white/60 hover:text-primary hover:shadow-md"
+                      ? "bg-primary text-primary-content shadow-lg transform scale-105"
+                      : "text-neutral-content hover:bg-base-100/30 hover:shadow-md"
                   }`}
                 >
                   <Icon />
@@ -417,7 +427,7 @@ const Dashboard = () => {
 
           {/* User Section & Logout */}
           <div className="pt-1 px-4 border-t border-gray-100">
-            <div className="mb-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+            <div className="mb-4 p-4 bg-base-200 rounded-xl border border-gray-200">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   {profileLoading ? (
@@ -441,7 +451,7 @@ const Dashboard = () => {
                   )}
                 </div>
 
-                <div className="flex-shrink-0 ml-2">
+                <div className="shrink-0 ml-2">
                   <button
                     onClick={handleLogout}
                     disabled={logoutMutation.isPending}
@@ -459,32 +469,19 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
-              {/* <div className="border-b border-gray-100">
-                <div className="flex flex-col items-center">
-                  <Image
-                    src="/sidebarlogoSlogan.webp"
-                    alt="Prepify"
-                    width={200}
-                    height={160}
-                    className="h-full w-full object-cover object-center"
-                    priority={true}
-                  />
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-8 overflow-y-auto h-screen">
+        <div className="flex-1 bg-base-100 p-8 overflow-y-auto h-screen">
           {renderContent()}
         </div>
       </div>
 
       {/* Mobile Main Content */}
       <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
-
-      <FeedbackWidget />
+      <CornerWidgets />
     </div>
   );
 };

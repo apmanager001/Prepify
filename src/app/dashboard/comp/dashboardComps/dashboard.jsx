@@ -125,7 +125,7 @@ const DashboardPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-white rounded-md shadow-sm">
+      <header className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-base-200 text-base-content rounded-md shadow-sm">
         <div className="flex-1 flex items-center justify-between md:justify-start gap-4 w-full">
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-primary">
@@ -135,7 +135,7 @@ const DashboardPage = () => {
           </div>
           <div className="flex items-center gap-3 min-w-[180px]">
             <div
-              className={`radial-progress ${dashColor} bg-indigo-50 font-extrabold text-xl`}
+              className={`radial-progress ${dashColor} bg-base-300 font-extrabold text-xl`}
               style={{
                 "--value": String(dashPercent),
                 "--size": "4.5rem",

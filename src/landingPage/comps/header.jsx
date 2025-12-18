@@ -17,22 +17,22 @@ const Header = () => {
     { href: "#donations", label: "Donate" },
     { href: "#contact", label: "Contact" },
   ];
-  
 
+  console.log("Profile Data:", profileError);
 
   const loginLink = (
     <div>
-      {profileError ? (
+      {profileData && !profileData.error && !profileError ? (
         <Link
           href="/dashboard"
-          className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
+          className="btn bg-linear-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
         >
           Dashboard
         </Link>
       ) : (
         <Link
           href="/login"
-          className="btn bg-gradient-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
+          className="btn bg-linear-to-r from-primary to-secondary rounded-lg font-semibold text-base lg:text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap"
         >
           Login
         </Link>
@@ -71,7 +71,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="flex items-center">
               <Image
                 src="/logoNoSlogan.webp"

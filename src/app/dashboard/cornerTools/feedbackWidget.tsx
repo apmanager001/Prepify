@@ -2,7 +2,7 @@
 import React from "react";
 import { useMutation } from "@tanstack/react-query";
 import { submitContactMessage } from "@/lib/api";
-import { MessageCircleQuestionMark } from "lucide-react";
+import { MessageCircleQuestionMark, Send } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function FeedbackWidget() {
@@ -40,13 +40,13 @@ export default function FeedbackWidget() {
   };
 
   return (
-    <div className="fixed right-4 bottom-4 z-[80]">
+    <div className="fixed right-18 bottom-4 z-[80] tooltip tooltip-top" data-tip="Send Feedback">
       {/* <div className="fab"> */}
       {open ? (
         <div className="w-80 sm:w-96 bg-white rounded-xl shadow-2xl p-4 border border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-semibold">Send Feedback</h4>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center">
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close feedback"

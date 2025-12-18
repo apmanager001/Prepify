@@ -102,7 +102,7 @@ const Calendar = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Study Calendar
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-neutral/70">
             Plan and schedule your study sessions, exams, and study groups
           </p>
         </div>
@@ -115,18 +115,15 @@ const Calendar = () => {
           <label className="swap swap-rotate">
             <input
               type="checkbox"
-              className="bg-primary/20 p-5 rounded-lg "
+              className="bg-base-200 p-5 rounded-lg "
               checked={calendarSelect}
               onChange={() => setCalendarSelect(!calendarSelect)}
             />
-            <div className="swap-on flex justify-center items-center">
-              <Rows3 strokeWidth={4} className="w-6 h-6 text-secondary" />
+            <div className="swap-on flex justify-center items-center text-info/90">
+              <Rows3 strokeWidth={4} className="w-6 h-6" />
             </div>
-            <div className="swap-off flex justify-center items-center">
-              <CalendarIcon
-                strokeWidth={4}
-                className="w-6 h-6 text-secondary"
-              />
+            <div className="swap-off flex justify-center items-center text-info/90">
+              <CalendarIcon strokeWidth={4} className="w-6 h-6" />
             </div>
           </label>
 
@@ -144,8 +141,8 @@ const Calendar = () => {
         </div>
       </div>
       {/* Event Types Legend */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      {/* <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-base-content mb-4">
           Event Types
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -156,12 +153,12 @@ const Calendar = () => {
                 <div className={`p-2 rounded-lg ${colorClasses[type.color]}`}>
                   <Icon size={16} />
                 </div>
-                <span className="text-sm text-gray-600">{type.label}</span>
+                <span className="text-sm text-base-content">{type.label}</span>
               </div>
             );
           })}
         </div>
-      </div>
+      </div> */}
 
       {calendarSelect ? (
         <BoxCalendar
@@ -179,7 +176,7 @@ const Calendar = () => {
       {/* Add Event Modal */}
       {showEventModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-base-300 rounded-2xl shadow-xl p-6 max-w-md w-full mx-4">
+          <div className="bg-base-100 rounded-2xl shadow-xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
                 {/* Add Event - {selectedDate ? selectedDate : selectedDate} */}
@@ -206,7 +203,7 @@ const Calendar = () => {
                   htmlFor="eventTitle"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Event Title
+                  Event Title*
                 </label>
                 <input
                   id="eventTitle"
@@ -215,7 +212,7 @@ const Calendar = () => {
                   onChange={(e) =>
                     setNewEvent((prev) => ({ ...prev, title: e.target.value }))
                   }
-                  className="w-full px-3 py-2 input input-primary rounded-lg "
+                  className="w-full px-3 py-2 input input-primary rounded-lg bg-base-200"
                   placeholder="Enter event title"
                 />
               </div>
@@ -236,7 +233,7 @@ const Calendar = () => {
                       description: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 textarea textarea-primary rounded-lg"
+                  className="w-full px-3 py-2 textarea textarea-primary rounded-lg bg-base-200"
                   rows={3}
                   placeholder="Enter event description"
                 />
@@ -256,7 +253,7 @@ const Calendar = () => {
                   onChange={(e) =>
                     setNewEvent((prev) => ({ ...prev, time: e.target.value }))
                   }
-                  className="w-full px-3 py-2 rounded-lg input input-primary"
+                  className="w-full px-3 py-2 rounded-lg input input-primary bg-base-200"
                 />
               </div>
 
@@ -273,7 +270,7 @@ const Calendar = () => {
                   onChange={(e) =>
                     setNewEvent((prev) => ({ ...prev, type: e.target.value }))
                   }
-                  className="w-full px-3 py-2 rounded-lg select select-primary"
+                  className="w-full px-3 py-2 rounded-lg select select-primary bg-base-200"
                 >
                   {Object.entries(eventTypes).map(([key, type]) => (
                     <option key={key} value={key}>
@@ -312,13 +309,13 @@ const Calendar = () => {
             <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowEventModal(false)}
-                className="cursor-pointer flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                className="cursor-pointer flex-1 px-4 py-2 text-gray-700 bg-base-200 hover:bg-base-300 rounded-lg font-medium transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={submitNewEvent}
-                className="cursor-pointer flex-1 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
+                className="cursor-pointer flex-1 px-4 py-2 text-success bg-base-200 hover:bg-base-300 rounded-lg font-medium transition-colors"
               >
                 {addEventMutation.isLoading ? "Adding..." : "Add Event"}
               </button>

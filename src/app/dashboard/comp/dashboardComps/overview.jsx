@@ -1,30 +1,32 @@
 import React from "react";
 import ToolsFooter from "./toolsFooter";
+import { Roboto } from "next/font/google";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
 import { useTodos } from "../todo/lib/todoAPI";
 import LoadingComp from "@/lib/loading";
 
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+});
+
 const todaysDate = new Date().toLocaleDateString("en-US");
 
-const todayEvents = new Date(
-  new Date().getFullYear(),
-  new Date().getMonth(),
-  1
-)
-  .toISOString()
-  .split("T")[0];
-
-
+const today = new Date().toISOString().split("T")[0];
+const startToday = today;
+const endToday = today;
 
 const Overview = () => {
   const { data: fetchEventData, isLoading: calendarLoading } =
     useCalendarEvents({
-      from: todayEvents,
-      to: todayEvents,
+      from: startToday,
+      to: endToday,
     });
   const { data: notes, isLoading: notesLoading } = useNotes();
   const { data: todos, isLoading: todosLoading } = useTodos();
+
+
 
   // normalize notes to an array regardless of shape
   const notesList = Array.isArray(notes)
@@ -38,22 +40,24 @@ const Overview = () => {
 
   return (
     <div className="flex flex-col gap-4 mb-24 xl:mb-10">
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-white rounded-md shadow-sm">
+      <header className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-base-200 rounded-md shadow-sm">
         <div className="flex-1 flex items-center justify-between md:justify-start gap-4 w-full">
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-primary">
               Dashboard
             </h1>
-            <div className="text-sm text-gray-500">Quick Tools & Stats</div>
+            <div className="text-sm text-base-content/80">Quick Tools & Stats</div>
           </div>
         </div>
       </header>
-      <div className="flex flex-col md:flex-row md:flex-wrap md:-mx-2 md:px-4 w-full">
+      <div
+        className={`flex flex-col md:flex-row md:flex-wrap md:-mx-2 md:px-4 w-full ${roboto.className}`}
+      >
         {/* Calendar card - render raw event objects */}
         <div className="md:w-1/2 px-2 mb-4">
-          <div className="bg-white rounded-md overflow-hidden border border-gray-200 shadow-sm">
+          <div className="bg-base-200 rounded-md overflow-hidden border border-gray-200 shadow-sm">
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">{`Today's Calendar Events ${todaysDate}`}</div>
-            <div className="p-4 min-h-[18rem]">
+            <div className="p-4 min-h-32">
               {calendarLoading ? (
                 <div className="text-sm text-gray-500 w-full">
                   <LoadingComp />
@@ -95,11 +99,11 @@ const Overview = () => {
 
         {/* Notes card - render recent notes objects */}
         <div className="md:w-1/2 px-2 mb-4">
-          <div className="bg-white rounded-md overflow-hidden border border-gray-200 shadow-sm">
+          <div className="bg-base-200 rounded-md overflow-hidden border border-gray-200 shadow-sm">
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">
               Notes
             </div>
-            <div className="p-4 min-h-[18rem]">
+            <div className="p-4 min-h-32">
               {notesLoading ? (
                 <div className="text-sm text-gray-500 w-full">
                   <LoadingComp />
@@ -111,7 +115,7 @@ const Overview = () => {
                   {notesList.slice(0, 6).map((n, i) => (
                     <div
                       key={n._id || i}
-                      className="p-3 border border-base-200 rounded-md bg-warning/10"
+                      className="p-3 border border-base-300 rounded-md bg-warning/10"
                     >
                       <div className="text-sm font-semibold text-gray-800">
                         {n.title || n.noteTitle}
@@ -136,11 +140,11 @@ const Overview = () => {
 
         {/* Todos card - render todo objects */}
         <div className="md:w-1/2 px-2 mb-14">
-          <div className="bg-white rounded-md overflow-hidden border border-base-200 shadow-sm">
+          <div className="bg-base-200 rounded-md overflow-hidden border border-base-200 shadow-sm">
             <div className="bg-info/30 px-4 py-2 text-sm font-medium text-info-content">
               To Do
             </div>
-            <div className="p-4 min-h-[18rem]">
+            <div className="p-4 min-h-32">
               {todosLoading ? (
                 <div className="text-sm text-gray-500 w-full">
                   <LoadingComp />
@@ -184,11 +188,6 @@ const Overview = () => {
           </div>
         </div>
       </div>
-
-      {/* <footer className="mx-0 w-full"> */}
-      <footer className="flex items-center justify-between p-4 rounded-md shadow-sm fixed bottom-0 bg-base-100 mr-6">
-        <ToolsFooter />
-      </footer>
     </div>
   );
 };

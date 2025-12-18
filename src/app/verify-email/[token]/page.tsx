@@ -52,7 +52,7 @@ export default function VerifyEmailPage() {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-100 to-base-300 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-base-100 to-base-300 p-4">
         <div className="max-w-md w-full rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
           <div className="loading loading-spinner loading-lg text-primary mb-4"></div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -67,7 +67,7 @@ export default function VerifyEmailPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-100 to-base-300 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-base-100 to-base-300 p-4">
       <div className="max-w-md w-full bg-base-300 rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
         {isSuccess ? (
           <>

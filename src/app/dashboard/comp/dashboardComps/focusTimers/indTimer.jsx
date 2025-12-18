@@ -93,20 +93,20 @@ const IndTimer = ({ index, onEdit }) => {
         modalRootRef.current &&
         createPortal(
           <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-            <div className="bg-base-200 p-6 rounded-lg shadow-lg space-y-4">
+            <div className="bg-base-100 p-6 rounded-lg shadow-lg space-y-4">
               <h3 className="text-lg font-semibold">Confirm Delete</h3>
               <p>Are you sure?</p>
 
               <div className="flex justify-end space-x-4">
                 <button
-                  className="btn btn-secondary rounded-lg"
+                  className="btn bg-base-200 rounded-lg hover:bg-base-300"
                   onClick={() => setShowDeletePopup(false)}
                 >
                   Cancel
                 </button>
 
                 <button
-                  className="btn btn-error rounded-lg"
+                  className="btn bg-base-200 text-error rounded-lg hover:bg-base-300"
                   onClick={() => {
                     deleteTimer(index);
                     setShowDeletePopup(false);

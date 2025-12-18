@@ -112,7 +112,7 @@ const Main = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-lg text-white">
+        <div className="bg-linear-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 text-sm font-medium">Study Streak</p>
@@ -125,7 +125,7 @@ const Main = () => {
           <p className="text-blue-100 text-sm mt-2">🔥 Keep it up!</p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl shadow-lg text-white">
+        <div className="bg-linear-to-br from-green-500 to-green-600 p-6 rounded-2xl shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100 text-sm font-medium">
@@ -140,7 +140,7 @@ const Main = () => {
           <p className="text-green-100 text-sm mt-2">📚 This week</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl shadow-lg text-white">
+        <div className="bg-linear-to-br from-purple-500 to-purple-600 p-6 rounded-2xl shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-purple-100 text-sm font-medium">
@@ -155,7 +155,7 @@ const Main = () => {
           <p className="text-purple-100 text-sm mt-2">✅ Out of 5</p>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl shadow-lg text-white">
+        <div className="bg-linear-to-br from-orange-500 to-orange-600 p-6 rounded-2xl shadow-lg text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-orange-100 text-sm font-medium">

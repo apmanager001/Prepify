@@ -4,18 +4,18 @@ import Link from "next/link";
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
       <div className="text-center max-w-2xl mx-auto">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-16 h-16 bg-linear-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-2xl">P</span>
           </div>
         </div>
 
         {/* 404 Number */}
         <div className="mb-6">
-          <h1 className="text-8xl md:text-9xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-8xl md:text-9xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             404
           </h1>
         </div>
@@ -34,7 +34,7 @@ const NotFound = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
           <Link
             href="/"
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="bg-linear-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Go Home
           </Link>

@@ -94,7 +94,7 @@ const RenderProfileTab = () => {
         {/* Avatar Section */}
         <div className="flex items-center space-x-6">
           <div className="relative">
-            <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+            <div className="w-24 h-24 bg-linear-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
               {userData.profile.avatar ? (
                 <img
                   src={userData.profile.avatar}
@@ -140,7 +140,7 @@ const RenderProfileTab = () => {
       {/* Responsive 3-column form grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-4">
+          <label htmlFor="firstname" className="block text-sm font-medium text-gray-700 mb-4">
             <div className="flex items-center gap-2">
               <User size={16} />
               <span>First Name</span>
@@ -148,6 +148,7 @@ const RenderProfileTab = () => {
           </label>
           <input
             type="text"
+            id='firstname'
             className="input w-full"
             value={userData.profile.firstname || ""}
             onChange={(e) =>
@@ -159,7 +160,7 @@ const RenderProfileTab = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-4">
+          <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mb-4">
             <div className="flex items-center gap-2">
               <User size={16} />
               <span>Last Name</span>
@@ -167,6 +168,7 @@ const RenderProfileTab = () => {
           </label>
           <input
             type="text"
+            id='lastname'
             className="input w-full"
             value={userData.profile.lastname || ""}
             onChange={(e) =>
@@ -224,9 +226,10 @@ const RenderProfileTab = () => {
           />
         </div>
         <div className="flex justify-between lg:col-span-3 md:col-span-2 items-center">
-          <label className="inline-flex items-center space-x-2">
+          <label htmlFor="public-profile-toggle" className="inline-flex items-center space-x-2">
             <input
               type="checkbox"
+              id='public-profile-toggle'
               checked={!!userData.profile.publicProfile}
               onChange={() =>
                 handleInputChange(
