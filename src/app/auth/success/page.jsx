@@ -2,27 +2,29 @@
 import React, { useEffect } from "react";
 
 export default function AuthSuccess() {
-  useEffect(() => {
-    // Notify opener window that auth succeeded
+  useEffect(() => { // Notify opener window that auth succeeded 
     try {
-      if (window.opener) {
-        window.opener.postMessage(
-          { type: "oauth_success" },
-          window.location.origin
-        );
+      const redirectUrl = "/dashboard";
+      // If opened as a popup from the main app, notify the opener so it can handle navigation.
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({ type: "oauth_success", url: redirectUrl }, window.location.origin);
+        // Give the opener a moment to handle the message, then close the popup.
+        const t = setTimeout(() => {
+          try {
+            window.close();
+          } catch (e) {}
+        }, 300);
+        return () => clearTimeout(t);
       }
+
+      // No opener (or it closed) — redirect this window to the dashboard.
+      window.location.href = redirectUrl;
     } catch (e) {
-      // ignore
-    }
-
-    // Close the popup shortly after notifying the opener
-    const t = setTimeout(() => {
+      console.error("Error notifying opener window:", e);
       try {
-        window.close();
-      } catch (e) {}
-    }, 800);
-
-    return () => clearTimeout(t);
+        window.location.href = "/dashboard";
+      } catch (err) {}
+    }
   }, []);
 
   return (

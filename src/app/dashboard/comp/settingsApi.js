@@ -18,7 +18,7 @@ export async function updateProfile(profile) {
     credentials: "include",
     body: JSON.stringify(profile),
   });
-  return await handleResponse(res);
+  return await res;
 }
 
 export async function getStudyGoals() {
@@ -41,7 +41,7 @@ export async function updateStudyGoals({ studyGoals, percentComplete }) {
     body: JSON.stringify(studyGoals),
   });
 
-  const body = await handleResponse(res);
+  const body = await res;
   if (percentComplete === 100) {
     const { status } = await addScoreAndInvalidate("completeStudyGoal");
     if (status === 201 || status === 214) {
@@ -62,5 +62,5 @@ export async function sendVerificationEmail(email) {
     body: JSON.stringify({ email }),
   });
 
-  return await handleResponse(res);
+  return await res;
 }
