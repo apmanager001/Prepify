@@ -396,7 +396,7 @@ const Dashboard = () => {
                 alt="Prepify"
                 width={160}
                 height={160}
-                className="rounded-full object-cover object-center"
+                className="object-cover object-center"
                 priority={true}
               />
             </div>
@@ -427,19 +427,19 @@ const Dashboard = () => {
 
           {/* User Section & Logout */}
           <div className="pt-1 px-4 border-t border-gray-100">
-            <div className="mb-4 p-4 bg-base-200 rounded-xl border border-gray-200">
+            <div className="mb-4 p-4 bg-base-200/20 rounded-xl border border-gray-200/30">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   {profileLoading ? (
                     <LoadingComp />
                   ) : (
                     <>
-                      <p className="text-sm font-semibold text-gray-900 mb-1 truncate">
+                      <p className="text-sm font-semibold text-neutral-content mb-1 truncate">
                         {userData?.profile?.username?.startsWith("\\google")
                           ? ""
                           : userData?.profile?.username || "User"}
                       </p>
-                      <p className="text-xs text-gray-600 truncate">
+                      <p className="text-xs text-neutral-content/80 truncate">
                         {userData?.profile?.email || "user@example.com"}
                       </p>
                       {userData?.profile?.isAdmin && (
