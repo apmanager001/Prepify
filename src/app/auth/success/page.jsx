@@ -7,7 +7,14 @@ export default function AuthSuccess() {
     try {
       const redirectUrl = "/dashboard";
       // If opened as a popup from the main app, notify the opener so it can handle navigation.
-      if (window.opener && !window.opener.closed) {
+      let hasOpener = false;
+      try {
+        hasOpener = !!window.opener;
+      } catch (e) {
+        hasOpener = false;
+      }
+
+      if (hasOpener) {
         window.opener.postMessage(
           { type: "oauth_success", url: redirectUrl },
           window.location.origin,
@@ -21,7 +28,7 @@ export default function AuthSuccess() {
         return () => clearTimeout(t);
       }
 
-      // No opener (or it closed) — redirect this window to the dashboard.
+      // No opener (or access restricted) — redirect this window to the dashboard.
       window.location.href = redirectUrl;
     } catch (e) {
       console.error("Error notifying opener window:", e);

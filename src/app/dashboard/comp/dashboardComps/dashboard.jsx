@@ -133,7 +133,7 @@ const DashboardPage = () => {
             </h1>
             <div className="text-sm text-gray-500">Quick Tools & Stats</div>
           </div>
-          <div className="flex items-center gap-3 min-w-[180px]">
+          <div className="flex items-center gap-3 min-w-180px">
             <div
               className={`radial-progress ${dashColor} bg-base-300 font-extrabold text-xl`}
               style={{
