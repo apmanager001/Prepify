@@ -2,12 +2,16 @@
 import React, { useEffect } from "react";
 
 export default function AuthSuccess() {
-  useEffect(() => { // Notify opener window that auth succeeded 
+  useEffect(() => {
+    // Notify opener window that auth succeeded
     try {
       const redirectUrl = "/dashboard";
       // If opened as a popup from the main app, notify the opener so it can handle navigation.
       if (window.opener && !window.opener.closed) {
-        window.opener.postMessage({ type: "oauth_success", url: redirectUrl }, window.location.origin);
+        window.opener.postMessage(
+          { type: "oauth_success", url: redirectUrl },
+          window.location.origin,
+        );
         // Give the opener a moment to handle the message, then close the popup.
         const t = setTimeout(() => {
           try {
