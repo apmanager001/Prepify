@@ -305,9 +305,9 @@ const Dashboard = () => {
               <Image
                 src="/WhiteLogoWithSlogan.webp"
                 alt="Prepify"
-                width={128}
-                height={128}
-                className="rounded-full object-cover object-center"
+                width={120}
+                height={120}
+                className="h-20 w-52 object-cover object-center"
                 priority={true}
               />
             </div>
@@ -394,9 +394,9 @@ const Dashboard = () => {
               <Image
                 src="/WhiteLogoWithSlogan.webp"
                 alt="Prepify"
-                width={160}
-                height={160}
-                className="object-cover object-center"
+                width={120}
+                height={120}
+                className="w-40 h-20 object-cover object-center"
                 priority={true}
               />
             </div>

@@ -18,7 +18,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
     const popup = window.open(
       url,
       name,
-      `width=${width},height=${height},left=${left},top=${top}`
+      `width=${width},height=${height},left=${left},top=${top}`,
     );
 
     if (!popup) return Promise.reject(new Error("Popup blocked"));
@@ -31,26 +31,20 @@ const GoogleButton = ({ onSuccess } = {}) => {
           window.removeEventListener("message", onMessage);
         } catch (e) {}
         try {
-          clearInterval(poll);
+          clearTimeout(timeoutId);
         } catch (e) {}
       };
 
       const onMessage = (event) => {
-        // Prefer validating by the popup window reference when possible
-        try {
-          if (event.source !== popup) return;
-        } catch (e) {
-          // if cross-origin check fails, still safeguard by checking origin
-          if (event.origin !== window.location.origin) return;
-        }
-
+        // Only trust messages from our own origin and with the expected shape
+        if (event.origin !== window.location.origin) return;
         const data = event.data || {};
         if (data.type === "oauth_success") {
           if (settled) return;
           settled = true;
           cleanup();
           try {
-            if (!popup.closed) popup.close();
+            popup.close();
           } catch (e) {}
           resolve({ success: true });
         }
@@ -59,7 +53,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
           settled = true;
           cleanup();
           try {
-            if (!popup.closed) popup.close();
+            popup.close();
           } catch (e) {}
           reject(new Error("OAuth failed"));
         }
@@ -67,16 +61,14 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
       window.addEventListener("message", onMessage);
 
-      // Poll popup closed state; if closed before message, reject
-      const poll = setInterval(() => {
-        if (popup.closed) {
-          cleanup();
-          if (!settled) {
-            settled = true;
-            reject(new Error("Popup closed before completing authentication"));
-          }
-        }
-      }, 300);
+      // Fallback timeout: if we never hear back from the popup,
+      // resolve anyway so we can attempt to read the session and redirect.
+      const timeoutId = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        resolve({ success: false, reason: "timeout" });
+      }, 2000);
     });
   };
 
@@ -129,7 +121,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
       // After popup reports success, fetch current user from backend (cookies included)
       // We attempt to read the user but will redirect regardless — session may be set server-side.
-      const user = await api.getCurrentUser().catch(() => null);
+      const user = await api.getProfile().catch(() => null);
       if (user && onSuccess) onSuccess(user);
       router.push("/dashboard");
     } catch (error) {
