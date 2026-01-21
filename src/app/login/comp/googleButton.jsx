@@ -119,11 +119,25 @@ const GoogleButton = ({ onSuccess } = {}) => {
       const authUrl = `${base}/google`;
       await openPopupAndWait(authUrl);
 
-      // After popup reports success, fetch current user from backend (cookies included)
-      // We attempt to read the user but will redirect regardless — session may be set server-side.
-      const user = await api.getProfile().catch(() => null);
-      if (user && onSuccess) onSuccess(user);
-      router.push("/dashboard");
+      // After popup completes (or times out), poll the profile endpoint briefly
+      // and only redirect when we detect the logged-in user. This avoids
+      // relying on the popup-close timing and works with server-set cookies.
+      const waitForProfile = async (attempts = 10, interval = 500) => {
+        for (let i = 0; i < attempts; i++) {
+          const user = await api.getProfile().catch(() => null);
+          if (user) return user;
+          await new Promise((res) => setTimeout(res, interval));
+        }
+        return null;
+      };
+
+      const user = await waitForProfile(10, 500);
+      if (user) {
+        if (onSuccess) onSuccess(user);
+        router.push("/dashboard");
+      } else {
+        console.warn("No session detected after OAuth; not redirecting.");
+      }
     } catch (error) {
       console.error("Google login failed:", error);
     } finally {
