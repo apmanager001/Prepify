@@ -22,8 +22,6 @@ import StudyGuides from "./comp/studyGuides/studyGuides";
 import Notes from "./comp/notes/notes";
 import Todo from "./comp/todo/todo";
 import { useProfileQuery } from "./comp/useProfileQuery";
-// import Main from "./comp/main";
-// import DashboardPage from "./comp/dashboardComps/dashboard";
 import Overview from "./comp/dashboardComps/overview";
 import SettingsPage from "./comp/settings";
 import AdminPage from "./comp/adminPage";
@@ -31,8 +29,6 @@ import Tools from "./comp/tools";
 import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
-import FeedbackWidget from "./cornerTools/feedbackWidget";
-import ToolsButton from "./cornerTools/tools";
 import CornerWidgets from "./cornerTools/cornerWidgets";
 
 const Dashboard = () => {
@@ -99,9 +95,16 @@ const Dashboard = () => {
         },
       }));
     }
-  }, [profileData, router]);
+  }, [profileData, profileError, router]);
 
-  if (profileLoading) {
+  // Only render the dashboard once we have a valid profile
+  const hasValidProfileData =
+    profileData &&
+    !profileData.error &&
+    !(typeof profileData.status === "number" && profileData.status !== 200);
+
+  if (!hasValidProfileData) {
+    // While redirecting or waiting on profile, avoid rendering dashboard content
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100">
         <LoadingComp />
@@ -201,8 +204,8 @@ const Dashboard = () => {
         return <Notes />;
       case "todo":
         return <Todo />;
-      case "tools":
-        return <Tools />;
+      // case "tools":
+      //   return <Tools />;
       case "calendar":
         return <Calendar />;
       case "resources":
