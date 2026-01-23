@@ -61,6 +61,8 @@ const useToolStore = create((set, get) => {
     isPlaying: false,
     currentTime: 0,
     duration: 0,
+    volume: 1,
+    muted: false,
     currentSong: () => get().playlist[get().currentIndex] || null,
     // actions
     setPlaylist: (pl) => set({ playlist: pl, currentIndex: 0 }),
@@ -71,10 +73,13 @@ const useToolStore = create((set, get) => {
     play: () => {
       const audio = getAudioElement();
       if (audio) {
+        const { volume, muted } = get();
+        audio.volume = muted ? 0 : volume;
         audio.play().catch(() => {});
         set({ isPlaying: true });
       }
     },
+
     pause: () => {
       const audio = getAudioElement();
       if (audio) {
@@ -115,8 +120,8 @@ const useToolStore = create((set, get) => {
         0,
         Math.min(
           get().duration || audio.duration || 0,
-          get().currentTime + delta
-        )
+          get().currentTime + delta,
+        ),
       );
       audio.currentTime = newTime;
       set({ currentTime: newTime });
@@ -135,10 +140,39 @@ const useToolStore = create((set, get) => {
         if (audio && song) {
           audio.src = song.audio || "";
           audio.load();
+
+          const { volume, muted } = get();
+          audio.volume = muted ? 0 : volume;
         }
         lastIndex = currentIndex;
       }
     },
+    setSiteVolume: (value) =>
+      set(() => {
+        const audio = getAudioElement();
+
+        if (audio) {
+          // always apply real volume
+          audio.volume = value;
+        }
+
+        return {
+          volume: value,
+          // auto unmute if value > 0
+          muted: value === 0 ? true : false,
+        };
+      }),
+    toggleMute: () =>
+      set((state) => {
+        const audio = getAudioElement();
+        const nextMuted = !state.muted;
+
+        if (audio) {
+          audio.volume = nextMuted ? 0 : state.volume;
+        }
+
+        return { muted: nextMuted };
+      }),
   };
 });
 

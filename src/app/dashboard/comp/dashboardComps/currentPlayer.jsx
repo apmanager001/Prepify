@@ -13,6 +13,10 @@ const CurrentPlayer = () => {
   const currentTime = useToolStore((s) => s.currentTime);
   const duration = useToolStore((s) => s.duration);
   const changeSong = useToolStore((s) => s.changeSong);
+  const siteVolume = useToolStore((s) => s.volume);
+  const setSiteVolume = useToolStore((s) => s.setSiteVolume);
+  const muted = useToolStore((s) => s.muted);
+  const toggleMute = useToolStore((s) => s.toggleMute);
 
   const formatTime = (seconds) => {
     const min = Math.floor(seconds / 60);
@@ -25,7 +29,7 @@ const CurrentPlayer = () => {
   }, []);
 
   return (
-    <div className="w-full max-h-96 flex justify-center md:justify-left ">
+    <div className="w-full max-h-102 flex justify-center md:justify-left ">
       <div className="w-80 bg-linear-to-br from-gray-800 via-gray-900 to-black rounded-2xl h-full shadow-2xl border border-gray-700">
         <div className="h-60 rounded-t-2xl flex items-center justify-center relative">
           <Img
@@ -74,7 +78,20 @@ const CurrentPlayer = () => {
               </div>
               <span>{formatTime(duration)}</span>
             </div>
-            <div className="flex items-center justify-center mt-4">
+            <div className="flex items-center gap-2">
+              <button onClick={toggleMute}>{muted ? "🔇" : "🔊"}</button>
+
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={muted ? 0 : siteVolume}
+                onChange={(e) => setSiteVolume(Number(e.target.value))}
+                className="w-32"
+              />
+            </div>
+            <div className="flex items-center justify-center">
               <div
                 className="bg-gray-700 hover:bg-gray-600 z-30 rounded-full p-2 inline-block mr-4 cursor-pointer transition-transform duration-100 active:scale-105 tooltip tooltip-top"
                 onClick={() => seekAudio(-10)}
@@ -84,7 +101,7 @@ const CurrentPlayer = () => {
               </div>
 
               <div
-                className="bg-primary hover:bg-primary/80 z-30 rounded-full p-3 inline-block cursor-pointer "
+                className="bg-primary hover:bg-primary/80 z-30 rounded-full p-2 inline-block cursor-pointer "
                 onClick={toggle}
               >
                 {isPlaying ? (

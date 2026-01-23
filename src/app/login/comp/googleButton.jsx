@@ -72,44 +72,6 @@ const GoogleButton = ({ onSuccess } = {}) => {
     });
   };
 
-  // const openPopupAndWait = (url, name = "google_oauth", options = {}) => {
-  //   const width = options.width || 600;
-  //   const height = options.height || 700;
-  //   const left = window.screenX + (window.outerWidth - width) / 2;
-  //   const top = window.screenY + (window.outerHeight - height) / 2;
-  //   const popup = window.open(
-  //     url,
-  //     name,
-  //     `width=${width},height=${height},left=${left},top=${top}`
-  //   );
-
-  //   if (!popup) return Promise.reject(new Error("Popup blocked"));
-
-  //   return new Promise((resolve, reject) => {
-  //     const onMessage = (event) => {
-  //       if (event.origin !== window.location.origin) return;
-  //       if (event.data?.type === "oauth_success") {
-  //         window.removeEventListener("message", onMessage);
-  //         resolve({ success: true });
-  //       }
-  //       if (event.data?.type === "oauth_error") {
-  //         window.removeEventListener("message", onMessage);
-  //         reject(new Error("OAuth failed"));
-  //       }
-  //     };
-
-  //     window.addEventListener("message", onMessage);
-
-  //     const poll = setInterval(() => {
-  //       if (popup.closed) {
-  //         clearInterval(poll);
-  //         window.removeEventListener("message", onMessage);
-  //         reject(new Error("Popup closed before completing authentication"));
-  //       }
-  //     }, 500);
-  //   });
-  // };
-
   const [pending, setPending] = useState(false);
 
   const handleLogin = async () => {
@@ -118,26 +80,11 @@ const GoogleButton = ({ onSuccess } = {}) => {
       const base = process.env.NEXT_PUBLIC_BACKEND || "";
       const authUrl = `${base}/google`;
       await openPopupAndWait(authUrl);
-
-      // After popup completes (or times out), poll the profile endpoint briefly
-      // and only redirect when we detect the logged-in user. This avoids
-      // relying on the popup-close timing and works with server-set cookies.
-      const waitForProfile = async (attempts = 10, interval = 500) => {
-        for (let i = 0; i < attempts; i++) {
-          const user = await api.getProfile().catch(() => null);
-          if (user) return user;
-          await new Promise((res) => setTimeout(res, interval));
-        }
-        return null;
-      };
-
-      const user = await waitForProfile(10, 500);
-      if (user) {
-        if (onSuccess) onSuccess(user);
-        router.push("/dashboard");
-      } else {
-        console.warn("No session detected after OAuth; not redirecting.");
-      }
+      // After popup reports success, fetch current user from backend (cookies included)
+      // We attempt to read the user but will redirect regardless — session may be set server-side.
+      const user = await api.getProfile().catch(() => null);
+      if (user && onSuccess) onSuccess(user);
+      router.push("/dashboard");
     } catch (error) {
       console.error("Google login failed:", error);
     } finally {
