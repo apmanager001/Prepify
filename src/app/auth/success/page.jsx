@@ -1,24 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 export default function AuthSuccess() {
   useEffect(() => {
     // Notify opener window that auth succeeded
     try {
-      const redirectUrl = "/dashboard";
-      // If opened as a popup from the main app, notify the opener so it can handle navigation.
-      let hasOpener = false;
-      try {
-        hasOpener = !!window.opener;
-      } catch (e) {
-        hasOpener = false;
-      }
-
-      if (hasOpener) {
-        window.opener.postMessage(
-          { type: "oauth_success", url: redirectUrl },
-          window.location.origin,
-        );
         // Give the opener a moment to handle the message, then close the popup.
         const t = setTimeout(() => {
           try {
@@ -26,15 +12,8 @@ export default function AuthSuccess() {
           } catch (e) {}
         }, 300);
         return () => clearTimeout(t);
-      }
-
-      // No opener (or access restricted) — redirect this window to the dashboard.
-      window.location.href = redirectUrl;
     } catch (e) {
       console.error("Error notifying opener window:", e);
-      try {
-        window.location.href = "/dashboard";
-      } catch (err) {}
     }
   }, []);
 

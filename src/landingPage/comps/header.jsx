@@ -18,8 +18,6 @@ const Header = () => {
     { href: "#contact", label: "Contact" },
   ];
 
-  console.log("Profile Data:", profileError);
-
   const loginLink = (
     <div>
       {profileData && !profileData.error && !profileError ? (

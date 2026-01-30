@@ -17,6 +17,7 @@ const RenderAccountTab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
+  const googleLogin = profileData?.username?.startsWith("\\google");
   const displayUsername = profileData?.username?.startsWith("\\google")
     ? "Logged in with Google"
     : profileData?.username;
@@ -68,7 +69,6 @@ const RenderAccountTab = () => {
       </div>
     );
   }
-
   return (
     <div className="space-y-6">
       <div className="bg-base-300 border border-yellow-200 rounded-lg p-4">
@@ -101,7 +101,7 @@ const RenderAccountTab = () => {
             </div>
           </label>
           <p className="text-xs text-gray-500 ml-4">
-            Login only, can not change
+            Used to login, cannot be changed
           </p>
           <input
             id="username"
@@ -125,9 +125,11 @@ const RenderAccountTab = () => {
               <span>Email</span>
             </div>
           </label>
-          <p className="text-xs text-gray-500 ml-4">
-            Changing your email, will change your login email.
-          </p>
+          {!googleLogin && (
+            <p className="text-xs text-gray-500 ml-4">
+              Changing your email, will change your login email.
+            </p>
+          )}
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
             <input
               id="email"
@@ -137,10 +139,10 @@ const RenderAccountTab = () => {
                 handleInputChange("profile", "email", e.target.value)
               }
               className="input flex-1 w-full bg-base-100"
-              disabled={isLoading}
+              disabled={true}
               autoComplete="off"
             />
-
+          {!googleLogin && (
             <div className="flex items-center space-x-2">
               {profileData?.emailVerified ? (
                 <Check size={18} className="text-green-500" />
@@ -185,6 +187,7 @@ const RenderAccountTab = () => {
                 Change Email
               </button>
             </div>
+          )}
           </div>
         </div>
       </div>
