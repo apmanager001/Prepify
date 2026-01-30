@@ -46,7 +46,9 @@ const Overview = () => {
             <h1 className="text-2xl md:text-3xl font-extrabold text-primary">
               Dashboard
             </h1>
-            <div className="text-sm text-base-content/80">Quick Tools & Stats</div>
+            <div className="text-sm text-base-content/80">
+              Quick Tools & Stats
+            </div>
           </div>
         </div>
       </header>
@@ -156,7 +158,7 @@ const Overview = () => {
                   {todosList.slice(0, 6).map((t, i) => (
                     <div
                       key={t._id || t.id || i}
-                      className="p-3 border border-gray-200 rounded-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                      className="p-3 bg-warning/10 border border-base-300 rounded-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                     >
                       <div className="flex items-center gap-3">
                         <input

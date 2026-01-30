@@ -79,11 +79,25 @@ const GoogleButton = ({ onSuccess } = {}) => {
     try {
       const base = process.env.NEXT_PUBLIC_BACKEND || "";
       const authUrl = `${base}/google`;
-      await openPopupAndWait(authUrl);
-      // After popup reports success, fetch current user from backend (cookies included)
-      // We attempt to read the user but will redirect regardless — session may be set server-side.
-      const user = await api.getProfile().catch(() => null);
-      if (user && onSuccess) onSuccess(user);
+      const result = await openPopupAndWait(authUrl);
+
+      // Regardless of whether we got an explicit success message or
+      // just a timeout, confirm with the backend by fetching the
+      // current user (cookies included).
+      let user = null;
+      try {
+        user = await api.getProfile();
+      } catch (e) {
+        console.error("Google login: backend profile fetch failed", e, result);
+      }
+
+      // If backend does not return a user, do not redirect.
+      if (!user) {
+        console.warn("Google login not confirmed by backend", result);
+        return;
+      }
+
+      if (onSuccess) onSuccess(user);
       router.push("/dashboard");
     } catch (error) {
       console.error("Google login failed:", error);
