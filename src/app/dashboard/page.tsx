@@ -59,7 +59,6 @@ const Dashboard = () => {
     onError: (error) => {
       console.error("Logout failed:", error);
       // Redirect to home page even if logout failed
-      
     },
   });
 

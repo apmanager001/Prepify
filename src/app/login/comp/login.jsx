@@ -127,8 +127,8 @@ const Login = () => {
               {/* Username Field */}
               <fieldset className="fieldset">
                 <legend className="fieldset-legend label text-primary text-lg">
-                    <User />
-                    Username or Email
+                  <User />
+                  Username or Email
                 </legend>
                 <input
                   id="login-username"
@@ -137,7 +137,7 @@ const Login = () => {
                   value={formData.username}
                   onChange={handleInputChange}
                   placeholder="Enter your username or email"
-                  className="input input-xl w-full bg-white" 
+                  className="input input-xl w-full bg-white"
                   required
                   autoComplete="username"
                   disabled={loginMutation.isPending || verifying}
@@ -147,8 +147,8 @@ const Login = () => {
               {/* Password Field */}
               <fieldset className="fieldset">
                 <legend className="fieldset-legend label text-primary text-lg">
-                    <Key />
-                    Password
+                  <Key />
+                  Password
                 </legend>
                 <input
                   id="login-password"

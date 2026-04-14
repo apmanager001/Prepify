@@ -200,8 +200,8 @@ const Register = () => {
               {/* Confirm Password Field */}
               <fieldset className="fieldset text-left">
                 <legend className="fieldset-legend label text-primary text-lg">
-                    <Lock />
-                    Confirm Password
+                  <Lock />
+                  Confirm Password
                 </legend>
                 <label className="input input-xl w-full bg-white">
                   <input
@@ -240,7 +240,9 @@ const Register = () => {
                   {registerMutation.isPending || verifying ? (
                     <>
                       <Loader2 className="animate-spin" size={18} />
-                      {verifying ? "Verifying session..." : "Creating Account..."}
+                      {verifying
+                        ? "Verifying session..."
+                        : "Creating Account..."}
                     </>
                   ) : (
                     "Create Account"
@@ -306,7 +308,10 @@ function getRegisterErrorMessage(error) {
     message.includes("too short") ||
     message.includes("at least")
   ) {
-    return rawMessage || "Please check the length requirements for your input fields.";
+    return (
+      rawMessage ||
+      "Please check the length requirements for your input fields."
+    );
   }
 
   if (rawMessage) {

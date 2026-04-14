@@ -167,7 +167,10 @@ export const api = {
         return await api.getProfile();
       } catch (error) {
         if (attempt === maxAttempts - 1) {
-          console.warn("Failed to confirm session via profile endpoint:", error);
+          console.warn(
+            "Failed to confirm session via profile endpoint:",
+            error,
+          );
           return null;
         }
 
@@ -186,7 +189,7 @@ export const submitContactMessage = async (messageData) => {
   try {
     if (!API_BASE_URL) {
       throw new Error(
-        "Backend API URL not configured. Please check your environment variables."
+        "Backend API URL not configured. Please check your environment variables.",
       );
     }
 
@@ -214,7 +217,7 @@ export const subscribeToNewsletter = async (emailData) => {
   try {
     if (!API_BASE_URL) {
       throw new Error(
-        "Backend API URL not configured. Please check your environment variables."
+        "Backend API URL not configured. Please check your environment variables.",
       );
     }
 
