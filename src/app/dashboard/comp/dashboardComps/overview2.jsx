@@ -1,5 +1,6 @@
 import React from "react";
 import ToolsFooter from "./toolsFooter";
+import {Calendar, NotebookPen, SquareCheckBig } from "lucide-react";
 import { Roboto } from "next/font/google";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
@@ -37,43 +38,49 @@ const Overview = ({ changePage }) => {
     : todos?.data || todos?.items || todos?.todos || [];
 
   const fullCardClass =
-    "bg-base-200 rounded-md overflow-hidden border border-gray-200 shadow-sm min-h-64 h-full flex flex-col";
+    "customContainer overflow-hidden min-h-64 h-full flex flex-col";
   const cardHeaderClass =
-    "bg-info/20 px-4 py-2 text-sm font-medium";
+    "bg-neutral-content text-neutral px-4 py-2 text-sm font-medium";
   const cardItemClass =
-    "cursor-pointer p-3 bg-info/10 border-2 border-info/20 rounded-md flex flex-col sm:flex-row sm:items-stretch sm:justify-between gap-3";
-  const iconClass = "text-gray-500 text-lg";
+    "cursor-pointer p-3 bg-neutral-content text-primary border-2 border-neutral-content/60 rounded-md flex flex-col sm:flex-row sm:items-stretch sm:justify-between gap-3";
+  const iconClass =
+    "flex items-center text-neutral-content text-lg border-3 border-primary bg-neutral p-2 rounded-xl hover:scale-105";
 
   return (
     <div className="flex flex-col gap-4 mb-24 xl:mb-10">
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-base-200 rounded-md shadow-sm">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-primary">
-              Dashboard
-            </h1>
-            <div className="text-sm text-base-content/80">
-              Quick Tools & Stats
-            </div>
+      <header className="headerContainer">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-neutral-content uppercase tracking-wide">
+            Overview
+          </h1>
+          <div className="text-sm text-neutral-content/80">
+            Quick Tools & Stats
           </div>
+        </div>
       </header>
       <div
-        className={`flex flex-col md:flex-row md:flex-wrap md:-mx-2 md:px-4 md:items-stretch w-full ${roboto.className}`}
+        className={`grid grid-cols-1 md:grid-cols-2 w-full gap-4 ${roboto.className}`}
       >
         {/* Calendar card - render raw event objects */}
-        <div className="md:w-1/2 px-2 mb-4">
+        <div className="w-full">
           <div className={fullCardClass}>
-            <div
-              className={cardHeaderClass}
-            >{`Today's Calendar Events ${todaysDate}`}</div>
+            <div className={`${cardHeaderClass} flex items-center gap-2`}>
+              <div className={`${iconClass}`}>
+                <Calendar />
+              </div>
+              {`Today's Calendar Events ${todaysDate}`}
+            </div>
             <div className="p-4 flex-1 min-h-32">
               {calendarLoading ? (
-                <div className="text-sm text-gray-500 w-full">
+                <div className="text-sm text-neutral-content w-full">
                   <LoadingComp />
                 </div>
               ) : !fetchEventData ||
                 !Array.isArray(fetchEventData?.events) ||
                 fetchEventData.events.length === 0 ? (
-                <div className="text-sm text-gray-500">No events for today</div>
+                <div className="text-sm text-neutral-content">
+                  No events for today
+                </div>
               ) : (
                 <div className="space-y-3">
                   {fetchEventData?.events.map((ev) => (
@@ -84,16 +91,16 @@ const Overview = ({ changePage }) => {
                     >
                       <div className="flex items-stretch justify-between w-full">
                         <div>
-                          <div className="text-sm font-semibold text-gray-800">
+                          <div className="text-sm font-semibold text-neutral">
                             {ev.eventTitle}
                           </div>
                           {ev.eventDescription && (
-                            <div className="text-xs text-base-content ml-2">
+                            <div className="text-xs text-neutral-content ml-2">
                               {ev.eventDescription}
                             </div>
                           )}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-neutral-content/80">
                           {ev.eventTime ||
                             new Date(ev.eventDate).toLocaleTimeString("en-US", {
                               hour: "numeric",
@@ -111,16 +118,21 @@ const Overview = ({ changePage }) => {
         </div>
 
         {/* Notes card - render recent notes objects */}
-        <div className="md:w-1/2 px-2 mb-4">
+        <div className="w-full">
           <div className={fullCardClass}>
-            <div className={cardHeaderClass}>Notes</div>
+            <div className={`${cardHeaderClass} flex items-center gap-2`}>
+              <div className={`${iconClass}`}>
+                <NotebookPen />
+              </div>
+              Notes
+            </div>
             <div className="p-4 flex-1 min-h-32">
               {notesLoading ? (
-                <div className="text-sm text-gray-500 w-full">
+                <div className="text-sm text-neutral-content w-full">
                   <LoadingComp />
                 </div>
               ) : !notesList || notesList.length === 0 ? (
-                <div className="text-sm text-gray-500">No notes</div>
+                <div className="text-sm text-neutral-content">No notes</div>
               ) : (
                 <div className="space-y-3">
                   {notesList.slice(0, 6).map((n, i) => (
@@ -131,12 +143,12 @@ const Overview = ({ changePage }) => {
                     >
                       <div className="flex items-stretch justify-between w-full gap-3">
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold text-gray-800 truncate">
+                          <div className="text-sm font-semibold text-neutral truncate">
                             {n.title || n.noteTitle}
                           </div>
                           {n.body && (
                             <div
-                              className="text-xs text-gray-800 overflow-hidden"
+                              className="text-xs text-neutral overflow-hidden"
                               style={{
                                 display: "-webkit-box",
                                 WebkitLineClamp: 3,
@@ -149,7 +161,7 @@ const Overview = ({ changePage }) => {
                         </div>
 
                         {n.createdAt && (
-                          <div className="text-xs text-gray-500 ml-4 whitespace-nowrap">
+                          <div className="text-xs text-neutral/80 ml-4 whitespace-nowrap">
                             {new Date(n.createdAt).toLocaleDateString("en-US", {
                               month: "numeric",
                               day: "numeric",
@@ -167,16 +179,21 @@ const Overview = ({ changePage }) => {
         </div>
 
         {/* Todos card - render todo objects */}
-        <div className="md:w-1/2 px-2 mb-14">
+        <div className="w-full mb-14">
           <div className={fullCardClass}>
-            <div className={cardHeaderClass}>To Do</div>
+            <div className={`${cardHeaderClass} flex items-center gap-2`}>
+              <div className={`${iconClass}`}>
+                <SquareCheckBig />
+              </div>
+              To Do
+            </div>
             <div className="p-4 flex-1 min-h-32">
               {todosLoading ? (
-                <div className="text-sm text-gray-500 w-full">
+                <div className="text-sm text-neutral-content w-full">
                   <LoadingComp />
                 </div>
               ) : !todosList || todosList.length === 0 ? (
-                <div className="text-sm text-gray-500">No tasks</div>
+                <div className="text-sm text-neutral-content">No tasks</div>
               ) : (
                 <div className="space-y-3">
                   {todosList.slice(0, 6).map((t, i) => (
@@ -195,14 +212,14 @@ const Overview = ({ changePage }) => {
                             t.title || t.task || t.text
                           } completed`}
                         />
-                        <div className="text-sm text-gray-800">
+                        <div className="text-sm text-neutral">
                           {t.title || t.task || t.text}
                         </div>
                       </div>
 
                       <div className="mt-2 sm:mt-0 flex items-center gap-3">
                         {t.createdAt && (
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-neutral/80">
                             {new Date(t.createdAt).toLocaleDateString("en-US", {
                               month: "numeric",
                               day: "numeric",

@@ -150,13 +150,20 @@ export default function Notes() {
     }
   }
   return (
-    <div className="p-4 min-h-dvh">
-      <h2 className="text-2xl font-semibold mb-4">Notes</h2>
+    <div className="min-h-dvh">
+      <div className="headerContainer">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-neutral-content uppercase tracking-wide">
+          Notes
+        </h1>
+        <p className="text-sm text-neutral-content/80">
+          Jot down your thoughts, ideas, and reminders — all in one place.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full mt-6">
         {/* Left: note creation + list */}
         <div className="md:col-span-1">
-          <form onSubmit={addNote} className="space-y-3 mb-4">
+          <form onSubmit={addNote} className="space-y-3 mb-6">
             <div className="flex items-center gap-2">
               <input
                 id="title"
@@ -197,7 +204,7 @@ export default function Notes() {
             </div>
           </form>
 
-          <div className="bg-base-200 rounded-lg shadow-sm w-full ">
+          <div className="bg-base-200 rounded-lg shadow-sm w-full border border-base-content/20">
             <ul className="divide-y w-full">
               {notes.map((n) => (
                 <li
@@ -227,7 +234,7 @@ export default function Notes() {
                         openDeleteModal(n._id, n.title);
                       }}
                       aria-label={`Delete ${n.title}`}
-                      className="btn btn-ghost rounded btn-sm"
+                      className="btn btn-ghost btn-circle btn-sm "
                     >
                       <Trash size={14} className="text-error" />
                     </button>
@@ -245,7 +252,7 @@ export default function Notes() {
 
         {/* Right: detail view — on mobile this becomes a panel that can be toggled */}
         <div
-          className={`md:col-span-2 bg-base-200 rounded-lg shadow p-4 ${
+          className={`md:col-span-2 bg-base-200 rounded-lg shadow p-4 border border-base-content/20 ${
             showDetailsOnMobile ? "" : "hidden md:block"
           }`}
         >
@@ -353,18 +360,18 @@ function EditModal({
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-base-200 rounded-lg w-full max-w-2xl p-4 shadow-lg">
+      <div className="bg-base-200 rounded-lg w-full max-w-2xl p-4 shadow-lg border border-base-content/20">
         <h3 className="text-lg font-semibold mb-2">Edit Note</h3>
         <div className="space-y-2">
           <input
-            className="input input-bordered w-full"
+            className="input input-ghost bg-base-100 w-full"
             value={title}
             onChange={(e) => onChangeTitle(e.target.value)}
             placeholder="Title"
             maxLength={120}
           />
           <textarea
-            className="textarea textarea-bordered w-full"
+            className="textarea textarea-ghost bg-base-100 w-full"
             value={body}
             onChange={(e) => onChangeBody(e.target.value)}
             rows={8}

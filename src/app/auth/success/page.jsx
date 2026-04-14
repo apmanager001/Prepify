@@ -1,20 +1,29 @@
 "use client";
+
 import { useEffect } from "react";
 
 export default function AuthSuccess() {
   useEffect(() => {
-    // Notify opener window that auth succeeded
     try {
-        // Give the opener a moment to handle the message, then close the popup.
-        const t = setTimeout(() => {
-          try {
-            window.close();
-          } catch (e) {}
-        }, 300);
-        return () => clearTimeout(t);
-    } catch (e) {
-      console.error("Error notifying opener window:", e);
+      if (window.opener) {
+        window.opener.postMessage(
+          { type: "oauth_success" },
+          window.location.origin,
+        );
+      }
+    } catch (error) {
+      console.error("OAuth success callback failed:", error);
     }
+
+    const timeoutId = window.setTimeout(() => {
+      try {
+        window.close();
+      } catch (error) {
+        console.error("Failed to close OAuth popup:", error);
+      }
+    }, 800);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   return (
@@ -22,7 +31,7 @@ export default function AuthSuccess() {
       <div className="text-center p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-xl font-bold">Authentication successful</h2>
         <p className="mt-2 text-sm text-gray-600">
-          You can close this window — you will be redirected shortly.
+          You can close this window. Sign-in will continue in the original tab.
         </p>
         <div className="mt-4">
           <button
@@ -30,7 +39,9 @@ export default function AuthSuccess() {
             onClick={() => {
               try {
                 window.close();
-              } catch (e) {}
+              } catch (error) {
+                console.error("Failed to close OAuth popup:", error);
+              }
             }}
             className="btn btn-primary"
           >
