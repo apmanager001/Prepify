@@ -1,7 +1,53 @@
 import { API_BASE_URL } from "@/lib/backendAPI";
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function readResponseBody(response) {
+  const text = await response.text().catch(() => "");
+
+  if (!text) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
+function extractErrorMessage(body, fallbackMessage) {
+  if (body && typeof body === "object") {
+    const candidate = body.message || body.error || body.detail;
+
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate;
+    }
+  }
+
+  if (typeof body === "string" && body.trim()) {
+    return body;
+  }
+
+  return fallbackMessage;
+}
+
+function createApiError(response, body, fallbackMessage) {
+  const error = new Error(extractErrorMessage(body, fallbackMessage));
+  error.status = response.status;
+  error.body = body;
+  return error;
+}
+
 export const api = {
   // Register user
   register: async (userData) => {
+    if (!API_BASE_URL) {
+      throw new Error(
+        "Backend API URL not configured. Please check your environment variables.",
+      );
+    }
+
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
       headers: {
@@ -11,22 +57,22 @@ export const api = {
       body: JSON.stringify(userData),
     });
 
+    const body = await readResponseBody(response);
+
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Registration failed");
+      throw createApiError(response, body, "Registration failed");
     }
 
-    return response.json();
+    return body;
   },
 
   // Login user
   login: async (credentials) => {
-    const requestId = Math.random().toString(36).substr(2, 9);
     const loginUrl = `${API_BASE_URL}/login`;
 
     if (!API_BASE_URL) {
       throw new Error(
-        "Backend API URL not configured. Please check your environment variables."
+        "Backend API URL not configured. Please check your environment variables.",
       );
     }
 
@@ -40,23 +86,28 @@ export const api = {
         body: JSON.stringify(credentials),
       });
 
+      const body = await readResponseBody(response);
+
       if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        console.error(`❌ [${requestId}] Login API error response:`, error);
-        throw new Error(error.message || "Login failed");
+        console.error(`❌ Login API error response:`, body);
+        throw createApiError(response, body, "Login failed");
       }
 
-      const responseData = await response.json();
-
-      return responseData;
+      return body;
     } catch (error) {
-      console.error(`❌ [${requestId}] Fetch error:`, error);
+      console.error(`❌ Fetch error:`, error);
       throw error;
     }
   },
 
   // Logout user
   logout: async () => {
+    if (!API_BASE_URL) {
+      throw new Error(
+        "Backend API URL not configured. Please check your environment variables.",
+      );
+    }
+
     const response = await fetch(`${API_BASE_URL}/logout`, {
       method: "POST",
       headers: {
@@ -65,14 +116,22 @@ export const api = {
       credentials: "include", // Include cookies
     });
 
+    const body = await readResponseBody(response);
+
     if (!response.ok) {
-      throw new Error("Logout failed");
+      throw createApiError(response, body, "Logout failed");
     }
-    return response.json();
+    return body;
   },
 
   // Get user profile (alternative endpoint)
   getProfile: async () => {
+    if (!API_BASE_URL) {
+      throw new Error(
+        "Backend API URL not configured. Please check your environment variables.",
+      );
+    }
+
     const response = await fetch(`${API_BASE_URL}/profile`, {
       method: "GET",
       headers: {
@@ -81,17 +140,59 @@ export const api = {
       credentials: "include", // Include cookies
     });
 
+    const body = await readResponseBody(response);
+
     if (!response.ok) {
-      throw new Error(`Failed to get profile data: ${response.status}`);
+      throw createApiError(
+        response,
+        body,
+        `Failed to get profile data: ${response.status}`,
+      );
     }
 
-    return response.json();
+    return body;
+  },
+
+  waitForProfile: async (options = {}) => {
+    const {
+      maxAttempts = 6,
+      initialDelay = 300,
+      maxDelay = 2000,
+      backoffMultiplier = 1.5,
+    } = options;
+    let delay = initialDelay;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      try {
+        return await api.getProfile();
+      } catch (error) {
+        if (attempt === maxAttempts - 1) {
+          console.warn(
+            "Failed to confirm session via profile endpoint:",
+            error,
+          );
+          return null;
+        }
+
+        // eslint-disable-next-line no-await-in-loop
+        await wait(delay);
+        delay = Math.min(maxDelay, Math.floor(delay * backoffMultiplier));
+      }
+    }
+
+    return null;
   },
 };
 
 // Contact form API
 export const submitContactMessage = async (messageData) => {
   try {
+    if (!API_BASE_URL) {
+      throw new Error(
+        "Backend API URL not configured. Please check your environment variables.",
+      );
+    }
+
     const response = await fetch(`${API_BASE_URL}/message`, {
       method: "POST",
       headers: {
@@ -114,6 +215,12 @@ export const submitContactMessage = async (messageData) => {
 // Newsletter subscription API
 export const subscribeToNewsletter = async (emailData) => {
   try {
+    if (!API_BASE_URL) {
+      throw new Error(
+        "Backend API URL not configured. Please check your environment variables.",
+      );
+    }
+
     const response = await fetch(`${API_BASE_URL}/newsletter`, {
       method: "POST",
       headers: {

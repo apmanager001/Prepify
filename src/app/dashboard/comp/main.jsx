@@ -17,7 +17,6 @@ const Main = () => {
 
   // Fetch user data from API to validate session
   const {
-    data: profileData,
     error: profileError,
     isLoading: profileLoading,
   } = useQuery({
@@ -29,23 +28,6 @@ const Main = () => {
     },
   });
 
-  // Update user data when profile is fetched
-  useEffect(() => {
-    if (profileData) {
-      setUserData({
-        username: profileData.username || userData.username,
-        email: profileData.email || userData.email,
-        userId: profileData.userId || userData.userId,
-      });
-      // Update localStorage with fresh data
-      if (profileData.username)
-        localStorage.setItem("username", profileData.username);
-      if (profileData.email) localStorage.setItem("email", profileData.email);
-      if (profileData.userId)
-        localStorage.setItem("userId", profileData.userId);
-      setIsLoading(false);
-    }
-  }, [profileData]);
 
   // Handle loading and error states
   useEffect(() => {

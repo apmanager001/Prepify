@@ -168,7 +168,7 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
     );
   }
   return (
-    <div>
+    <div className="">
       {/* 7-Day Calendar */}
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4 px-2">
         <button
@@ -218,7 +218,7 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
         </button>
       </div>
       {/* Events for selected day */}
-      <div className="bg-base-200 rounded-lg p-4 shadow-sm">
+      <div className="bg-base-200 rounded-lg p-4 shadow-sm border border-base-content/20">
         <h4 className="text-sm font-semibold mb-2">
           Events on {selectedDay.toLocaleDateString()}
         </h4>
@@ -244,7 +244,7 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
           //     </li>
           //   ))}
           // </ul>
-          <ul className="timeline timeline-vertical">
+          <ul className="timeline timeline-vertical min-h-96">
             {(fetchedMap[selectedDay.toDateString()] || []).map((ev) => (
               <li
                 key={ev.id}

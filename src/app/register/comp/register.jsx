@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 import GoogleButton from "../../login/comp/googleButton";
 
 const Register = () => {
@@ -18,6 +19,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
+  const [verifying, setVerifying] = useState(false);
 
   // Use the API utility for registration
   const registerUser = async (userData) => {
@@ -26,40 +28,28 @@ const Register = () => {
 
   const registerMutation = useMutation({
     mutationFn: registerUser,
-    onSuccess: (data) => {
-      console.log("Registration successful:", data);
-      // Store user data in localStorage if needed
-      if (data.userId) {
-        localStorage.setItem("userId", data.userId);
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("email", data.email);
+    onSuccess: async () => {
+      setError("");
+      setVerifying(true);
+
+      const profile = await api.waitForProfile();
+
+      setVerifying(false);
+
+      if (!profile) {
+        const message =
+          "Account created, but we couldn't verify your session yet. Please use the sign-in link below if needed.";
+
+        setError(message);
+        toast.error(message);
+        return;
       }
-      // Redirect to dashboard
-      router.push("/dashboard");
+
+      router.replace("/dashboard");
     },
     onError: (error) => {
       console.error("Registration error:", error);
-      // Handle different error types based on your API response
-      if (error.message.includes("already in use")) {
-        if (error.message.includes("username")) {
-          setError("Username is already taken. Please choose a different one.");
-        } else if (error.message.includes("Email")) {
-          setError(
-            "Email is already registered. Please use a different email or try logging in."
-          );
-        } else {
-          setError("Account already exists. Please try logging in instead.");
-        }
-      } else if (error.message.includes("Missing")) {
-        setError("Please fill in all required fields.");
-      } else if (
-        error.message.includes("too long") ||
-        error.message.includes("too short")
-      ) {
-        setError("Please check the length requirements for your input fields.");
-      } else {
-        setError("Registration failed. Please try again later.");
-      }
+      setError(getRegisterErrorMessage(error));
     },
   });
 
@@ -107,13 +97,13 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-primary/10 to-secondary/10 flex items-center justify-center md:p-4">
       <div className="w-full max-w-md">
-        <div className="card bg-base-100 shadow-xl border border-primary/20">
-          <div className="card-body">
-            <h2 className="card-title text-2xl font-bold text-center text-primary mb-6">
+        <div className="bg-base-100 md:bg-white/80 backdrop-blur-xl md:rounded-3xl border border-white/30 shadow-2xl p-8 min-h-screen md:min-h-0">
+          <div className="text-center mb-8 p-6">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
               Create Account
-            </h2>
+            </h1>
 
             {error && (
               <div className="alert alert-error mb-4">
@@ -133,73 +123,57 @@ const Register = () => {
                 <span>{error}</span>
               </div>
             )}
-              <GoogleButton />
-              <div className="divider divider-primary mb-4">OR</div>
-              <form onSubmit={handleSubmit} className="space-y-6">
+            <GoogleButton />
+            <div className="divider divider-primary mb-4">OR</div>
+            <form onSubmit={handleSubmit} className="space-y-2">
               {/* Username Field */}
-              <fieldset className="fieldset">
-                <legend className="label">
-                  <span className="input-group-text text-primary">
-                    <User size={18} />
-                  </span>
-                  <span className="label-text text-base-content font-semibold">
-                    Username
-                  </span>
+              <fieldset className="fieldset text-left">
+                <legend className="fieldset-legend label text-primary text-lg">
+                  <User />
+                  Username
                 </legend>
-                <label className="input w-full">
-                  <input
-                    id="register-username"
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    placeholder="Enter your username"
-                    className=""
-                    required
-                    autoComplete="username"
-                    disabled={registerMutation.isPending}
-                    maxLength={20}
-                  />
-                </label>
+                <input
+                  id="register-username"
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  placeholder="Enter your username"
+                  className="input input-xl w-full bg-white"
+                  required
+                  autoComplete="username"
+                  disabled={registerMutation.isPending || verifying}
+                  maxLength={20}
+                />
               </fieldset>
 
               {/* Email Field */}
-              <fieldset className="fieldset">
-                <legend className="label">
-                  <span className="input-group-text text-primary">
-                    <Mail size={18} />
-                  </span>
-                  <span className="label-text text-base-content font-semibold">
-                    Email
-                  </span>
+              <fieldset className="fieldset text-left">
+                <legend className="fieldset-legend label text-primary text-lg">
+                  <Mail />
+                  Email
                 </legend>
-                <label className="input w-full">
-                  <input
-                    id="register-email"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Enter your email"
-                    className=""
-                    required
-                    autoComplete="email"
-                    disabled={registerMutation.isPending}
-                  />
-                </label>
+                <input
+                  id="register-email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                  className="input input-xl w-full bg-white"
+                  required
+                  autoComplete="email"
+                  disabled={registerMutation.isPending || verifying}
+                />
               </fieldset>
 
               {/* Password Field */}
-              <fieldset className="fieldset">
-                <legend className="label">
-                  <span className="input-group-text text-primary">
-                    <Lock size={18} />
-                  </span>
-                  <span className="label-text text-base-content font-semibold">
-                    Password
-                  </span>
+              <fieldset className="fieldset text-left">
+                <legend className="fieldset-legend label text-primary text-lg">
+                  <Lock />
+                  Password
                 </legend>
-                <label className="input w-full">
+                <label className="input input-xl w-full bg-white">
                   <input
                     id="register-password"
                     type={showPassword ? "text" : "password"}
@@ -209,14 +183,14 @@ const Register = () => {
                     placeholder="Enter your password"
                     className=""
                     required
-                    disabled={registerMutation.isPending}
+                    disabled={registerMutation.isPending || verifying}
                     minLength={6}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="btn text-primary bg-transparent border-none"
-                    disabled={registerMutation.isPending}
+                    className="btn btn-ghost text-primary bg-transparent border-none"
+                    disabled={registerMutation.isPending || verifying}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -224,16 +198,12 @@ const Register = () => {
               </fieldset>
 
               {/* Confirm Password Field */}
-              <fieldset className="fieldset">
-                <legend className="label">
-                  <span className="input-group-text text-primary">
-                    <Lock size={18} />
-                  </span>
-                  <span className="label-text text-base-content font-semibold">
-                    Confirm Password
-                  </span>
+              <fieldset className="fieldset text-left">
+                <legend className="fieldset-legend label text-primary text-lg">
+                  <Lock />
+                  Confirm Password
                 </legend>
-                <label className="input w-full">
+                <label className="input input-xl w-full bg-white">
                   <input
                     id="register-confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
@@ -243,13 +213,13 @@ const Register = () => {
                     placeholder="Confirm your password"
                     className=""
                     required
-                    disabled={registerMutation.isPending}
+                    disabled={registerMutation.isPending || verifying}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="btn text-primary bg-transparent border-none"
-                    disabled={registerMutation.isPending}
+                    className="btn btn-ghost text-primary bg-transparent border-none"
+                    disabled={registerMutation.isPending || verifying}
                   >
                     {showConfirmPassword ? (
                       <EyeOff size={18} />
@@ -264,13 +234,15 @@ const Register = () => {
               <div className="form-control mt-6">
                 <button
                   type="submit"
-                  disabled={registerMutation.isPending}
-                  className="btn btn-primary w-full"
+                  disabled={registerMutation.isPending || verifying}
+                  className="btn btn-primary text-lg w-full"
                 >
-                  {registerMutation.isPending ? (
+                  {registerMutation.isPending || verifying ? (
                     <>
                       <Loader2 className="animate-spin" size={18} />
-                      Creating Account...
+                      {verifying
+                        ? "Verifying session..."
+                        : "Creating Account..."}
                     </>
                   ) : (
                     "Create Account"
@@ -290,9 +262,61 @@ const Register = () => {
             </div>
           </div>
         </div>
+
+        {verifying && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-lg shadow-xl p-6 flex items-center space-x-4">
+              <span className="loading loading-spinner loading-lg"></span>
+              <div>
+                <div className="font-medium">Verifying session</div>
+                <div className="text-sm text-gray-600">
+                  Waiting for server to confirm your new account...
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default Register;
+
+function getRegisterErrorMessage(error) {
+  const rawMessage = typeof error?.message === "string" ? error.message : "";
+  const message = rawMessage.toLowerCase();
+
+  if (error?.status === 409 || message.includes("already in use")) {
+    if (message.includes("username")) {
+      return "Username is already taken. Please choose a different one.";
+    }
+
+    if (message.includes("email")) {
+      return "Email is already registered. Please use a different email or try logging in.";
+    }
+
+    return "Account already exists. Please try logging in instead.";
+  }
+
+  if (error?.status === 400 || message.includes("missing")) {
+    return "Please fill in all required fields.";
+  }
+
+  if (
+    message.includes("too long") ||
+    message.includes("too short") ||
+    message.includes("at least")
+  ) {
+    return (
+      rawMessage ||
+      "Please check the length requirements for your input fields."
+    );
+  }
+
+  if (rawMessage) {
+    return rawMessage;
+  }
+
+  return "Registration failed. Please try again later.";
+}

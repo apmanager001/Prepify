@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useProfileQuery } from "./useProfileQuery";
 import RenderProfileTab from "./settings/profileTab/renderProfileTab";
+import RenderBadgesTab from "./settings/badgesTab/renderBadgesTab";
 import StudyGoalsTab from "./settings/studyGoalsTab/studyGoalTab";
 import { sendVerificationEmail } from "./settingsApi";
 import { toast } from "react-hot-toast";
@@ -94,6 +95,7 @@ const SettingsPage = () => {
     { id: "profile", label: "Profile", icon: User },
     { id: "scoreboard", label: "Scoreboard", icon: Trophy },
     { id: "studyGoals", label: "Study Goals", icon: GraduationCap },
+    // { id: "badges", label: "Badges", icon: Trophy },
     // { id: "notifications", label: "Notifications", icon: Bell },
     // { id: "privacy", label: "Privacy", icon: Shield },
     // { id: "appearance", label: "Appearance", icon: Palette },
@@ -300,6 +302,8 @@ const SettingsPage = () => {
         return <Scoreboard />;
       case "studyGoals":
         return <StudyGoalsTab />;
+      // case "badges":
+      //   return <RenderBadgesTab />;
       case "notifications":
         return renderNotificationsTab();
       case "privacy":
@@ -315,9 +319,11 @@ const SettingsPage = () => {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Settings</h1>
-        <p className="text-lg text-gray-600">
+      <div className="headerContainer">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-neutral-content uppercase tracking-wide">
+          Settings
+        </h1>
+        <p className="text-sm text-neutral-content/80">
           Customize your experience and manage your account
         </p>
       </div>

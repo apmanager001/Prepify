@@ -237,7 +237,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
 
   return (
     <>
-      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
+      <div className="bg-base-200 rounded-2xl shadow-lg border border-base-content/20 p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
@@ -285,7 +285,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
               <div
                 key={index}
                 className={`md:min-h-24 p-2 border border-neutral/40 cursor-pointer hover:bg-base-300 transition-colors ${
-                  isToday(date) ? "bg-primary" : ""
+                  isToday(date) ? "bg-base-300/80" : ""
                 } ${isSelected(date) ? "bg-base-300" : ""}`}
                 onClick={() => {
                   handleDateClick(date);

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 /**
  * GoogleButton
  * Opens the backend /google route in a popup to start OAuth.
- * After the popup completes, it calls `api.getCurrentUser()` and invokes
+ * After the popup completes, it confirms the session via /profile and invokes
  * onSuccess with the user data if provided.
  */
 const GoogleButton = ({ onSuccess } = {}) => {
@@ -26,49 +27,88 @@ const GoogleButton = ({ onSuccess } = {}) => {
     return new Promise((resolve, reject) => {
       let settled = false;
 
+      const finish = (callback) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        callback();
+      };
+
       const cleanup = () => {
         try {
           window.removeEventListener("message", onMessage);
-        } catch (e) {}
+        } catch (error) {}
         try {
           clearTimeout(timeoutId);
-        } catch (e) {}
+        } catch (error) {}
+        try {
+          clearInterval(pollId);
+        } catch (error) {}
       };
 
       const onMessage = (event) => {
-        // Only trust messages from our own origin and with the expected shape
+        try {
+          if (event.source && event.source !== popup) return;
+        } catch (error) {}
+
         if (event.origin !== window.location.origin) return;
+
         const data = event.data || {};
+
         if (data.type === "oauth_success") {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          try {
-            popup.close();
-          } catch (e) {}
-          resolve({ success: true });
+          finish(() => {
+            try {
+              if (!popup.closed) {
+                popup.close();
+              }
+            } catch (error) {}
+
+            resolve({ success: true, reason: "message" });
+          });
         }
+
         if (data.type === "oauth_error") {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          try {
-            popup.close();
-          } catch (e) {}
-          reject(new Error("OAuth failed"));
+          finish(() => {
+            try {
+              if (!popup.closed) {
+                popup.close();
+              }
+            } catch (error) {}
+
+            reject(
+              new Error(
+                typeof data.message === "string"
+                  ? data.message
+                  : "Google sign-in failed",
+              ),
+            );
+          });
         }
       };
 
       window.addEventListener("message", onMessage);
 
-      // Fallback timeout: if we never hear back from the popup,
-      // resolve anyway so we can attempt to read the session and redirect.
+      const pollId = setInterval(() => {
+        if (!popup.closed) {
+          return;
+        }
+
+        finish(() => {
+          resolve({ success: false, reason: "closed" });
+        });
+      }, 300);
+
       const timeoutId = setTimeout(() => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        resolve({ success: false, reason: "timeout" });
-      }, 2000);
+        finish(() => {
+          try {
+            if (!popup.closed) {
+              popup.close();
+            }
+          } catch (error) {}
+
+          resolve({ success: false, reason: "timeout" });
+        });
+      }, 60000);
     });
   };
 
@@ -78,29 +118,51 @@ const GoogleButton = ({ onSuccess } = {}) => {
     setPending(true);
     try {
       const base = process.env.NEXT_PUBLIC_BACKEND || "";
+
+      if (!base) {
+        throw new Error(
+          "Backend API URL not configured. Please check your environment variables.",
+        );
+      }
+
       const authUrl = `${base}/google`;
       const result = await openPopupAndWait(authUrl);
 
-      // Regardless of whether we got an explicit success message or
-      // just a timeout, confirm with the backend by fetching the
-      // current user (cookies included).
-      let user = null;
-      try {
-        user = await api.getProfile();
-      } catch (e) {
-        console.error("Google login: backend profile fetch failed", e, result);
-      }
+      const user = await api.waitForProfile({
+        maxAttempts: 8,
+        initialDelay: 350,
+      });
 
-      // If backend does not return a user, do not redirect.
       if (!user) {
         console.warn("Google login not confirmed by backend", result);
+
+        if (result.reason === "timeout") {
+          toast.error(
+            "Google sign-in timed out before your session was confirmed. Please try again.",
+          );
+        } else if (result.reason === "closed") {
+          toast.error(
+            "Google sign-in window closed before your session was confirmed. Please try again.",
+          );
+        } else {
+          toast.error(
+            "Google sign-in completed, but we couldn't verify your session. Please try again.",
+          );
+        }
+
         return;
       }
 
       if (onSuccess) onSuccess(user);
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (error) {
       console.error("Google login failed:", error);
+
+      toast.error(
+        error instanceof Error && error.message
+          ? error.message
+          : "Google sign-in failed. Please try again.",
+      );
     } finally {
       setPending(false);
     }

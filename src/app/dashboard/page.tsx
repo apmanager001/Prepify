@@ -22,7 +22,7 @@ import StudyGuides from "./comp/studyGuides/studyGuides";
 import Notes from "./comp/notes/notes";
 import Todo from "./comp/todo/todo";
 import { useProfileQuery } from "./comp/useProfileQuery";
-import Overview from "./comp/dashboardComps/overview";
+import Overview from "./comp/dashboardComps/overview2";
 import SettingsPage from "./comp/settings";
 import AdminPage from "./comp/adminPage";
 import Tools from "./comp/tools";
@@ -59,55 +59,79 @@ const Dashboard = () => {
     onError: (error) => {
       console.error("Logout failed:", error);
       // Redirect to home page even if logout failed
-      router.push("/");
     },
   });
 
   React.useEffect(() => {
-    if (profileData) {
-      // If the response contains an error object, treat as unauthenticated
-      if (profileData.error || profileError) {
-        router.push("/login");
-        return;
-      }
-      // If the response includes a status field and it's not OK, redirect to login
-      if (
-        typeof profileData.status === "number" &&
-        profileData.status !== 200
-      ) {
-        router.push("/login");
-        return;
-      }
-
-      setUserData((prev) => ({
-        ...prev,
-        profile: {
-          ...prev.profile,
-          // prefer values from profileData, fall back to existing state
-          username: profileData.username ?? prev.profile.username,
-          email: profileData.email ?? prev.profile.email,
-          isAdmin:
-            typeof profileData.isAdmin === "boolean"
-              ? profileData.isAdmin
-              : prev.profile.isAdmin,
-          screenname: profileData.screenname ?? prev.profile.screenname,
-          createdAt: profileData.createdAt ?? prev.profile.createdAt,
-        },
-      }));
+    if (profileLoading || profileError) {
+      return;
     }
-  }, [profileData, profileError, router]);
 
-  // Only render the dashboard once we have a valid profile
-  const hasValidProfileData =
-    profileData &&
-    !profileData.error &&
-    !(typeof profileData.status === "number" && profileData.status !== 200);
+    const shouldRedirectToLogin =
+      profileData === null ||
+      profileData?.error ||
+      (typeof profileData?.status === "number" && profileData.status !== 200);
 
-  if (!hasValidProfileData) {
-    // While redirecting or waiting on profile, avoid rendering dashboard content
+    if (shouldRedirectToLogin) {
+      router.replace("/login");
+      return;
+    }
+
+    if (!profileData) {
+      return;
+    }
+
+    setUserData((prev) => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        // prefer values from profileData, fall back to existing state
+        username: profileData.username ?? prev.profile.username,
+        email: profileData.email ?? prev.profile.email,
+        isAdmin:
+          typeof profileData.isAdmin === "boolean"
+            ? profileData.isAdmin
+            : prev.profile.isAdmin,
+        screenname: profileData.screenname ?? prev.profile.screenname,
+        createdAt: profileData.createdAt ?? prev.profile.createdAt,
+      },
+    }));
+  }, [profileData, profileError, profileLoading, router]);
+
+  const shouldRedirectToLogin =
+    !profileLoading &&
+    !profileError &&
+    (profileData === null ||
+      profileData?.error ||
+      (typeof profileData?.status === "number" && profileData.status !== 200));
+
+  if (profileLoading || shouldRedirectToLogin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100">
         <LoadingComp />
+      </div>
+    );
+  }
+
+  if (profileError || !profileData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 p-6">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-gray-200 p-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+            Unable to load dashboard
+          </h1>
+          <p className="text-gray-600 mb-6">
+            {profileError?.message ||
+              "We couldn't confirm your session. Please sign in again."}
+          </p>
+          <button
+            type="button"
+            onClick={() => router.replace("/login")}
+            className="btn btn-primary"
+          >
+            Go to Login
+          </button>
+        </div>
       </div>
     );
   }
@@ -196,7 +220,7 @@ const Dashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <Overview />;
+        return <Overview changePage={setActiveTab} />;
       // <Main />;
       case "studyGuides":
         return <StudyGuides />;
@@ -346,15 +370,15 @@ const Dashboard = () => {
 
             {/* User Section & Logout */}
             <div className="p-6 border-t border-gray-100 shrink-0">
-              <div className="mb-4 p-4 bg-base-200 rounded-xl border border-gray-200">
+              <div className="mb-4 p-4 bg-base-200/20 rounded-xl border border-gray-200/30">
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 mb-1 truncate">
+                    <p className="text-sm font-semibold text-neutral-content mb-1 truncate">
                       {userData?.profile?.username?.startsWith("\\google")
                         ? ""
                         : userData?.profile?.username || "User"}
                     </p>
-                    <p className="text-xs text-gray-600 truncate">
+                    <p className="text-xs text-neutral-content truncate">
                       {userData?.profile?.email || "user@example.com"}
                     </p>
                     {userData?.profile?.isAdmin && (
@@ -368,7 +392,7 @@ const Dashboard = () => {
                     <button
                       onClick={handleLogout}
                       disabled={logoutMutation.isPending}
-                      className="flex items-center space-x-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 hover:shadow transition-all duration-200 disabled:opacity-50"
+                      className="btn btn-error btn-soft rounded-2xl"
                       aria-label="Logout"
                     >
                       {logoutMutation.isPending ? (
