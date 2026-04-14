@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
@@ -10,6 +10,7 @@ import GoogleButton from "../../login/comp/googleButton";
 
 const Register = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -45,6 +46,7 @@ const Register = () => {
         return;
       }
 
+      queryClient.setQueryData(["profile"], profile);
       router.replace("/dashboard");
     },
     onError: (error) => {

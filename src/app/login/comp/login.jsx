@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { User, Key } from "lucide-react";
@@ -12,6 +12,7 @@ import { addScoreAndInvalidate } from "@/app/dashboard/comp/dashboardComps/useTo
 
 const Login = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -58,6 +59,7 @@ const Login = () => {
         return;
       }
 
+      queryClient.setQueryData(["profile"], profile);
       router.replace("/dashboard");
       void awardDailyLoginScore();
     },

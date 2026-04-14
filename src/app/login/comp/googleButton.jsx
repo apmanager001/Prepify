@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+
+const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 /**
  * GoogleButton
@@ -11,6 +14,7 @@ import toast from "react-hot-toast";
  */
 const GoogleButton = ({ onSuccess } = {}) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const openPopupAndWait = (url, name = "google_oauth", options = {}) => {
     const width = options.width || 600;
     const height = options.height || 700;
@@ -24,8 +28,22 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
     if (!popup) return Promise.reject(new Error("Popup blocked"));
 
+    const allowedOrigins = new Set([window.location.origin]);
+
+    try {
+      allowedOrigins.add(new URL(url).origin);
+    } catch (error) {}
+
     return new Promise((resolve, reject) => {
       let settled = false;
+
+      const closePopup = () => {
+        try {
+          if (!popup.closed) {
+            popup.close();
+          }
+        } catch (error) {}
+      };
 
       const finish = (callback) => {
         if (settled) return;
@@ -51,29 +69,21 @@ const GoogleButton = ({ onSuccess } = {}) => {
           if (event.source && event.source !== popup) return;
         } catch (error) {}
 
-        if (event.origin !== window.location.origin) return;
+        if (!allowedOrigins.has(event.origin)) return;
 
         const data = event.data || {};
 
         if (data.type === "oauth_success") {
           finish(() => {
-            try {
-              if (!popup.closed) {
-                popup.close();
-              }
-            } catch (error) {}
+            closePopup();
 
-            resolve({ success: true, reason: "message" });
+            resolve({ success: true, reason: "message", user: data.user });
           });
         }
 
         if (data.type === "oauth_error") {
           finish(() => {
-            try {
-              if (!popup.closed) {
-                popup.close();
-              }
-            } catch (error) {}
+            closePopup();
 
             reject(
               new Error(
@@ -88,8 +98,56 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
       window.addEventListener("message", onMessage);
 
+      const sessionPromise = (async () => {
+        let attempt = 0;
+        let delay = options.initialDelay || 250;
+        const maxAttempts = options.maxAttempts || 30;
+
+        while (!settled && attempt < maxAttempts) {
+          attempt += 1;
+
+          try {
+            const user = await api.getProfile();
+
+            finish(() => {
+              closePopup();
+              resolve({ success: true, reason: "profile", user });
+            });
+            return;
+          } catch (error) {
+            if (settled || attempt === maxAttempts) {
+              return;
+            }
+
+            // eslint-disable-next-line no-await-in-loop
+            await wait(delay);
+            delay = Math.min(1500, Math.floor(delay * 1.35));
+          }
+        }
+      })();
+
       const pollId = setInterval(() => {
         if (!popup.closed) {
+          try {
+            const popupUrl = new URL(popup.location.href);
+
+            if (
+              allowedOrigins.has(popupUrl.origin) &&
+              (popupUrl.pathname === "/auth/success" ||
+                popupUrl.pathname === "/dashboard")
+            ) {
+              finish(() => {
+                closePopup();
+
+                resolve({
+                  success: true,
+                  reason: "navigation",
+                  path: popupUrl.pathname,
+                });
+              });
+            }
+          } catch (error) {}
+
           return;
         }
 
@@ -100,15 +158,13 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
       const timeoutId = setTimeout(() => {
         finish(() => {
-          try {
-            if (!popup.closed) {
-              popup.close();
-            }
-          } catch (error) {}
+          closePopup();
 
           resolve({ success: false, reason: "timeout" });
         });
       }, 60000);
+
+      void sessionPromise;
     });
   };
 
@@ -126,12 +182,17 @@ const GoogleButton = ({ onSuccess } = {}) => {
       }
 
       const authUrl = `${base}/google`;
-      const result = await openPopupAndWait(authUrl);
-
-      const user = await api.waitForProfile({
-        maxAttempts: 8,
-        initialDelay: 350,
+      const result = await openPopupAndWait(authUrl, "google_oauth", {
+        maxAttempts: 30,
+        initialDelay: 250,
       });
+
+      const user =
+        result.user ||
+        (await api.waitForProfile({
+          maxAttempts: 8,
+          initialDelay: 350,
+        }));
 
       if (!user) {
         console.warn("Google login not confirmed by backend", result);
@@ -153,6 +214,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
         return;
       }
 
+      queryClient.setQueryData(["profile"], user);
       if (onSuccess) onSuccess(user);
       router.replace("/dashboard");
     } catch (error) {

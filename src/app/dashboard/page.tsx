@@ -37,6 +37,7 @@ const Dashboard = () => {
   const {
     data: profileData,
     isLoading: profileLoading,
+    isFetching: profileFetching,
     error: profileError,
   } = useProfileQuery();
   const [userData, setUserData] = useState({
@@ -62,8 +63,11 @@ const Dashboard = () => {
     },
   });
 
+  const isProfilePending =
+    profileLoading || (profileFetching && profileData === null);
+
   React.useEffect(() => {
-    if (profileLoading || profileError) {
+    if (isProfilePending || profileError) {
       return;
     }
 
@@ -96,16 +100,16 @@ const Dashboard = () => {
         createdAt: profileData.createdAt ?? prev.profile.createdAt,
       },
     }));
-  }, [profileData, profileError, profileLoading, router]);
+  }, [isProfilePending, profileData, profileError, router]);
 
   const shouldRedirectToLogin =
-    !profileLoading &&
+    !isProfilePending &&
     !profileError &&
     (profileData === null ||
       profileData?.error ||
       (typeof profileData?.status === "number" && profileData.status !== 200));
 
-  if (profileLoading || shouldRedirectToLogin) {
+  if (isProfilePending || shouldRedirectToLogin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100">
         <LoadingComp />
