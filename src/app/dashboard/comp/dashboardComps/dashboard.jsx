@@ -148,7 +148,7 @@ const DashboardPage = () => {
             </div>
 
             <div className="flex flex-col text-left">
-              <div className="text-sm font-bold text-indigo-800 uppercase tracking-wide">
+              <div className="text-sm font-bold text-indigo-800 tracking-wide">
                 Daily Coins
               </div>
               <div className="text-lg font-extrabold text-indigo-900">

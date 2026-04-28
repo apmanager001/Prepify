@@ -181,7 +181,7 @@ const Stats = () => {
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <div className="text-sm font-bold text-neutral-content uppercase text-wrap">
+          <div className="text-sm font-bold text-neutral-content text-wrap">
             Daily Coins
           </div>
         </div>
