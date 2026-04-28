@@ -64,16 +64,16 @@ export async function postCalendarEvent(eventPayload) {
   const { status } = await addScoreAndInvalidate("addCalendarEvent");
   if (status === 206) {
     toast.success(
-      "Calendar Event created, but you have reached your daily score cap for calendar events today"
+      "Calendar Event created, but you have reached your daily coin cap for calendar events today",
     );
   } else if (status === 207) {
     toast.success(
-      "Calendar Event created, but you have reached your cap for daily points"
+      "Calendar Event created, but you have reached your daily coin cap for calendar events today",
     );
   } else if (status === 201 || status === 214) {
     toast.success("Calendar Event created");
   } else {
-    console.error("Failed to award Calendar Award points");
+    console.error("Failed to award Calendar Award coins");
   }
 
   return body;
@@ -87,7 +87,7 @@ export async function deleteCalendarEvent(eventId) {
     {
       method: "DELETE",
       credentials: "include",
-    }
+    },
   );
   if (!res.ok) {
     const txt = await res.text();

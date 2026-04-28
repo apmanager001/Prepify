@@ -27,7 +27,7 @@ function formatType(type) {
     case "completeStudyGoal":
       return "Study Goal Completed";
     default:
-      return " Misc Points ";
+      return " Misc Coins ";
       try {
         return String(type)
           .replace(/([A-Z])/g, " $1")

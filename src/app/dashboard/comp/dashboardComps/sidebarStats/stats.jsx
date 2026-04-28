@@ -19,7 +19,7 @@ const Stats = () => {
     isError,
   } = useNotes({
     // return server shape directly; assume server returns an array
-    select: (v) => (Array.isArray(v) ? v : v.notes ?? []),
+    select: (v) => (Array.isArray(v) ? v : (v.notes ?? [])),
   });
 
   const {
@@ -28,15 +28,15 @@ const Stats = () => {
     isError: todosError,
   } = useTodos();
 
-  // derive a numeric daily points value from the possible response shapes
-  const DAILY_POINTS_NUM = (() => {
+  // derive a numeric daily coins value from the possible response shapes
+  const DAILY_COINS_NUM = (() => {
     const raw = dailyData;
     const maybeNumber =
       raw && typeof raw === "object"
-        ? raw.total ?? raw.totalScore ?? raw.score ?? null
+        ? (raw.total ?? raw.totalScore ?? raw.score ?? null)
         : typeof raw === "number"
-        ? raw
-        : null;
+          ? raw
+          : null;
     return Number.isFinite(maybeNumber) ? maybeNumber : 0;
   })();
   const TODO_COUNT = Array.isArray(todosData) ? todosData.length : 0;
@@ -47,14 +47,14 @@ const Stats = () => {
     isError: totalError,
   } = useTotalScore();
 
-  const lifetimePoints = (() => {
+  const lifetimeCoins = (() => {
     const raw = totalData;
     const total =
       raw && typeof raw === "object"
-        ? raw.totalScore ?? raw.total ?? raw.score ?? null
+        ? (raw.totalScore ?? raw.total ?? raw.score ?? null)
         : typeof raw === "number"
-        ? raw
-        : null;
+          ? raw
+          : null;
     return total ?? null;
   })();
 
@@ -63,14 +63,14 @@ const Stats = () => {
   const startOfMonthIso = new Date(
     new Date().getFullYear(),
     new Date().getMonth(),
-    1
+    1,
   )
     .toISOString()
     .split("T")[0];
   const endOfMonthIso = new Date(
     new Date().getFullYear(),
     new Date().getMonth() + 1,
-    0
+    0,
   )
     .toISOString()
     .split("T")[0];
@@ -102,7 +102,7 @@ const Stats = () => {
   const DAILY_GOAL_DASH = 250;
   const dashPercent = Math.min(
     100,
-    Math.round((DAILY_POINTS_NUM / Math.max(1, DAILY_GOAL_DASH)) * 100)
+    Math.round((DAILY_COINS_NUM / Math.max(1, DAILY_GOAL_DASH)) * 100),
   );
 
   let dashColor = "text-error";
@@ -112,8 +112,8 @@ const Stats = () => {
   const statsList = [
     // {
     //   key: "daily",
-    //   label: "Daily Points",
-    //   value: () => (dailyLoading ? "…" : dailyError ? "—" : DAILY_POINTS_NUM),
+    //   label: "Daily Coins",
+    //   value: () => (dailyLoading ? "…" : dailyError ? "—" : DAILY_COINS_NUM),
     //   suffix: "pts",
     //   icon: Zap,
     //   iconBg: "bg-indigo-50",
@@ -143,9 +143,9 @@ const Stats = () => {
     },
     {
       key: "lifetime",
-      label: "Lifetime Points",
+      label: "Lifetime Coins",
       value: () =>
-        totalLoading ? "…" : totalError ? "—" : lifetimePoints ?? "—",
+        totalLoading ? "…" : totalError ? "—" : (lifetimeCoins ?? "—"),
       icon: Award,
       iconBg: "bg-warning/10",
       cardBg: "bg-warning/10",
@@ -175,14 +175,14 @@ const Stats = () => {
             "--thickness": "0.9rem",
           }}
           role="img"
-          aria-label={`Daily points ${DAILY_POINTS_NUM} of ${DAILY_GOAL_DASH}`}
+          aria-label={`Daily coins ${DAILY_COINS_NUM} of ${DAILY_GOAL_DASH}`}
         >
-          {dailyLoading ? "…" : dailyError ? "—" : DAILY_POINTS_NUM}
+          {dailyLoading ? "…" : dailyError ? "—" : DAILY_COINS_NUM}
         </div>
 
         <div className="flex flex-col items-center text-center">
           <div className="text-sm font-bold text-neutral-content uppercase text-wrap">
-            Daily Points
+            Daily Coins
           </div>
         </div>
       </div>

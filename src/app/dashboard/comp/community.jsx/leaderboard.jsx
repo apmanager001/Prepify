@@ -41,12 +41,10 @@ export default function Leaderboard() {
   const top = leaderboard.slice(0, 15);
   const topScore = React.useMemo(() => {
     const first = top[0];
-    const candidate = Number(
-      first?.score ?? first?.total ?? first?.points ?? 0,
-    );
+    const candidate = Number(first?.score ?? first?.total ?? first?.coins ?? 0);
     return Math.max(Number.isFinite(candidate) ? candidate : 0, 1);
   }, [top]);
-  
+
   const isEmpty = !query.isLoading && leaderboard.length === 0;
   return (
     <section className="p-4 bg-base-200 rounded-lg shadow-sm border border-base-content/10 customContainer pointer-events-none">
@@ -102,7 +100,7 @@ export default function Leaderboard() {
             }
             const rank = idx + 1;
             const uScore = Number(
-              user?.score ?? user?.total ?? user?.points ?? 0,
+              user?.score ?? user?.total ?? user?.coins ?? 0,
             );
             const pct = topScore
               ? Math.round(
@@ -140,7 +138,7 @@ export default function Leaderboard() {
                 : "";
 
             const displayTotal = (() => {
-              const t = user?.total ?? user?.score ?? user?.points ?? 0;
+              const t = user?.total ?? user?.score ?? user?.coins ?? 0;
               const n = Number(t);
               if (Number.isNaN(n)) {
                 console.warn("Leaderboard: coerced non-numeric total", t);
