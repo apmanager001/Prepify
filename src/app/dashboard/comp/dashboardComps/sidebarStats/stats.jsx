@@ -1,11 +1,26 @@
 "use client";
-import React from "react";
-import { Zap, CheckSquare, FileText, Award } from "lucide-react";
+import { useState } from "react";
+import { CheckSquare, FileText, Award } from "lucide-react";
 import { Calendar } from "lucide-react";
 import useTotalScore, { useDailyScore } from "../useTotalScore";
 import { useCalendarEvents } from "../../calendar/lib/calendar";
 import { useNotes } from "../../notes/lib/notesApi";
 import { useTodos } from "../../todo/lib/todoAPI";
+import DailiesModal from "./_components/dailiesModal";
+import { createPortal } from "react-dom";
+
+const dailyTasks = [
+  { id: "login", label: "Daily Login", completed: true },
+  { id: "calendar", label: "Add or Finish Calendar Event", completed: true },
+  { id: "study", label: "Study for 25 minutes", completed: true },
+  { id: "music", label: "Listen to music for 5 minutes", completed: true },
+  { id: "notes", label: "Write a note", completed: true },
+  { id: "todo", label: "Complete a task", completed: true },
+];
+
+const completedCount = dailyTasks.filter((t) => t.completed).length;
+const totalCount = dailyTasks.length;
+const allComplete = completedCount === totalCount;
 
 const Stats = () => {
   const {
@@ -164,52 +179,75 @@ const Stats = () => {
       valueClass: "",
     },
   ];
-  return (
-    <div className="grid grid-cols-2 gap-3 px-4 md:px-0">
-      <div className="flex flex-col justify-center items-center gap-3 row-span-2 h-full">
-        <div
-          className={`radial-progress ${dashColor} bg-info/30 font-extrabold text-lg`}
-          style={{
-            "--value": String(dashPercent),
-            "--size": "4.5rem",
-            "--thickness": "0.9rem",
-          }}
-          role="img"
-          aria-label={`Daily coins ${DAILY_COINS_NUM} of ${DAILY_GOAL_DASH}`}
-        >
-          {dailyLoading ? "…" : dailyError ? "—" : DAILY_COINS_NUM}
-        </div>
 
-        <div className="flex flex-col items-center text-center">
-          <div className="text-sm font-bold text-neutral-content text-wrap">
-            Daily Coins
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-3 px-4 md:px-0">
+        <div className="flex flex-col justify-center items-center gap-3 row-span-2 h-full">
+          <div
+            className={`radial-progress ${dashColor} bg-info/30 font-extrabold text-lg hover:cursor-pointer hover:bg-info/40`}
+            style={{
+              "--value": String(dashPercent),
+              "--size": "4.5rem",
+              "--thickness": "0.9rem",
+            }}
+            role="img"
+            aria-label={`Daily coins ${DAILY_COINS_NUM} of ${DAILY_GOAL_DASH}`}
+            onClick={() => setIsModalOpen(true)}
+          >
+            {dailyLoading ? "…" : dailyError ? "—" : DAILY_COINS_NUM}
+          </div>
+
+          <div className="flex flex-col items-center text-center">
+            <div className="text-sm font-bold text-neutral-content text-wrap">
+              Daily Coins
+            </div>
           </div>
         </div>
-      </div>
-      {statsList.map((s) => {
-        const Icon = s.icon;
-        return (
-          <div
-            key={s.key}
-            className={`${s.cardBg} flex items-center gap-3 p-1 rounded-md shadow-sm border border-white/10 text-white/80`}
-          >
+        {statsList.map((s) => {
+          const Icon = s.icon;
+          return (
             <div
-              className={`${s.iconBg} w-9 h-9 rounded-full flex items-center justify-center`}
+              key={s.key}
+              className={`${s.cardBg} flex items-center gap-3 p-1 rounded-md shadow-sm border border-white/10 text-white/80`}
             >
-              <Icon className={s.iconClass} size={18} />
-            </div>
+              <div
+                className={`${s.iconBg} w-9 h-9 rounded-full flex items-center justify-center`}
+              >
+                <Icon className={s.iconClass} size={18} />
+              </div>
 
-            <div className="flex flex-col items-center text-center">
-              <div className="text-xs truncate">{s.label}</div>
-              <div className={`text-sm font-semibold truncate ${s.valueClass}`}>
-                {s.value()}{" "}
-                {s.suffix ? <span className="text-xs">{s.suffix}</span> : null}
+              <div className="flex flex-col items-center text-center">
+                <div className="text-xs truncate">{s.label}</div>
+                <div
+                  className={`text-sm font-semibold truncate ${s.valueClass}`}
+                >
+                  {s.value()}{" "}
+                  {s.suffix ? (
+                    <span className="text-xs">{s.suffix}</span>
+                  ) : null}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+      {isModalOpen &&
+        createPortal(
+          <DailiesModal
+            setIsModalOpen={setIsModalOpen}
+            DAILY_COINS_NUM={DAILY_COINS_NUM}
+            DAILY_GOAL_DASH={DAILY_GOAL_DASH}
+            dailyTasks={dailyTasks}
+            completedCount={completedCount}
+            totalCount={totalCount}
+            allComplete={allComplete}
+          />,
+          document.body,
+        )}
+    </>
   );
 };
 
