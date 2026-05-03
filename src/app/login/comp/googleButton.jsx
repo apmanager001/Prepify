@@ -1,15 +1,20 @@
 import React, { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+
+const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 /**
  * GoogleButton
  * Opens the backend /google route in a popup to start OAuth.
- * After the popup completes, it calls `api.getCurrentUser()` and invokes
+ * After the popup completes, it confirms the session via /profile and invokes
  * onSuccess with the user data if provided.
  */
 const GoogleButton = ({ onSuccess } = {}) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const openPopupAndWait = (url, name = "google_oauth", options = {}) => {
     const width = options.width || 600;
     const height = options.height || 700;
@@ -23,52 +28,143 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
     if (!popup) return Promise.reject(new Error("Popup blocked"));
 
+    const allowedOrigins = new Set([window.location.origin]);
+
+    try {
+      allowedOrigins.add(new URL(url).origin);
+    } catch (error) {}
+
     return new Promise((resolve, reject) => {
       let settled = false;
+
+      const closePopup = () => {
+        try {
+          if (!popup.closed) {
+            popup.close();
+          }
+        } catch (error) {}
+      };
+
+      const finish = (callback) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        callback();
+      };
 
       const cleanup = () => {
         try {
           window.removeEventListener("message", onMessage);
-        } catch (e) {}
+        } catch (error) {}
         try {
           clearTimeout(timeoutId);
-        } catch (e) {}
+        } catch (error) {}
+        try {
+          clearInterval(pollId);
+        } catch (error) {}
       };
 
       const onMessage = (event) => {
-        // Only trust messages from our own origin and with the expected shape
-        if (event.origin !== window.location.origin) return;
+        try {
+          if (event.source && event.source !== popup) return;
+        } catch (error) {}
+
+        if (!allowedOrigins.has(event.origin)) return;
+
         const data = event.data || {};
+
         if (data.type === "oauth_success") {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          try {
-            popup.close();
-          } catch (e) {}
-          resolve({ success: true });
+          finish(() => {
+            closePopup();
+
+            resolve({ success: true, reason: "message", user: data.user });
+          });
         }
+
         if (data.type === "oauth_error") {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          try {
-            popup.close();
-          } catch (e) {}
-          reject(new Error("OAuth failed"));
+          finish(() => {
+            closePopup();
+
+            reject(
+              new Error(
+                typeof data.message === "string"
+                  ? data.message
+                  : "Google sign-in failed",
+              ),
+            );
+          });
         }
       };
 
       window.addEventListener("message", onMessage);
 
-      // Fallback timeout: if we never hear back from the popup,
-      // resolve anyway so we can attempt to read the session and redirect.
+      const sessionPromise = (async () => {
+        let attempt = 0;
+        let delay = options.initialDelay || 250;
+        const maxAttempts = options.maxAttempts || 30;
+
+        while (!settled && attempt < maxAttempts) {
+          attempt += 1;
+
+          try {
+            const user = await api.getProfile();
+
+            finish(() => {
+              closePopup();
+              resolve({ success: true, reason: "profile", user });
+            });
+            return;
+          } catch (error) {
+            if (settled || attempt === maxAttempts) {
+              return;
+            }
+
+            // eslint-disable-next-line no-await-in-loop
+            await wait(delay);
+            delay = Math.min(1500, Math.floor(delay * 1.35));
+          }
+        }
+      })();
+
+      const pollId = setInterval(() => {
+        if (!popup.closed) {
+          try {
+            const popupUrl = new URL(popup.location.href);
+
+            if (
+              allowedOrigins.has(popupUrl.origin) &&
+              (popupUrl.pathname === "/auth/success" ||
+                popupUrl.pathname === "/dashboard")
+            ) {
+              finish(() => {
+                closePopup();
+
+                resolve({
+                  success: true,
+                  reason: "navigation",
+                  path: popupUrl.pathname,
+                });
+              });
+            }
+          } catch (error) {}
+
+          return;
+        }
+
+        finish(() => {
+          resolve({ success: false, reason: "closed" });
+        });
+      }, 300);
+
       const timeoutId = setTimeout(() => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        resolve({ success: false, reason: "timeout" });
-      }, 2000);
+        finish(() => {
+          closePopup();
+
+          resolve({ success: false, reason: "timeout" });
+        });
+      }, 60000);
+
+      void sessionPromise;
     });
   };
 
@@ -78,29 +174,57 @@ const GoogleButton = ({ onSuccess } = {}) => {
     setPending(true);
     try {
       const base = process.env.NEXT_PUBLIC_BACKEND || "";
-      const authUrl = `${base}/google`;
-      const result = await openPopupAndWait(authUrl);
 
-      // Regardless of whether we got an explicit success message or
-      // just a timeout, confirm with the backend by fetching the
-      // current user (cookies included).
-      let user = null;
-      try {
-        user = await api.getProfile();
-      } catch (e) {
-        console.error("Google login: backend profile fetch failed", e, result);
+      if (!base) {
+        throw new Error(
+          "Backend API URL not configured. Please check your environment variables.",
+        );
       }
 
-      // If backend does not return a user, do not redirect.
+      const authUrl = `${base}/google`;
+      const result = await openPopupAndWait(authUrl, "google_oauth", {
+        maxAttempts: 30,
+        initialDelay: 250,
+      });
+
+      const user =
+        result.user ||
+        (await api.waitForProfile({
+          maxAttempts: 8,
+          initialDelay: 350,
+        }));
+
       if (!user) {
         console.warn("Google login not confirmed by backend", result);
+
+        if (result.reason === "timeout") {
+          toast.error(
+            "Google sign-in timed out before your session was confirmed. Please try again.",
+          );
+        } else if (result.reason === "closed") {
+          toast.error(
+            "Google sign-in window closed before your session was confirmed. Please try again.",
+          );
+        } else {
+          toast.error(
+            "Google sign-in completed, but we couldn't verify your session. Please try again.",
+          );
+        }
+
         return;
       }
 
+      queryClient.setQueryData(["profile"], user);
       if (onSuccess) onSuccess(user);
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (error) {
       console.error("Google login failed:", error);
+
+      toast.error(
+        error instanceof Error && error.message
+          ? error.message
+          : "Google sign-in failed. Please try again.",
+      );
     } finally {
       setPending(false);
     }

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { User, Key } from "lucide-react";
@@ -12,6 +12,7 @@ import { addScoreAndInvalidate } from "@/app/dashboard/comp/dashboardComps/useTo
 
 const Login = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -24,70 +25,46 @@ const Login = () => {
   const [forgotEmail, setForgotEmail] = useState("");
   const forgotMutation = useForgotPassword();
 
+  const awardDailyLoginScore = async () => {
+    try {
+      const { status } = await addScoreAndInvalidate("dailyLogin");
 
+      if (status === 201 || status === 214) {
+        toast.success("You earned daily login points");
+      }
+    } catch (scoreError) {
+      console.warn("Failed to award daily login score:", scoreError);
+    }
+  };
 
   const loginMutation = useMutation({
     mutationFn: async (credentials) => {
       const response = await api.login(credentials);
       return response;
     },
-    onSuccess: (data) => {
-      // store values immediately
-      if (data && data.userId) {
-        localStorage.setItem("userId", data.userId);
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("email", data.email);
-        localStorage.setItem("isAdmin", data.isAdmin || false);
+    onSuccess: async () => {
+      setError("");
+      setVerifying(true);
+
+      const profile = await api.waitForProfile();
+
+      setVerifying(false);
+
+      if (!profile) {
+        const message =
+          "Login succeeded but we couldn't verify your session. Please try again.";
+
+        setError(message);
+        toast.error(message);
+        return;
       }
 
-      // Poll profile endpoint to ensure session is visible server-side before redirecting
-      (async () => {
-        setVerifying(true);
-        const maxAttempts = 6;
-        let attempt = 0;
-        let ok = false;
-        let delay = 300;
-        while (attempt < maxAttempts) {
-          attempt += 1;
-          try {
-            await api.getProfile();
-            ok = true;
-            break;
-          } catch (err) {
-            // wait and retry
-            // eslint-disable-next-line no-await-in-loop
-            await new Promise((r) => setTimeout(r, delay));
-            delay = Math.min(2000, Math.floor(delay * 1.5));
-          }
-        }
-
-        setVerifying(false);
-        if (ok) {
-          const { status } = await addScoreAndInvalidate("dailyLogin");
-          if (status === 201 || status === 214) {
-            toast.success("You earned daily login points");
-          } 
-          router.push("/dashboard");
-        } else {
-          toast.error(
-            "Login succeeded but we couldn't verify your session. Please try again or check server settings."
-          );
-        }
-      })();
+      queryClient.setQueryData(["profile"], profile);
+      router.replace("/dashboard");
+      void awardDailyLoginScore();
     },
     onError: (error) => {
-      if (
-        error.message.includes("Invalid") ||
-        error.message.includes("Incorrect")
-      ) {
-        setError("Invalid username or password. Please try again.");
-      } else if (error.message.includes("Missing")) {
-        setError("Please fill in all required fields.");
-      } else if (error.message.includes("Failed to fetch")) {
-        setError("Network error. Please check your connection and try again.");
-      } else {
-        setError(`Login failed: ${error.message}`);
-      }
+      setError(getLoginErrorMessage(error));
     },
   });
 
@@ -134,73 +111,59 @@ const Login = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-linear-to-br from-primary/10 via-secondary/5 to-primary/15 flex items-center justify-center p-4">
+      <div className="md:min-h-screen flex items-center justify-center md:p-4">
         <div className="w-full max-w-md">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Welcome Back
-            </h1>
-            <p className="text-gray-600">
-              Sign in to continue your learning journey
-            </p>
-          </div>
-
           {/* Login Form */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/30 shadow-2xl p-8">
+          <div className="bg-base-100 md:bg-white/80 backdrop-blur-xl md:rounded-3xl border border-white/30 shadow-2xl p-8 min-h-screen md:min-h-0">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Welcome Back
+              </h1>
+              <p className="text-gray-600">
+                Sign in to continue your learning journey
+              </p>
+            </div>
             <GoogleButton />
             <div className="divider divider-primary mb-4">OR</div>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Username Field */}
               <fieldset className="fieldset">
-                <legend className="label">
-                  <span className="input-group-text text-primary">
-                    <User size={18} />
-                  </span>
-                  <span className="label-text text-base-content font-semibold">
-                    Username or Email
-                  </span>
+                <legend className="fieldset-legend label text-primary text-lg">
+                  <User />
+                  Username or Email
                 </legend>
-                <label className="input w-full">
-                  <input
-                    id="login-username"
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    placeholder="Enter your username or email"
-                    className="grow"
-                    required
-                    autoComplete="username"
-                    disabled={loginMutation.isPending || verifying}
-                  />
-                </label>
+                <input
+                  id="login-username"
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  placeholder="Enter your username or email"
+                  className="input input-xl w-full bg-white"
+                  required
+                  autoComplete="username"
+                  disabled={loginMutation.isPending || verifying}
+                />
               </fieldset>
 
               {/* Password Field */}
               <fieldset className="fieldset">
-                <legend className="label">
-                  <span className="input-group-text text-primary">
-                    <Key size={18} />
-                  </span>
-                  <span className="label-text text-base-content font-semibold">
-                    Password
-                  </span>
+                <legend className="fieldset-legend label text-primary text-lg">
+                  <Key />
+                  Password
                 </legend>
-                <label className="input w-full">
-                  <input
-                    id="login-password"
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="Enter your password"
-                    className="grow"
-                    required
-                    autoComplete="current-password"
-                    disabled={loginMutation.isPending || verifying}
-                  />
-                </label>
+                <input
+                  id="login-password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter your password"
+                  className="input input-xl w-full bg-white"
+                  required
+                  autoComplete="current-password"
+                  disabled={loginMutation.isPending || verifying}
+                />
               </fieldset>
 
               {/* Error Message */}
@@ -213,7 +176,7 @@ const Login = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="btn btn-primary w-full text-lg font-semibold py-3"
+                className="btn btn-primary w-full text-lg font-semibold"
                 disabled={loginMutation.isPending || verifying}
               >
                 {loginMutation.isPending || verifying ? (
@@ -272,13 +235,40 @@ const Login = () => {
         emailValue={forgotEmail}
         onChange={setForgotEmail}
         onSubmit={handleForgotSubmit}
-        loading={forgotMutation.isLoading}
+        loading={forgotMutation.isPending}
       />
     </>
   );
 };
 
 export default Login;
+
+function getLoginErrorMessage(error) {
+  const rawMessage = typeof error?.message === "string" ? error.message : "";
+  const message = rawMessage.toLowerCase();
+
+  if (
+    error?.status === 401 ||
+    message.includes("incorrect") ||
+    message.includes("invalid")
+  ) {
+    return "Invalid username or password. Please try again.";
+  }
+
+  if (error?.status === 400 || message.includes("missing")) {
+    return "Please fill in all required fields.";
+  }
+
+  if (message.includes("failed to fetch") || message.includes("network")) {
+    return "Network error. Please check your connection and try again.";
+  }
+
+  if (rawMessage) {
+    return `Login failed: ${rawMessage}`;
+  }
+
+  return "Login failed. Please try again.";
+}
 
 // Forgot Password Modal (rendered at end so it doesn't interrupt layout)
 function ForgotPasswordModal({
@@ -304,18 +294,19 @@ function ForgotPasswordModal({
           </button>
         </div>
 
-        <div className="space-y-4">
-          <label className="label">
-            <span className="label-text">Email address</span>
-          </label>
-          <input
-            type="email"
-            value={emailValue}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="you@example.com"
-            className="input input-bordered w-full"
-          />
-
+        <div>
+          <fieldset className="fieldset">
+            <legend className="fieldset-legend label text-primary text-lg">
+              Email address
+            </legend>
+            <input
+              type="email"
+              value={emailValue}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="you@example.com"
+              className="input input-xl w-full"
+            />
+          </fieldset>
           <div className="flex justify-end space-x-2 mt-4">
             <button onClick={onClose} className="btn btn-secondary btn-outline">
               Cancel

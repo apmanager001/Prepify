@@ -1,14 +1,20 @@
 import { API_BASE_URL } from "@/lib/backendAPI";
+import { api } from "@/lib/api";
 import { addScoreAndInvalidate } from "./dashboardComps/useTotalScore";
 import toast from "react-hot-toast";
 // API utility for /profile routes
 
 export async function getProfile() {
-  const res = await fetch(`${API_BASE_URL}/profile`, {
-    method: "GET",
-    credentials: "include",
-  });
-  return await res.json();
+  try {
+    return await api.getProfile();
+  } catch (err) {
+    if (err?.status === 401) {
+      return null;
+    }
+
+    console.warn("getProfile failed:", err);
+    throw err;
+  }
 }
 
 export async function updateProfile(profile) {
@@ -26,12 +32,11 @@ export async function getStudyGoals() {
     method: "GET",
     credentials: "include",
   });
-   if (!res.ok) {
-     throw new Error(`HTTP error! status: ${res.status}`);
-   }
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`);
+  }
   return await res.json();
 }
-
 
 export async function updateStudyGoals({ studyGoals, percentComplete }) {
   const res = await fetch(`${API_BASE_URL}/studyGoals`, {

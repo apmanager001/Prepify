@@ -66,7 +66,7 @@ const Scoreboard = () => {
       <div className="text-gray-500 min-h-24 flex items-center justify-center"><LoadingComp /></div>
     );
   }
-
+  
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -79,7 +79,7 @@ const Scoreboard = () => {
           </div>
         ) : (
           <div className="text-sm text-gray-500">
-            Lifetime Score: {totalData?.totalScore ?? 0}
+            Lifetime Score: {totalData?.total ?? 0}
           </div>
         )}
       </div>

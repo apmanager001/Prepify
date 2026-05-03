@@ -97,49 +97,38 @@ const Calendar = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between gap-4 px-4 py-2">
-        <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Study Calendar
-          </h1>
-          <p className="text-lg text-neutral/70">
-            Plan and schedule your study sessions, exams, and study groups
-          </p>
-        </div>
-        <div
-          className="tooltip tooltip-left"
-          data-tip={
-            calendarSelect ? "Switch to List View" : "Switch to Calendar View"
-          }
-        >
-          <label className="swap swap-rotate">
+        <div className='headerContainer flex justify-between items-center pointer-events-none'>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-neutral-content uppercase tracking-wide">
+              Study Calendar
+            </h1>
+            <p className="text-sm text-neutral-content/80">
+              Plan and schedule your study sessions, exams, and study groups
+            </p>
+            
+          </div>
+          <div
+            className="tooltip tooltip-left pointer-events-auto"
+            data-tip={
+              calendarSelect ? "Switch to List View" : "Switch to Calendar View"
+            }
+            >
+          <label className="swap swap-rotate text-neutral">
             <input
               type="checkbox"
               className="bg-base-200 p-5 rounded-lg "
               checked={calendarSelect}
               onChange={() => setCalendarSelect(!calendarSelect)}
             />
-            <div className="swap-on flex justify-center items-center text-info/90">
-              <Rows3 strokeWidth={4} className="w-6 h-6" />
+            <div className="swap-on flex justify-center items-center">
+              <List strokeWidth={4} className="w-6 h-6" />
             </div>
-            <div className="swap-off flex justify-center items-center text-info/90">
+            <div className="swap-off flex justify-center items-center">
               <CalendarIcon strokeWidth={4} className="w-6 h-6" />
             </div>
           </label>
-
-          {/* <label htmlFor="calendar-toggle" className="swap swap-rotate btn btn-primary rounded-lg">
-            <input
-              id="calendar-toggle"
-              type="checkbox"
-              checked={calendarSelect}
-              onChange={() => setCalendarSelect(!calendarSelect)}
-              aria-label="Toggle calendar view"
-            />
-            <Rows3 strokeWidth={3} className="swap-off text-secondary" />
-            <CalendarIcon strokeWidth={3} className="swap-on text-secondary" />
-          </label> */}
+          </div>
         </div>
-      </div>
       {/* Event Types Legend */}
       {/* <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100 p-6">
         <h3 className="text-lg font-semibold text-base-content mb-4">

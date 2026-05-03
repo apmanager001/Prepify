@@ -44,15 +44,22 @@ export default function Todo() {
   const completedCount = (todos || []).filter((t) => t.completed).length;
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">To Do</h2>
-
-      <form onSubmit={addTodo} className="space-y-3 mb-4">
+    <div className="min-h-dvh">
+      <div className='headerContainer'>
+        <h2 className="text-2xl md:text-3xl font-extrabold text-neutral-content uppercase tracking-wide">
+          To Do
+        </h2>
+        <p className="text-sm text-neutral-content/80">
+          Manage your tasks and stay organized
+        </p>
+      </div>
+      <form onSubmit={addTodo} className="space-y-3 my-6">
         <div className="flex gap-2">
           <input
             value={text}
+            id="new-todo"
             onChange={(e) => setText(e.target.value)}
-            className="input input-bordered flex-1 bg-base-200"
+            className="input input-xl flex-1 bg-base-200"
             placeholder="Add a task"
             aria-label="New todo"
             maxLength={240}
@@ -60,7 +67,7 @@ export default function Todo() {
           <button
             type="submit"
             disabled={!text.trim() || (todos || []).length >= TODO_LIMIT}
-            className={`btn bg-base-200 hover:bg-base-300 rounded-full ${
+            className={`btn btn-xl bg-base-200 hover:bg-base-300 rounded-full ${
               !text.trim() || (todos || []).length >= TODO_LIMIT
                 ? "btn-disabled"
                 : ""
@@ -80,7 +87,7 @@ export default function Todo() {
         </div>
       </form>
 
-      <div className="bg-base-200 rounded-lg shadow-sm w-full">
+      <div className="bg-base-200 rounded-lg shadow-sm w-full border border-base-content/20 min-h-96">
         <div className="p-3 border-b flex items-center justify-between">
           <div className="text-sm text-gray-600">
             {(todos || []).length} items
@@ -126,7 +133,7 @@ export default function Todo() {
             (todos || []).map((t) => (
               <li
                 key={t.id}
-                className={`p-3 flex items-center justify-between hover:bg-base-300 ${
+                className={`p-3 flex items-center justify-between hover:bg-base-300/80 ${
                   t.completed ? "opacity-80" : ""
                 }`}
               >
@@ -135,7 +142,7 @@ export default function Todo() {
                     type="checkbox"
                     checked={!!t.completed}
                     onChange={() => onToggle(t.id)}
-                    className="checkbox checkbox-primary"
+                    className="checkbox checkbox-info"
                     aria-label={`Mark ${t.text} complete`}
                   />
 
@@ -163,7 +170,7 @@ export default function Todo() {
                       onDelete(t.id);
                     }}
                     aria-label={`Delete ${t.text}`}
-                    className="btn bg-base-200 hover:bg-base-300 rounded btn-sm"
+                    className="btn btn-ghost btn-circle btn-sm "
                   >
                     <Trash size={14} className="text-error" />
                   </button>
