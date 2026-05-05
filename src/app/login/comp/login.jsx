@@ -30,7 +30,7 @@ const Login = () => {
       const { status } = await addScoreAndInvalidate("dailyLogin");
 
       if (status === 201 || status === 214) {
-        toast.success("You earned daily login points");
+        toast.success("You earned daily login coins");
       }
     } catch (scoreError) {
       console.warn("Failed to award daily login score:", scoreError);
