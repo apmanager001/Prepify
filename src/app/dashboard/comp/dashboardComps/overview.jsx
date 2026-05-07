@@ -1,9 +1,20 @@
-import { Calendar, NotebookPen, SquareCheckBig } from "lucide-react";
+import {
+  Calendar,
+  Flame,
+  NotebookPen,
+  SquareCheckBig,
+  Target,
+  Trophy,
+} from "lucide-react";
 import { Roboto } from "next/font/google";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
 import { useTodos } from "../todo/lib/todoAPI";
 import LoadingComp from "@/lib/loading";
+import { Star } from "lucide-react";
+import StatBadge from "./sidebarStats/_components/statBadge";
+import useTotalScore, { useDailyScore } from "./useTotalScore";
+import FocusTimer from "./focusTimers/quickStartTimer";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -15,6 +26,17 @@ const todaysDate = new Date().toLocaleDateString("en-US");
 const today = new Date().toISOString().split("T")[0];
 const startToday = today;
 const endToday = today;
+
+function percentOfAllTime(allTimeCoins, todayCoins) {
+  const total = Number(allTimeCoins);
+  const today = Number(todayCoins);
+
+  if (!Number.isFinite(total) || !Number.isFinite(today)) return 0;
+
+  if (total === 0) return today === 0 ? 0 : 100;
+
+  return Number(((today / total) * 100).toFixed(2));
+}
 
 const Overview = ({ changePage }) => {
   const { data: fetchEventData, isLoading: calendarLoading } =
@@ -44,22 +66,121 @@ const Overview = ({ changePage }) => {
   const iconClass =
     "flex items-center text-neutral-content text-lg border-3 border-primary bg-neutral p-2 rounded-xl hover:scale-105";
 
+  const {
+    data: dailyData,
+    isLoading: dailyLoading,
+    isError: dailyError,
+  } = useDailyScore();
+
+  // Daily coins
+  const DAILY_COINS_NUM = (() => {
+    const raw = dailyData;
+
+    const maybeNumber =
+      raw && typeof raw === "object"
+        ? (raw.total ?? raw.totalScore ?? raw.score ?? null)
+        : typeof raw === "number"
+          ? raw
+          : null;
+
+    return Number.isFinite(maybeNumber) ? maybeNumber : 0;
+  })();
+
+  const {
+    data: totalData,
+    isLoading: totalLoading,
+    isError: totalError,
+  } = useTotalScore();
+
+  // Lifetime coins
+  const lifetimeCoins = (() => {
+    const raw = totalData;
+
+    const total =
+      raw && typeof raw === "object"
+        ? (raw.totalScore ?? raw.total ?? raw.score ?? null)
+        : typeof raw === "number"
+          ? raw
+          : null;
+
+    return total ?? 0;
+  })();
+
+  const statCards = [
+    {
+      id: "dailyCoins",
+      icon: Star,
+      iconBg: "bg-[#eeb54a]",
+      iconColor: "text-white",
+
+      title: "Today's Coins",
+      amount: dailyLoading ? "…" : dailyError ? "—" : String(DAILY_COINS_NUM),
+      stat: `${percentOfAllTime(lifetimeCoins, DAILY_COINS_NUM)}% increase from yesterday`,
+      statClassName: "text-success",
+    },
+    {
+      id: "totalCoins",
+      icon: Trophy,
+      iconBg: "bg-[#282828]",
+      iconColor: "text-[#e3ceae]",
+      title: "Total Coins",
+      amount: totalLoading ? "…" : totalError ? "—" : String(lifetimeCoins),
+      stat: "Lifetime earned coins",
+    },
+    {
+      id: "streak",
+      icon: Flame,
+      iconBg: "bg-[#f0ac5c]",
+      iconColor: "text-white",
+      title: "Current Streak",
+      amount: "14",
+      stat: "Personal best",
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-4 mb-24 xl:mb-10">
+      {/* Header */}
       <header className="headerContainer">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-neutral-content uppercase tracking-wide">
-            Overview
+            DashBoard
           </h1>
           <div className="text-sm text-neutral-content/80">
-            Quick Tools & Stats
+            Your progress, rewards, and stats at a glance
           </div>
         </div>
       </header>
-      <div
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {statCards.map((card) => {
+          const Icon = card.icon;
+
+          return (
+            <StatBadge
+              key={card.id}
+              icon={
+                <Icon className={`h-6 w-6 ${card.iconColor || "text-white"}`} />
+              }
+              iconBg={card.iconBg}
+              title={card.title}
+              amount={card.amount}
+              stat={card.stat}
+              statClassName={card.statClassName}
+            />
+          );
+        })}
+      </div>
+      {/* Focus Timer, Dailies, and Quicklinks */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <div className="border-nuetral-200 shadow-md hover:shadow-lg transition-shadow duration-300">
+          <FocusTimer />
+        </div>
+      </div>
+      {/* Calendar, Notes, and Todos */}
+      {/* <div
         className={`grid grid-cols-1 md:grid-cols-2 w-full gap-4 ${roboto.className}`}
       >
-        {/* Calendar card - render raw event objects */}
         <div className="w-full">
           <div className={fullCardClass}>
             <div className={`${cardHeaderClass} flex items-center gap-2`}>
@@ -115,7 +236,6 @@ const Overview = ({ changePage }) => {
           </div>
         </div>
 
-        {/* Notes card - render recent notes objects */}
         <div className="w-full">
           <div className={fullCardClass}>
             <div className={`${cardHeaderClass} flex items-center gap-2`}>
@@ -176,7 +296,6 @@ const Overview = ({ changePage }) => {
           </div>
         </div>
 
-        {/* Todos card - render todo objects */}
         <div className="w-full mb-14">
           <div className={fullCardClass}>
             <div className={`${cardHeaderClass} flex items-center gap-2`}>
@@ -233,7 +352,7 @@ const Overview = ({ changePage }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
