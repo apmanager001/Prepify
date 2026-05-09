@@ -10,22 +10,19 @@ import { Roboto } from "next/font/google";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
 import { useTodos } from "../todo/lib/todoAPI";
-import LoadingComp from "@/lib/loading";
 import { Star } from "lucide-react";
-import StatBadge from "./sidebarStats/_components/statBadge";
 import useTotalScore, { useDailyScore } from "./useTotalScore";
-import FocusTimer from "./focusTimers/quickStartTimer";
+import QuickStartTimer from "./focusTimers/quickStartTimer";
+import StatBadge from "./_components/statBadge";
+import DailyTasksCard from "./_components/dailyTaskCard";
+import QuickLinks from "./_components/quickLinks";
 
 const roboto = Roboto({
   variable: "--font-roboto",
   subsets: ["latin"],
 });
 
-const todaysDate = new Date().toLocaleDateString("en-US");
-
 const today = new Date().toISOString().split("T")[0];
-const startToday = today;
-const endToday = today;
 
 function percentOfAllTime(allTimeCoins, todayCoins) {
   const total = Number(allTimeCoins);
@@ -39,24 +36,6 @@ function percentOfAllTime(allTimeCoins, todayCoins) {
 }
 
 const Overview = ({ changePage }) => {
-  const { data: fetchEventData, isLoading: calendarLoading } =
-    useCalendarEvents({
-      from: startToday,
-      to: endToday,
-    });
-  const { data: notes, isLoading: notesLoading } = useNotes();
-  const { data: todos, isLoading: todosLoading } = useTodos();
-
-  // normalize notes to an array regardless of shape
-  const notesList = Array.isArray(notes)
-    ? notes
-    : notes?.notes || notes?.data || [];
-
-  // normalize todos to an array regardless of shape
-  const todosList = Array.isArray(todos)
-    ? todos
-    : todos?.data || todos?.items || todos?.todos || [];
-
   const fullCardClass =
     "customContainer overflow-hidden min-h-64 h-full flex flex-col";
   const cardHeaderClass =
@@ -87,14 +66,14 @@ const Overview = ({ changePage }) => {
   })();
 
   const {
-    data: totalData,
-    isLoading: totalLoading,
-    isError: totalError,
+    data: totalScoreData,
+    isLoading: totalScoreLoading,
+    isError: totalScoreError,
   } = useTotalScore();
 
   // Lifetime coins
   const lifetimeCoins = (() => {
-    const raw = totalData;
+    const raw = totalScoreData;
 
     const total =
       raw && typeof raw === "object"
@@ -124,7 +103,11 @@ const Overview = ({ changePage }) => {
       iconBg: "bg-[#282828]",
       iconColor: "text-[#e3ceae]",
       title: "Total Coins",
-      amount: totalLoading ? "…" : totalError ? "—" : String(lifetimeCoins),
+      amount: totalScoreLoading
+        ? "…"
+        : totalScoreError
+          ? "—"
+          : String(lifetimeCoins),
       stat: "Lifetime earned coins",
     },
     {
@@ -137,6 +120,103 @@ const Overview = ({ changePage }) => {
       stat: "Personal best",
     },
   ];
+
+  const {
+    data: notesData,
+    isLoading,
+    isError,
+  } = useNotes({
+    // return server shape directly; assume server returns an array
+    select: (v) => (Array.isArray(v) ? v : (v.notes ?? [])),
+  });
+
+  const { data: todosData } = useTodos();
+
+  const TODO_COUNT = Array.isArray(todosData) ? todosData.length : 0;
+  const NOTES_COUNT = Array.isArray(notesData) ? notesData.length : 0;
+
+  // note: keep icon background classes inline per-card for easier per-card tweaks
+  // Compute current month's ISO date-only range (YYYY-MM-DD)
+  const startOfMonthIso = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1,
+  )
+    .toISOString()
+    .split("T")[0];
+  const endOfMonthIso = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0,
+  )
+    .toISOString()
+    .split("T")[0];
+
+  const {
+    data: monthData,
+    isLoading: monthLoading,
+    isError: monthError,
+  } = useCalendarEvents({
+    from: startOfMonthIso,
+    to: endOfMonthIso,
+    page: 1,
+    pageSize: 200,
+  });
+
+  const THIS_MONTH_EVENTS = (() => {
+    const d = monthData;
+    if (!d) return monthLoading ? "…" : 0;
+    // backend returns { events, page, pageSize, totalCount, totalPages }
+    if (Array.isArray(d)) return d.length;
+    if (Array.isArray(d.events)) return d.events.length;
+    if (typeof d.totalCount === "number") return d.totalCount;
+    // try common aliases
+    if (Array.isArray(d.data)) return d.data.length;
+    if (Array.isArray(d.items)) return d.items.length;
+    return 0;
+  })();
+
+  const dailyTasks = [
+    {
+      id: "login",
+      type: "login",
+      label: "Daily Login",
+      completed: true,
+    },
+    {
+      id: "calendar",
+      type: "event",
+      label: "Add or Finish Calendar Event",
+      completed: THIS_MONTH_EVENTS > 0,
+    },
+    {
+      id: "study",
+      type: "timer",
+      label: "Study for 25 minutes",
+      completed: false,
+    },
+    {
+      id: "music",
+      type: "music",
+      label: "Listen to music for 5 minutes",
+      completed: false,
+    },
+    {
+      id: "notes",
+      type: "notes",
+      label: "Write a note",
+      completed: NOTES_COUNT > 0,
+    },
+    {
+      id: "todo",
+      type: "todo",
+      label: "Complete a task",
+      completed: TODO_COUNT > 0,
+    },
+  ];
+
+  const completedCount = dailyTasks.filter((t) => t.completed).length;
+  const totalCount = dailyTasks.length;
 
   return (
     <div className="flex flex-col gap-4 mb-24 xl:mb-10">
@@ -172,10 +252,19 @@ const Overview = ({ changePage }) => {
         })}
       </div>
       {/* Focus Timer, Dailies, and Quicklinks */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className="border-nuetral-200 shadow-md hover:shadow-lg transition-shadow duration-300">
-          <FocusTimer />
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 items-stretch">
+        <div className="border-neutral-200 shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
+          <QuickStartTimer />
         </div>
+
+        <div className="h-full">
+          <DailyTasksCard
+            dailyTasks={dailyTasks}
+            completedCount={completedCount}
+            totalCount={totalCount}
+          />
+        </div>
+        <QuickLinks />
       </div>
       {/* Calendar, Notes, and Todos */}
       {/* <div

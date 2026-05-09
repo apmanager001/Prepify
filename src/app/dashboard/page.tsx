@@ -16,7 +16,7 @@ import {
 import Stats from "./comp/dashboardComps/sidebarStats/stats";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import StudyGuides from "./comp/studyGuides/studyGuides";
 import Notes from "./comp/notes/notes";
 import Todo from "./comp/todo/todo";
@@ -29,9 +29,21 @@ import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
 import CornerWidgets from "./cornerTools/cornerWidgets";
 
+type Tab =
+  | "overview"
+  | "studyGuides"
+  | "notes"
+  | "todo"
+  | "resources"
+  | "calendar"
+  | "community"
+  | "settings"
+  | "admin";
+
 const Dashboard = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("overview");
+  const searchParams = useSearchParams();
+  const activeTab = (searchParams.get("tab") as Tab) || "overview";
   const {
     data: profileData,
     isLoading: profileLoading,
@@ -219,11 +231,18 @@ const Dashboard = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const goToTab = (tab: Tab) => {
+    router.push(`/dashboard?tab=${tab}`);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <Overview changePage={setActiveTab} />;
-      // <Main />;
+        return (
+          <Overview
+            changePage={(tab: Tab) => router.push(`/dashboard?tab=${tab}`)}
+          />
+        ); // <Main />;
       case "studyGuides":
         return <StudyGuides />;
       case "notes":
@@ -354,7 +373,7 @@ const Dashboard = () => {
                   <button
                     key={item.id}
                     onClick={() => {
-                      setActiveTab(item.id);
+                      router.push(`/dashboard?tab=${item.id}`);
                       closeMobileMenu();
                     }}
                     className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
@@ -440,7 +459,7 @@ const Dashboard = () => {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => router.push(`/dashboard?tab=${item.id}`)}
                   className={`w-full flex items-center space-x-4 px-4 py-4 rounded-xl text-left transition-all duration-300 group cursor-pointer ${
                     activeTab === item.id
                       ? "bg-primary text-primary-content shadow-lg transform scale-105"
