@@ -40,8 +40,15 @@ export default function DailyTasksCard({
           onClick={() => setExpanded((prev) => !prev)}
           className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition hover:cursor-pointer"
         >
-          View All
-          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {expanded ? (
+            <>
+              Hide Completed <ChevronUp size={16} />
+            </>
+          ) : (
+            <>
+              View All <ChevronDown size={16} />
+            </>
+          )}
         </button>
       </div>
       {/* ROW 2 */}

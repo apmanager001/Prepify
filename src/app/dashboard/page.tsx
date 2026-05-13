@@ -528,7 +528,9 @@ const Dashboard = () => {
       </div>
 
       {/* Mobile Main Content */}
-      <div className="lg:hidden pt-20 px-4 pb-12">{renderContent()}</div>
+      <div className="lg:hidden pt-20 bg-base-100 px-4 pb-12">
+        {renderContent()}
+      </div>
       <CornerWidgets />
     </div>
   );

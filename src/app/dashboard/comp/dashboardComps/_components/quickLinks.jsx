@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Crown,
 } from "lucide-react";
+import { TASK_STYLES } from "./taskStyles";
 
 const quickLinks = [
   {
@@ -17,40 +18,41 @@ const quickLinks = [
     description: "Notes",
     href: "/dashboard?tab=notes",
     icon: NotebookPen,
-    bg: "bg-yellow-500/15",
-    color: "text-yellow-500",
+    ...TASK_STYLES.notes,
   },
+
   {
     title: "To-Do",
     description: "Tasks",
     href: "/dashboard?tab=todo",
     icon: CheckSquare,
-    bg: "bg-orange-500/15",
-    color: "text-orange-500",
+    ...TASK_STYLES.todo,
   },
+
   {
     title: "Calendar",
     description: "Schedule",
     href: "/dashboard?tab=calendar",
     icon: Calendar,
-    bg: "bg-purple-500/15",
-    color: "text-purple-500",
+    ...TASK_STYLES.event,
   },
+
   {
     title: "Community",
     description: "Social",
     href: "/dashboard?tab=community",
     icon: UsersRound,
-    bg: "bg-green-500/15",
-    color: "text-green-500",
+    bg: "bg-cyan-500/15",
+    color: "text-cyan-500",
   },
+
   {
     title: "Settings",
     description: "Settings",
     href: "/dashboard?tab=settings",
     icon: Settings,
     bg: "bg-gray-500/15",
-    color: "text-gray-600",
+    color: "text-gray-500",
   },
 ];
 

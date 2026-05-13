@@ -1,7 +1,6 @@
 export default function StatBadge({
   icon,
   iconBg = "bg-neutral",
-  iconColor = "text-white",
   title,
   amount,
   stat,
@@ -12,7 +11,7 @@ export default function StatBadge({
     <div
       className={`
         flex items-center gap-4
-        rounded-2xl border border-neutral-200
+        rounded-2xl border border-base-content/20
         p-4 shadow-md hover:shadow-lg transition-shadow duration-300
         ${className}
       `}

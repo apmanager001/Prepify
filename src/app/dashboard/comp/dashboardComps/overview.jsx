@@ -16,6 +16,7 @@ import QuickStartTimer from "./focusTimers/quickStartTimer";
 import StatBadge from "./_components/statBadge";
 import DailyTasksCard from "./_components/dailyTaskCard";
 import QuickLinks from "./_components/quickLinks";
+import DashboardThirdRow from "./_components/dashboardThirdRow";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -266,6 +267,7 @@ const Overview = ({ changePage }) => {
         </div>
         <QuickLinks />
       </div>
+      <DashboardThirdRow />
       {/* Calendar, Notes, and Todos */}
       {/* <div
         className={`grid grid-cols-1 md:grid-cols-2 w-full gap-4 ${roboto.className}`}
