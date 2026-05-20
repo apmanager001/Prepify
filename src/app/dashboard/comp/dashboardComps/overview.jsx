@@ -1,29 +1,14 @@
-import {
-  Calendar,
-  Flame,
-  NotebookPen,
-  SquareCheckBig,
-  Target,
-  Trophy,
-} from "lucide-react";
-import { Roboto } from "next/font/google";
+import { Flame, Trophy } from "lucide-react";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
 import { useTodos } from "../todo/lib/todoAPI";
 import { Star } from "lucide-react";
 import useTotalScore, { useDailyScore } from "./useTotalScore";
 import QuickStartTimer from "./focusTimers/quickStartTimer";
-import StatBadge from "./_components/statBadge";
 import DailyTasksCard from "./_components/dailyTaskCard";
 import QuickLinks from "./_components/quickLinks";
 import DashboardThirdRow from "./_components/dashboardThirdRow";
-
-const roboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
-});
-
-const today = new Date().toISOString().split("T")[0];
+import StatsBadge from "./statsBadge";
 
 function percentOfAllTime(allTimeCoins, todayCoins) {
   const total = Number(allTimeCoins);
@@ -36,16 +21,7 @@ function percentOfAllTime(allTimeCoins, todayCoins) {
   return Number(((today / total) * 100).toFixed(2));
 }
 
-const Overview = ({ changePage }) => {
-  const fullCardClass =
-    "customContainer overflow-hidden min-h-64 h-full flex flex-col";
-  const cardHeaderClass =
-    "bg-neutral-content text-neutral px-4 py-2 text-sm font-medium";
-  const cardItemClass =
-    "cursor-pointer p-2 bg-neutral-content text-primary border-2 border-neutral-content/60 rounded-md flex flex-col sm:flex-row sm:items-stretch sm:justify-between gap-3";
-  const iconClass =
-    "flex items-center text-neutral-content text-lg border-3 border-primary bg-neutral p-2 rounded-xl hover:scale-105";
-
+const Overview = () => {
   const {
     data: dailyData,
     isLoading: dailyLoading,
@@ -86,47 +62,55 @@ const Overview = ({ changePage }) => {
     return total ?? 0;
   })();
 
-  const statCards = [
+  const stats = [
     {
       id: "dailyCoins",
-      icon: Star,
-      iconBg: "bg-[#eeb54a]",
-      iconColor: "text-white",
-
-      title: "Today's Coins",
-      amount: dailyLoading ? "…" : dailyError ? "—" : String(DAILY_COINS_NUM),
-      stat: `${percentOfAllTime(lifetimeCoins, DAILY_COINS_NUM)}% increase from yesterday`,
-      statClassName: "text-success",
+      icon: (
+        <div className="bg-[#eeb54a] text-white rounded-lg p-2">
+          <Star className="w-5 h-5" />
+        </div>
+      ),
+      label: "Today's Coins",
+      value: dailyLoading ? "…" : dailyError ? "—" : String(DAILY_COINS_NUM),
+      subValue: `${percentOfAllTime(
+        lifetimeCoins,
+        DAILY_COINS_NUM,
+      )}% increase from yesterday`,
+      positive: true,
     },
+
     {
       id: "totalCoins",
-      icon: Trophy,
-      iconBg: "bg-[#282828]",
-      iconColor: "text-[#e3ceae]",
-      title: "Total Coins",
-      amount: totalScoreLoading
+      icon: (
+        <div className="bg-[#282828] text-[#e3ceae] rounded-lg p-2">
+          <Trophy className="w-5 h-5" />
+        </div>
+      ),
+      label: "Total Coins",
+      value: totalScoreLoading
         ? "…"
         : totalScoreError
           ? "—"
           : String(lifetimeCoins),
-      stat: "Lifetime earned coins",
+      subValue: "Lifetime earned coins",
+      positive: true,
     },
+
     {
       id: "streak",
-      icon: Flame,
-      iconBg: "bg-[#f0ac5c]",
-      iconColor: "text-white",
-      title: "Current Streak",
-      amount: "14",
-      stat: "Personal best",
+      icon: (
+        <div className="bg-[#f0ac5c] text-white rounded-lg p-2">
+          <Flame className="w-5 h-5" />
+        </div>
+      ),
+      label: "Current Streak",
+      value: "14",
+      subValue: "Personal best",
+      positive: true,
     },
   ];
 
-  const {
-    data: notesData,
-    isLoading,
-    isError,
-  } = useNotes({
+  const { data: notesData } = useNotes({
     // return server shape directly; assume server returns an array
     select: (v) => (Array.isArray(v) ? v : (v.notes ?? [])),
   });
@@ -153,11 +137,7 @@ const Overview = ({ changePage }) => {
     .toISOString()
     .split("T")[0];
 
-  const {
-    data: monthData,
-    isLoading: monthLoading,
-    isError: monthError,
-  } = useCalendarEvents({
+  const { data: monthData, isLoading: monthLoading } = useCalendarEvents({
     from: startOfMonthIso,
     to: endOfMonthIso,
     page: 1,
@@ -233,25 +213,7 @@ const Overview = ({ changePage }) => {
         </div>
       </header>
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {statCards.map((card) => {
-          const Icon = card.icon;
-
-          return (
-            <StatBadge
-              key={card.id}
-              icon={
-                <Icon className={`h-6 w-6 ${card.iconColor || "text-white"}`} />
-              }
-              iconBg={card.iconBg}
-              title={card.title}
-              amount={card.amount}
-              stat={card.stat}
-              statClassName={card.statClassName}
-            />
-          );
-        })}
-      </div>
+      <StatsBadge stats={stats} />
       {/* Focus Timer, Dailies, and Quicklinks */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 items-stretch">
         <div className="border-neutral-200 shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
@@ -268,182 +230,6 @@ const Overview = ({ changePage }) => {
         <QuickLinks />
       </div>
       <DashboardThirdRow />
-      {/* Calendar, Notes, and Todos */}
-      {/* <div
-        className={`grid grid-cols-1 md:grid-cols-2 w-full gap-4 ${roboto.className}`}
-      >
-        <div className="w-full">
-          <div className={fullCardClass}>
-            <div className={`${cardHeaderClass} flex items-center gap-2`}>
-              <div className={`${iconClass}`}>
-                <Calendar />
-              </div>
-              {`Today's Calendar Events ${todaysDate}`}
-            </div>
-            <div className="p-4 flex-1 min-h-32">
-              {calendarLoading ? (
-                <div className="text-sm text-neutral-content w-full">
-                  <LoadingComp />
-                </div>
-              ) : !fetchEventData ||
-                !Array.isArray(fetchEventData?.events) ||
-                fetchEventData.events.length === 0 ? (
-                <div className="text-sm text-neutral-content">
-                  No events for today
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {fetchEventData?.events.map((ev) => (
-                    <div
-                      onClick={() => changePage("calendar")}
-                      key={ev._id}
-                      className={`${cardItemClass}`}
-                    >
-                      <div className="flex items-stretch justify-between w-full">
-                        <div>
-                          <div className="text-sm font-semibold text-neutral">
-                            {ev.eventTitle}
-                          </div>
-                          {ev.eventDescription && (
-                            <div className="text-xs text-neutral-content ml-2">
-                              {ev.eventDescription}
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-xs text-neutral-content/80">
-                          {ev.eventTime ||
-                            new Date(ev.eventDate).toLocaleTimeString("en-US", {
-                              hour: "numeric",
-                              minute: "2-digit",
-                              hour12: true,
-                            })}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full">
-          <div className={fullCardClass}>
-            <div className={`${cardHeaderClass} flex items-center gap-2`}>
-              <div className={`${iconClass}`}>
-                <NotebookPen />
-              </div>
-              Notes
-            </div>
-            <div className="p-4 flex-1 min-h-32">
-              {notesLoading ? (
-                <div className="text-sm text-neutral-content w-full">
-                  <LoadingComp />
-                </div>
-              ) : !notesList || notesList.length === 0 ? (
-                <div className="text-sm text-neutral-content">No notes</div>
-              ) : (
-                <div className="space-y-3">
-                  {notesList.slice(0, 6).map((n, i) => (
-                    <div
-                      onClick={() => changePage("notes")}
-                      key={n._id || i}
-                      className={cardItemClass}
-                    >
-                      <div className="flex items-stretch justify-between w-full gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold text-neutral truncate">
-                            {n.title || n.noteTitle}
-                          </div>
-                          {n.body && (
-                            <div
-                              className="text-xs text-neutral overflow-hidden"
-                              style={{
-                                display: "-webkit-box",
-                                WebkitLineClamp: 3,
-                                WebkitBoxOrient: "vertical",
-                              }}
-                            >
-                              {n.body}
-                            </div>
-                          )}
-                        </div>
-
-                        {n.createdAt && (
-                          <div className="text-xs text-neutral/80 ml-4 whitespace-nowrap">
-                            {new Date(n.createdAt).toLocaleDateString("en-US", {
-                              month: "numeric",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full mb-14">
-          <div className={fullCardClass}>
-            <div className={`${cardHeaderClass} flex items-center gap-2`}>
-              <div className={`${iconClass}`}>
-                <SquareCheckBig />
-              </div>
-              To Do
-            </div>
-            <div className="p-4 flex-1 min-h-32">
-              {todosLoading ? (
-                <div className="text-sm text-neutral-content w-full">
-                  <LoadingComp />
-                </div>
-              ) : !todosList || todosList.length === 0 ? (
-                <div className="text-sm text-neutral-content">No tasks</div>
-              ) : (
-                <div className="space-y-3">
-                  {todosList.slice(0, 6).map((t, i) => (
-                    <div
-                      onClick={() => changePage("todo")}
-                      key={t._id || t.id || i}
-                      className={`${cardItemClass}`}
-                    >
-                      <div className="flex items-stretch gap-3">
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-sm checkbox-success mt-1 sm:mt-0 cursor-default"
-                          checked={!!t.completed}
-                          readOnly
-                          aria-label={`Todo ${
-                            t.title || t.task || t.text
-                          } completed`}
-                        />
-                        <div className="text-sm text-neutral">
-                          {t.title || t.task || t.text}
-                        </div>
-                      </div>
-
-                      <div className="mt-2 sm:mt-0 flex items-center gap-3">
-                        {t.createdAt && (
-                          <div className="text-xs text-neutral/80">
-                            {new Date(t.createdAt).toLocaleDateString("en-US", {
-                              month: "numeric",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 };

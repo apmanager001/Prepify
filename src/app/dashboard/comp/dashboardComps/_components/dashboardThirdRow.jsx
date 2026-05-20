@@ -1,10 +1,4 @@
-import {
-  ArrowRight,
-  Zap,
-  Check,
-  ChevronRight,
-  ClipboardList,
-} from "lucide-react";
+import { ArrowRight, Zap, Check, ClipboardList } from "lucide-react";
 
 import { TASK_STYLES } from "./taskStyles";
 import { useState } from "react";
@@ -47,21 +41,21 @@ const activityData = [
     type: "notes",
     title: "Notes Uploaded",
     time: "2 mins ago",
-    points: "+25 XP",
+    points: "+25 Coins",
   },
   {
     id: 2,
     type: "timer",
     title: "Study Session Completed",
     time: "18 mins ago",
-    points: "+40 XP",
+    points: "+40 Coins",
   },
   {
     id: 3,
     type: "event",
     title: "Event Joined",
     time: "1 hour ago",
-    points: "+10 XP",
+    points: "+10 Coins",
   },
 ];
 
