@@ -1,18 +1,32 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
+export type StatsBadgeTrend = "positive" | "negative" | "neutral";
+
 export type StatsBadgeItem = {
   id: number | string;
   icon?: React.ReactNode;
-  iconClassName?: string;
   label: string;
   value: string | number;
   subValue?: string;
-  positive?: boolean;
+  trend?: StatsBadgeTrend;
+
+  iconClassName?: string;
+  iconContainerClassName?: string;
+  divClassName?: string;
+  labelClassName?: string;
+  valueClassName?: string;
+  subValueClassName?: string;
 };
 
 type StatsBadgeProps = {
   stats?: StatsBadgeItem[];
+};
+
+const trendStyles: Record<StatsBadgeTrend, string> = {
+  positive: "text-success",
+  negative: "text-error",
+  neutral: "text-white",
 };
 
 const StatsBadge = ({ stats = [] }: StatsBadgeProps) => {
@@ -32,23 +46,26 @@ const StatsBadge = ({ stats = [] }: StatsBadgeProps) => {
       {safeStats.map((stat) => (
         <div
           key={stat.id}
-          className="
-            w-full
-            min-w-0
-            rounded-xl
-            border
-            border-white
-            bg-neutral
-            shadow-sm
-            p-4
-            flex
-            items-center
-            gap-4
-            transition-all
-            hover:scale-[1.02]
-            hover:shadow-md
-            cursor-pointer
-          "
+          className={cn(
+            `
+              w-full
+              min-w-0
+              rounded-xl
+              border
+              border-white
+              bg-neutral
+              shadow-sm
+              p-4
+              flex
+              items-center
+              gap-4
+              transition-all
+              hover:scale-[1.02]
+              hover:shadow-md
+              cursor-pointer
+            `,
+            stat.divClassName,
+          )}
         >
           {stat.icon && (
             <div
@@ -58,42 +75,61 @@ const StatsBadge = ({ stats = [] }: StatsBadgeProps) => {
                   items-center
                   justify-center
                   shrink-0
+                  size-12
+                  p-2
                   rounded-xl
-                  border-2
                   border-primary
-                  p-3
-                  text-lg
-                  text-neutral-content
+                  border-2
+                  bg-black
                 `,
-                stat.iconClassName,
+                stat.iconContainerClassName,
               )}
             >
-              {stat.icon}
+              <span
+                className={cn(
+                  `
+                    flex
+                    items-center
+                    justify-center
+                    text-lg
+                    text-neutral-content
+                  `,
+                  stat.iconClassName,
+                )}
+              >
+                {stat.icon}
+              </span>
             </div>
           )}
 
           <div className="flex flex-col min-w-0 flex-1">
             <span
-              className="
-                text-xs
-                sm:text-sm
-                font-medium
-                truncate
-                text-white
-              "
+              className={cn(
+                `
+                  text-xs
+                  sm:text-sm
+                  font-medium
+                  truncate
+                  text-white
+                `,
+                stat.labelClassName,
+              )}
             >
               {stat.label}
             </span>
 
             <span
-              className="
-                text-lg
-                sm:text-xl
-                lg:text-2xl
-                font-bold
-                wrap-break-words
-                text-white
-              "
+              className={cn(
+                `
+                  text-lg
+                  sm:text-xl
+                  lg:text-2xl
+                  font-bold
+                  wrap-break-words
+                  text-white
+                `,
+                stat.valueClassName,
+              )}
             >
               {stat.value}
             </span>
@@ -107,7 +143,8 @@ const StatsBadge = ({ stats = [] }: StatsBadgeProps) => {
                     font-semibold
                     wrap-break-words
                   `,
-                  stat.positive ? "text-success" : "text-error",
+                  trendStyles[stat.trend ?? "neutral"],
+                  stat.subValueClassName,
                 )}
               >
                 {stat.subValue}

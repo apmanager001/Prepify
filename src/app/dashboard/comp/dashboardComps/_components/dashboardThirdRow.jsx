@@ -3,34 +3,33 @@ import { ArrowRight, Zap, Check, ClipboardList } from "lucide-react";
 import { TASK_STYLES } from "./taskStyles";
 import { useState } from "react";
 
+// Example format matching CalendarEvent mongoose schema
 const initialTodayPlan = [
   {
-    id: 1,
-    type: "event",
-    title: "Math Final Review",
-    subject: "math",
-    class: "Calculus II",
-    time: "8:00 AM",
+    eventTitle: "Math Final Review",
+    eventDescription: "Review integration techniques and practice problems",
+    eventDate: "2026-05-20T00:00:00.000Z",
+    eventTime: "8:00 AM",
+    eventType: "math",
+    eventColor: "#3B82F6",
     status: "Pending",
   },
-
   {
-    id: 2,
-    type: "music",
-    title: "Practice Piano",
-    subject: "music",
-    class: "Music Theory",
-    time: "11:30 AM",
+    eventTitle: "Practice Piano",
+    eventDescription: "Practice scales and chord progressions",
+    eventDate: "2026-05-20T00:00:00.000Z",
+    eventTime: "11:30 AM",
+    eventType: "music",
+    eventColor: "#EC4899",
     status: "Pending",
   },
-
   {
-    id: 3,
-    type: "todo",
-    title: "Complete Homework",
-    subject: "science",
-    class: "Physics",
-    time: "3:15 PM",
+    eventTitle: "Complete Homework",
+    eventDescription: "Finish chapter 7 physics assignment",
+    eventDate: "2026-05-20T00:00:00.000Z",
+    eventTime: "3:15 PM",
+    eventType: "science",
+    eventColor: "#22C55E",
     status: "Completed",
   },
 ];
@@ -58,56 +57,6 @@ const activityData = [
     points: "+10 Coins",
   },
 ];
-
-const SUBJECT_STYLES = {
-  math: {
-    bg: "bg-blue-500/15",
-    color: "text-blue-500",
-    border: "border-blue-500",
-  },
-
-  science: {
-    bg: "bg-green-500/15",
-    color: "text-green-500",
-    border: "border-green-500",
-  },
-
-  history: {
-    bg: "bg-orange-500/15",
-    color: "text-orange-500",
-    border: "border-orange-500",
-  },
-
-  english: {
-    bg: "bg-purple-500/15",
-    color: "text-purple-500",
-    border: "border-purple-500",
-  },
-
-  music: {
-    bg: "bg-pink-500/15",
-    color: "text-pink-500",
-    border: "border-pink-500",
-  },
-
-  programming: {
-    bg: "bg-cyan-500/15",
-    color: "text-cyan-500",
-    border: "border-cyan-500",
-  },
-
-  art: {
-    bg: "bg-red-500/15",
-    color: "text-red-500",
-    border: "border-red-500",
-  },
-
-  business: {
-    bg: "bg-yellow-500/15",
-    color: "text-yellow-500",
-    border: "border-yellow-500",
-  },
-};
 export default function DashboardThirdRow() {
   const [tasks, setTasks] = useState(initialTodayPlan);
   return (
@@ -129,20 +78,18 @@ export default function DashboardThirdRow() {
 
         {/* Task List */}
         <div className="my-2 space-y-2">
-          {tasks.map((task) => {
-            const subjectStyle = SUBJECT_STYLES[task.subject];
-
+          {tasks.map((task, index) => {
             return (
               <div
-                key={task.id}
+                key={index}
                 className="flex items-center gap-2 rounded-2xl border border-base-content/20 px-2 py-2 transition-all hover:bg-base-200"
               >
                 {/* Check Button */}
                 <button
                   onClick={() =>
                     setTasks((prev) =>
-                      prev.map((t) =>
-                        t.id === task.id
+                      prev.map((t, i) =>
+                        i === index
                           ? {
                               ...t,
                               status:
@@ -154,42 +101,50 @@ export default function DashboardThirdRow() {
                       ),
                     )
                   }
-                  className={`
-  flex h-8 w-8 shrink-0 items-center justify-center
-  rounded-full border transition-all duration-200 cursor-pointer
-  ${
-    task.status === "Completed"
-      ? `${subjectStyle.bg} ${subjectStyle.color.replace("text-", "border-")}`
-      : `${subjectStyle.border}`
-  }
-`}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-200 cursor-pointer"
+                  style={{
+                    borderColor: task.eventColor,
+                    backgroundColor:
+                      task.status === "Completed"
+                        ? `${task.eventColor}20`
+                        : "transparent",
+                  }}
                 >
                   {task.status === "Completed" ? (
-                    <Check size={20} className={subjectStyle.color} />
-                  ) : (
-                    <></>
-                  )}
+                    <Check size={20} style={{ color: task.eventColor }} />
+                  ) : null}
                 </button>
 
-                {/* Title + Class */}
+                {/* Title + Description */}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-base-content">
-                    {task.title}
+                    {task.eventTitle}
+
+                    <span
+                      className="ml-1 text-xs font-medium capitalize"
+                      style={{ color: task.eventColor }}
+                    >
+                      ({task.eventType.toUpperCase()})
+                    </span>
                   </p>
 
                   <p className="truncate text-sm text-base-content/60">
-                    {task.class}
+                    {task.eventDescription}
                   </p>
                 </div>
 
                 {/* Time */}
-                <div className="hidden text-sm font-medium text-base-content/70 sm:block">
-                  {task.time}
+                <div className="text-sm font-medium block">
+                  {task.eventTime}
                 </div>
 
                 {/* Status */}
                 <div
-                  className={`rounded-full px-3 py-1 text-xs font-medium text-base-content/70 ${subjectStyle.bg}`}
+                  className="rounded-full px-3 py-1 text-xs font-medium"
+                  style={{
+                    backgroundColor: `${task.eventColor}20`,
+                    color: task.eventColor,
+                  }}
                 >
                   {task.status}
                 </div>

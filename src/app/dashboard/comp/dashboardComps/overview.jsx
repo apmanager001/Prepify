@@ -1,25 +1,13 @@
-import { Flame, Trophy } from "lucide-react";
+import { Flame, Coins } from "lucide-react";
 import { useCalendarEvents } from "../calendar/lib/calendar";
 import { useNotes } from "../notes/lib/notesApi";
 import { useTodos } from "../todo/lib/todoAPI";
-import { Star } from "lucide-react";
 import useTotalScore, { useDailyScore } from "./useTotalScore";
 import QuickStartTimer from "./focusTimers/quickStartTimer";
 import DailyTasksCard from "./_components/dailyTaskCard";
 import QuickLinks from "./_components/quickLinks";
 import DashboardThirdRow from "./_components/dashboardThirdRow";
 import StatsBadge from "./statsBadge";
-
-function percentOfAllTime(allTimeCoins, todayCoins) {
-  const total = Number(allTimeCoins);
-  const today = Number(todayCoins);
-
-  if (!Number.isFinite(total) || !Number.isFinite(today)) return 0;
-
-  if (total === 0) return today === 0 ? 0 : 100;
-
-  return Number(((today / total) * 100).toFixed(2));
-}
 
 const Overview = () => {
   const {
@@ -64,49 +52,40 @@ const Overview = () => {
 
   const stats = [
     {
-      id: "dailyCoins",
-      icon: (
-        <div className="bg-[#eeb54a] text-white rounded-lg p-2">
-          <Star className="w-5 h-5" />
-        </div>
-      ),
-      label: "Today's Coins",
-      value: dailyLoading ? "…" : dailyError ? "—" : String(DAILY_COINS_NUM),
-      subValue: `${percentOfAllTime(
-        lifetimeCoins,
-        DAILY_COINS_NUM,
-      )}% increase from yesterday`,
-      positive: true,
-    },
-
-    {
-      id: "totalCoins",
-      icon: (
-        <div className="bg-[#282828] text-[#e3ceae] rounded-lg p-2">
-          <Trophy className="w-5 h-5" />
-        </div>
-      ),
-      label: "Total Coins",
+      id: "coins",
+      icon: <Coins />,
+      label: "Coins",
       value: totalScoreLoading
         ? "…"
         : totalScoreError
           ? "—"
-          : String(lifetimeCoins),
-      subValue: "Lifetime earned coins",
-      positive: true,
-    },
+          : lifetimeCoins.toLocaleString(),
 
+      subValue: dailyLoading
+        ? "Loading today's coins..."
+        : dailyError
+          ? "No Coins Earned Yet."
+          : DAILY_COINS_NUM > 0
+            ? `+${DAILY_COINS_NUM.toLocaleString()} today`
+            : "",
+
+      trend: dailyLoading
+        ? "neutral"
+        : dailyError
+          ? "negative"
+          : DAILY_COINS_NUM > 0
+            ? `positive`
+            : "neutral",
+    },
     {
       id: "streak",
-      icon: (
-        <div className="bg-[#f0ac5c] text-white rounded-lg p-2">
-          <Flame className="w-5 h-5" />
-        </div>
-      ),
+      icon: <Flame />,
       label: "Current Streak",
       value: "14",
       subValue: "Personal best",
-      positive: true,
+      trend: "positive",
+      iconContainerClassName: "bg-[#f0ac5c] border-black",
+      iconClassName: "text-white",
     },
   ];
 
