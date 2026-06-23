@@ -1,0 +1,221 @@
+/timer:
+    summary: Start/Get timers
+    post:
+      tags:
+        - Timer
+      summary: Start a new active timer
+      description:
+        "Start a new active timer for the authenticated user. Only one active timer can exist at a time.
+        The time must be in MM:SS format (e.g., '15:30' for 15 minutes and 30 seconds), and name must be a non-empty string."
+      operationId: start_timer
+      requestBody:
+        description: Submit a timer with time in MM:SS format and a name
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TimerRequest"
+            example: { "time": "25:00", "name": "Pomodoro Session" }
+      responses:
+        "200":
+          description: "Timer successfully started."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Timer"
+              example:
+                {
+                  "_id": "66ce0c8dc538303360039d01",
+                  "userId": "66ce0c8dc538303360039d00",
+                  "time": "25:00",
+                  "name": "Pomodoro Session",
+                  "completed": false,
+                  "createdAt": "2024-06-02T10:30:00.000Z",
+                }
+        "400":
+          description: "Invalid request or validation error."
+          content:
+            application/json:
+              examples:
+                missingTime:
+                  value: { "error": "Missing time field." }
+                invalidTimeFormat:
+                  value: { "error": "Time must be a valid string in the format 'MM:SS'." }
+                missingName:
+                  value: { "error": "Missing name field." }
+                invalidName:
+                  value: { "error": "Name must be a string." }
+                emptyName:
+                  value: { "error": "Name cannot be empty." }
+        "401":
+          description: "No logged in user."
+          content:
+            application/json:
+              example: { "error": "No logged in user." }
+        "409":
+          description: "An active timer already exists."
+          content:
+            application/json:
+              example: { "error": "An active timer already exists. Please stop it before starting a new one." }
+        "500":
+          description: "Server error occurred while processing the request."
+          content:
+            application/json:
+              example: { "error": "Internal server error." }
+        default:
+          description: Default error sample response
+    get:
+      tags:
+        - Timer
+      summary: Get all timers for the authenticated user
+      description: Returns the list of all timers (both active and completed) for the authenticated user.
+      operationId: get_timers
+      responses:
+        "200":
+          description: List of all timers for the user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Timer"
+              example:
+                {
+                  "timers":
+                    [
+                      {
+                        "_id": "66ce0c8dc538303360039d01",
+                        "userId": "66ce0c8dc538303360039d00",
+                        "time": "25:00",
+                        "name": "Pomodoro Session",
+                        "completed": true,
+                        "createdAt": "2024-06-02T10:30:00.000Z",
+                      },
+                      {
+                        "_id": "66ce0c8dc538303360039d02",
+                        "userId": "66ce0c8dc538303360039d00",
+                        "time": "10:00",
+                        "name": "Short Break",
+                        "completed": false,
+                        "createdAt": "2024-06-02T11:00:00.000Z",
+                      },
+                    ],
+                }
+        "401":
+          description: No logged in user.
+          content:
+            application/json:
+              example: { "error": "No logged in user." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example: { "error": "Failed to retrieve timers. Please try again." }
+        default:
+          description: Default error sample response
+  /timer/active:
+    summary: Get/Delete/Complete active timer
+    get:
+      tags:
+        - Timer
+      summary: Get the active timer
+      description: Returns the currently active timer for the authenticated user, if one exists.
+      operationId: get_active_timer
+      responses:
+        "200":
+          description: The active timer for the user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Timer"
+              example:
+                {
+                  "_id": "66ce0c8dc538303360039d01",
+                  "userId": "66ce0c8dc538303360039d00",
+                  "time": "25:00",
+                  "name": "Pomodoro Session",
+                  "completed": false,
+                  "createdAt": "2024-06-02T10:30:00.000Z",
+                }
+        "401":
+          description: No logged in user.
+          content:
+            application/json:
+              example: { "error": "No logged in user." }
+        "404":
+          description: No active timer found.
+          content:
+            application/json:
+              example: { "error": "No active timer found." }
+        "500":
+          description: Server error occurred while processing the request.
+          content:
+            application/json:
+              example: { "error": "Failed to retrieve active timer. Please try again." }
+        default:
+          description: Default error sample response
+    delete:
+      tags:
+        - Timer
+      summary: Delete the active timer
+      description: Deletes the currently active timer for the authenticated user.
+      operationId: delete_active_timer
+      responses:
+        "200":
+          description: "Active timer successfully deleted."
+          content:
+            application/json:
+              example: { "message": "Active timer deleted successfully." }
+        "401":
+          description: "No logged in user."
+          content:
+            application/json:
+              example: { "error": "No logged in user." }
+        "404":
+          description: "No active timer found."
+          content:
+            application/json:
+              example: { "error": "No active timer found." }
+        "500":
+          description: "Server error occurred while processing the request."
+          content:
+            application/json:
+              example: { "error": "Failed to delete active timer. Please try again." }
+        default:
+          description: Default error sample response
+    put:
+      tags:
+        - Timer
+      summary: Complete the active timer
+      description: "Marks the active timer as completed. The timer duration must have fully elapsed (calculated from timer creation time and MM:SS time field) before it can be completed."
+      operationId: complete_active_timer
+      responses:
+        "200":
+          description: "Active timer successfully marked as completed."
+          content:
+            application/json:
+              example: { "message": "Active timer completed successfully." }
+        "401":
+          description: "No logged in user."
+          content:
+            application/json:
+              example: { "error": "No logged in user." }
+        "404":
+          description: "No active timer found."
+          content:
+            application/json:
+              example: { "error": "No active timer found." }
+        "409":
+          description: "Timer duration has not elapsed yet."
+          content:
+            application/json:
+              example: { "error": "Timer duration has not elapsed yet." }
+        "500":
+          description: "Server error occurred while processing the request."
+          content:
+            application/json:
+              example: { "error": "Failed to complete active timer. Please try again." }
+        default:
+          description: Default error sample response

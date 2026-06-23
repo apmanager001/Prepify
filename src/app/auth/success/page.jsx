@@ -14,16 +14,6 @@ export default function AuthSuccess() {
     } catch (error) {
       console.error("OAuth success callback failed:", error);
     }
-
-    const timeoutId = window.setTimeout(() => {
-      try {
-        window.close();
-      } catch (error) {
-        console.error("Failed to close OAuth popup:", error);
-      }
-    }, 800);
-
-    return () => window.clearTimeout(timeoutId);
   }, []);
 
   return (

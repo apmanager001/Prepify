@@ -133,8 +133,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
             if (
               allowedOrigins.has(popupUrl.origin) &&
-              (popupUrl.pathname === "/auth/success" ||
-                popupUrl.pathname === "/dashboard")
+              popupUrl.pathname === "/dashboard"
             ) {
               finish(() => {
                 closePopup();
