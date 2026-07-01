@@ -4,26 +4,19 @@ import { useEffect } from "react";
 
 export default function AuthSuccess() {
   useEffect(() => {
-    try {
-      if (window.opener) {
-        window.opener.postMessage(
-          { type: "oauth_success" },
-          window.location.origin,
-        );
-      }
-    } catch (error) {
-      console.error("OAuth success callback failed:", error);
-    }
-
-    const timeoutId = window.setTimeout(() => {
+    const timer = setTimeout(() => {
       try {
-        window.close();
+        if (window.opener) {
+          window.opener.postMessage(
+            { type: "oauth_success" },
+            window.location.origin,
+          );
+        }
       } catch (error) {
-        console.error("Failed to close OAuth popup:", error);
+        console.error("OAuth success callback failed:", error);
       }
-    }, 800);
-
-    return () => window.clearTimeout(timeoutId);
+    }, 1200);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

@@ -28,6 +28,7 @@ import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
 import CornerWidgets from "./cornerTools/cornerWidgets";
+import Lab from "./comp/lab/lab";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -169,31 +170,41 @@ const Dashboard = () => {
     //   label: "Study Tools",
     //   icon: () => <Hammer size={24} />,
     // },
+    // {
+    //   id: "notes",
+    //   label: "Notes",
+    //   icon: () => <NotebookPen size={24} />,
+    // },
+    // {
+    //   id: "todo",
+    //   label: "To-Do",
+    //   icon: () => <CheckSquare size={24} />,
+    // },
     {
-      id: "notes",
-      label: "Notes",
-      icon: () => <NotebookPen size={24} />,
+      id: "planner",
+      label: "Planner",
+      icon: () => <Notebook size={24} />,
     },
+    // {
+    //   id: "calendar",
+    //   label: "Calendar",
+    //   icon: () => <CalendarIcon size={24} />,
+    // },
     {
-      id: "todo",
-      label: "To-Do",
-      icon: () => <CheckSquare size={24} />,
-    },
-    {
-      id: "calendar",
-      label: "Calendar",
-      icon: () => <CalendarIcon size={24} />,
+      id: "lab",
+      label: "Lab",
+      icon: () => <FlaskConical size={24} />,
     },
     // {
     //   id: "resources",
     //   label: "Resources",
     //   icon: () => <FolderClosed size={24} />,
     // },
-    {
-      id: "community",
-      label: "Community",
-      icon: () => <UsersRound size={24} />,
-    },
+    // {
+    //   id: "community",
+    //   label: "Community",
+    //   icon: () => <UsersRound size={24} />,
+    // },
     {
       id: "settings",
       label: "Settings",
@@ -230,10 +241,14 @@ const Dashboard = () => {
         return <Notes />;
       case "todo":
         return <Todo />;
+      case "lab":
+        return <Lab />;
       // case "tools":
       //   return <Tools />;
-      case "calendar":
-        return <Calendar />;
+      // case "calendar":
+      //   return <Calendar />;
+      case 'planner':
+        return <Planner />
       case "resources":
         return (
           <div className="space-y-8">

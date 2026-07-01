@@ -43,7 +43,7 @@ const RenderBadgesTab = () => {
       key: "explorer",
       name: "Explorer",
       description: "Visited new sections of the app.",
-      earned: false,
+      earned: true,
       icon: "compass",
     },
     {
@@ -171,12 +171,12 @@ const RenderBadgesTab = () => {
     return <div className={cls}>{icons[badge.icon] || "★"}</div>;
   };
   return (
-    <div className="w-full flex-2 flex flex-col items-center p-6">
+    <div className="w-full flex-2 flex flex-col items-center p-4">
       <h2 className="text-2xl font-semibold mb-4">Your Badges</h2>
 
       {/* {loading && <p className="text-sm text-gray-500">Loading badges...</p>} */}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full">
+      <div className="flex flex-wrap justify-center gap-2 w-full">
         {badges.map((badge) => {
           const earned = badge.earned;
 
