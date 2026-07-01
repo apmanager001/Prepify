@@ -13,7 +13,7 @@ import {
   useNotes,
   useUpdateNote,
 } from "./notesApi";
-import FocusTimer from "./focusTimer";
+import FocusTimer from "../../../../lib/focusTimer";
 import StatsBadge from "../planner/statsBadge";
 
 const MAX_NOTES = 10;
@@ -82,7 +82,7 @@ const Lab = () => {
     const createdAt = new Date(note?.createdAt);
     return !Number.isNaN(createdAt.getTime()) && createdAt >= startOfWeek;
   }).length;
-  
+
   const stats = [
     {
       id: 1,
@@ -94,7 +94,7 @@ const Lab = () => {
       label: "Today's Focus Time",
       value: "1h 30m",
       subValue: "+20m vs yesterday",
-      trend: 'positive',
+      trend: "positive",
     },
     {
       id: 2,
@@ -102,7 +102,7 @@ const Lab = () => {
       label: "Sessions Completed",
       value: "3",
       subValue: "+1 vs yesterday",
-      trend: 'negative',
+      trend: "negative",
     },
     {
       id: 3,
@@ -110,7 +110,7 @@ const Lab = () => {
       label: "Current Streak",
       value: "6 days",
       subValue: "Best: 10 days",
-      trend: 'positive',
+      trend: "positive",
     },
     {
       id: 4,
@@ -118,7 +118,7 @@ const Lab = () => {
       label: "Notes Saved",
       value: safeNotes.length,
       subValue: `${notesCreatedThisWeek} note${notesCreatedThisWeek === 1 ? "" : "s"} this week`,
-      trend: notesCreatedThisWeek === 0 ? 'negative' : 'positive',
+      trend: notesCreatedThisWeek === 0 ? "negative" : "positive",
     },
   ];
 

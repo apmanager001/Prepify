@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { History, Timer } from "lucide-react";
+import { History, Timer, Trash2 } from "lucide-react";
 import {
-  useAddTimerMutation,
   useActiveTimerQuery,
   useDeleteActiveTimerMutation,
-} from "./timer";
+} from "../app/dashboard/comp/lab/timer";
 
 const INITIAL_PRESETS = [
   { id: "pomodoro", label: "Pomodoro 25:00", minutes: 25 },
@@ -40,7 +39,6 @@ const FocusTimer = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [infoMessage, setInfoMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const tickCount = 60;
   const tickStep = 360 / tickCount;
   const ringRadius = 39;
@@ -84,7 +82,14 @@ const FocusTimer = () => {
       allPresets.find((preset) => preset.id === selectedPresetId) ??
       INITIAL_PRESETS[0]
     );
-  }, [allPresets, selectedPresetId, customMinutes, customPreset, activeTimerData, hasActiveTimer]);
+  }, [
+    allPresets,
+    selectedPresetId,
+    customMinutes,
+    customPreset,
+    activeTimerData,
+    hasActiveTimer,
+  ]);
 
   useEffect(() => {
     if (!isRunning && !isPaused) {
@@ -143,6 +148,8 @@ const FocusTimer = () => {
         : 0;
       const remaining = Math.max(totalSeconds - elapsedSeconds, 0);
 
+      if (remaining <= 0) return;
+
       // setSelectedPresetId(ACTIVE_OPTION_ID);
       setIsRunning(true);
       setIsPaused(false);
@@ -177,17 +184,10 @@ const FocusTimer = () => {
     return () => clearInterval(id);
   }, [isRunning, isPaused]);
 
-  const handleStartStop = async () => {
+  const handleStartStop = () => {
     if (isRunning) {
       setIsRunning(false);
       setIsPaused(false);
-      return;
-    }
-
-    if (activeTimerData) {
-      setErrorMessage(
-        "An active timer is already running. Please stop it first.",
-      );
       return;
     }
 
@@ -201,9 +201,7 @@ const FocusTimer = () => {
     setIsPaused((prev) => !prev);
   };
 
-  const addTimerMutation = useAddTimerMutation();
-
-  const handleCreateCustomTimer = async (e) => {
+  const handleCreateCustomTimer = (e) => {
     e.preventDefault();
     if (!customLabel.trim()) {
       setErrorMessage("Custom timer label is required.");
@@ -215,26 +213,13 @@ const FocusTimer = () => {
     }
 
     setErrorMessage("");
-    setIsSubmitting(true);
-    try {
-      await addTimerMutation.mutateAsync({
-        name: customLabel.trim(),
-        minutes: customMinutes,
-      });
-      const newPreset = {
-        id: CUSTOM_OPTION_ID,
-        name: customLabel.trim(),
-        minutes: customMinutes,
-      };
-      setCustomPreset(newPreset);
-      setSelectedPresetId(CUSTOM_OPTION_ID);
-      setInfoMessage("Custom timer saved. Select it and start focus.");
-    } catch (err) {
-      console.error(err);
-      setErrorMessage(err?.message || "Failed to add custom timer.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    setCustomPreset({
+      id: CUSTOM_OPTION_ID,
+      name: customLabel.trim(),
+      minutes: customMinutes,
+    });
+    setSelectedPresetId(CUSTOM_OPTION_ID);
+    setInfoMessage("Custom timer created.");
   };
 
   const deleteActiveTimerMutation = useDeleteActiveTimerMutation();
@@ -252,7 +237,7 @@ const FocusTimer = () => {
 
   const handleDeleteCustomPreset = () => {
     setCustomPreset(null);
-    setSelectedPresetId(INITIAL_PRESETS[0].id);
+    setSelectedPresetId(CUSTOM_OPTION_ID);
     setCustomLabel("");
     setCustomMinutes(25);
     setInfoMessage("Custom timer removed.");
@@ -288,7 +273,6 @@ const FocusTimer = () => {
       })),
     [elapsedTickCount, tickCount, tickStep],
   );
-
   const tickMarksColor = "hsl(26 89.6% 71.5%)";
   const timerScaleVars = {
     "--timer-size": "18rem",
@@ -310,7 +294,6 @@ const FocusTimer = () => {
     "--timer-history-font-size": "0.875rem",
     "--timer-history-icon-size": "1rem",
   };
-
   return (
     <div
       className="bg-base-100 rounded-lg shadow-sm w-full border border-base-content/20 p-2 h-full [--timer-scale:0.74] xl:[--timer-scale:1]"
@@ -487,96 +470,121 @@ const FocusTimer = () => {
                 </option>
               ))}
               {activeTimerData ? (
-                <option value={ACTIVE_OPTION_ID} id="focus-timer-preset-option-active">
+                <option
+                  value={ACTIVE_OPTION_ID}
+                  id="focus-timer-preset-option-active"
+                >
                   {`${activeTimerData.name} ${activeTimerData.time}`}
                 </option>
               ) : (
-                <option value={CUSTOM_OPTION_ID} id="focus-timer-preset-option-custom">
-                  {customPreset ? `${customPreset.name} ${customPreset.minutes}:00` : "Custom timer"}
+                <option
+                  value={CUSTOM_OPTION_ID}
+                  id="focus-timer-preset-option-custom"
+                >
+                  {customPreset
+                    ? `${customPreset.name} ${customPreset.minutes}:00`
+                    : "+ Add Custom Timer"}
                 </option>
               )}
             </select>
           </div>
         </div>
 
-        {selectedPresetId === CUSTOM_OPTION_ID && (
+        {selectedPresetId === CUSTOM_OPTION_ID && !customPreset && (
           <div className="w-full max-w-sm space-y-2">
-          <div className="grid grid-cols-2 gap-2">
-            <label className="input-group input-group-vertical">
-              <span>Name</span>
-              <input
-                type="text"
-                className="input input-bordered w-full"
-                value={customLabel}
-                onChange={(e) => setCustomLabel(e.target.value)}
-                disabled={isSubmitting}
-                placeholder="e.g. Deep Work"
-              />
-            </label>
-            <label className="input-group input-group-vertical">
-              <span>Minutes</span>
-              <input
-                type="number"
-                className="input input-bordered w-full"
-                value={customMinutes}
-                min={1}
-                max={240}
-                onChange={(e) => setCustomMinutes(Number(e.target.value))}
-                disabled={isSubmitting}
-              />
-            </label>
-          </div>
+            <div className="grid grid-cols-2 gap-2">
+              <label className="input-group input-group-vertical">
+                <span>Name</span>
+                <input
+                  type="text"
+                  className="input input-bordered w-full"
+                  value={customLabel}
+                  onChange={(e) => setCustomLabel(e.target.value)}
+                  placeholder="e.g. Deep Work"
+                />
+              </label>
+              <label className="input-group input-group-vertical">
+                <span>Minutes</span>
+                <input
+                  type="number"
+                  className="input input-bordered w-full"
+                  value={customMinutes}
+                  min={1}
+                  max={240}
+                  onChange={(e) => setCustomMinutes(Number(e.target.value))}
+                />
+              </label>
+            </div>
 
-          <div className="flex gap-2">
             <button
               type="button"
-              className="btn btn-secondary flex-1"
+              className="btn btn-secondary w-full"
               onClick={handleCreateCustomTimer}
-              disabled={isSubmitting}
+              disabled={false}
             >
-              {customPreset ? "Update Custom Timer" : "Add Custom Timer"}
+              Create Custom Timer
             </button>
-            {customPreset && (
-              <button
-                type="button"
-                className="btn btn-error flex-1"
-                onClick={handleDeleteCustomPreset}
-                disabled={isSubmitting}
-              >
-                Delete Custom Timer
-              </button>
+
+            {errorMessage && (
+              <div className="rounded-lg border border-error bg-error/10 px-3 py-2 text-sm text-error">
+                {errorMessage}
+              </div>
+            )}
+
+            {infoMessage && (
+              <div className="rounded-lg border border-success bg-success/10 px-3 py-2 text-sm text-success">
+                {infoMessage}
+              </div>
             )}
           </div>
+        )}
 
-          {errorMessage && (
-            <div className="rounded-lg border border-error bg-error/10 px-3 py-2 text-sm text-error">
-              {errorMessage}
-            </div>
-          )}
-
-          {infoMessage && (
-            <div className="rounded-lg border border-success bg-success/10 px-3 py-2 text-sm text-success">
-              {infoMessage}
-            </div>
-          )}
-
-          {activeTimerData && (
-            <div className="rounded-lg border border-primary bg-primary/10 px-3 py-2 text-sm text-primary">
-              <div className="font-semibold">Active timer:</div>
-              <div>{activeTimerData.name}</div>
-              <div className="text-xs">
-                Remaining: {formatTime(remainingSeconds)}
+        {(customPreset || activeTimerData) && (
+          <div className="w-full max-w-sm space-y-2">
+            {customPreset && (
+              <div className="flex items-center justify-between rounded-lg border border-base-content/20 bg-base-200 px-3 py-2 text-sm">
+                <span className="font-medium">
+                  {customPreset.name} · {customPreset.minutes} min
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-error btn-xs"
+                  onClick={handleDeleteCustomPreset}
+                >
+                  <Trash2 color="white" size="16" />
+                </button>
               </div>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm mt-2"
-                onClick={handleClearActiveTimer}
-              >
-                Clear Active Timer
-              </button>
-            </div>
-          )}
-        </div>
+            )}
+
+            {activeTimerData && (
+              <div className="rounded-lg border border-primary bg-primary/10 px-3 py-2 text-sm text-primary">
+                <div className="font-semibold">Active timer:</div>
+                <div>{activeTimerData.name}</div>
+                <div className="text-xs">
+                  Remaining: {formatTime(remainingSeconds)}
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm mt-2"
+                  onClick={handleClearActiveTimer}
+                >
+                  Clear Active Timer
+                </button>
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="rounded-lg border border-error bg-error/10 px-3 py-2 text-sm text-error">
+                {errorMessage}
+              </div>
+            )}
+
+            {infoMessage && (
+              <div className="rounded-lg border border-success bg-success/10 px-3 py-2 text-sm text-success">
+                {infoMessage}
+              </div>
+            )}
+          </div>
         )}
 
         <div className="flex gap-2">

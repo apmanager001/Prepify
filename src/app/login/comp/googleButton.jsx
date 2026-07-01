@@ -36,6 +36,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
     return new Promise((resolve, reject) => {
       let settled = false;
+      let profileUser = null;
 
       const closePopup = () => {
         try {
@@ -77,7 +78,7 @@ const GoogleButton = ({ onSuccess } = {}) => {
           finish(() => {
             closePopup();
 
-            resolve({ success: true, reason: "message", user: data.user });
+            resolve({ success: true, reason: "message", user: profileUser || data.user });
           });
         }
 
@@ -109,10 +110,17 @@ const GoogleButton = ({ onSuccess } = {}) => {
           try {
             const user = await api.getProfile();
 
-            finish(() => {
-              closePopup();
-              resolve({ success: true, reason: "profile", user });
-            });
+            if (!settled) {
+              profileUser = user;
+              try {
+                popup.location.href = "/auth/success";
+              } catch (_e) {}
+              await wait(3000);
+              finish(() => {
+                closePopup();
+                resolve({ success: true, reason: "profile", user });
+              });
+            }
             return;
           } catch (error) {
             if (settled || attempt === maxAttempts) {
@@ -182,8 +190,8 @@ const GoogleButton = ({ onSuccess } = {}) => {
 
       const authUrl = `${base}/google`;
       const result = await openPopupAndWait(authUrl, "google_oauth", {
-        maxAttempts: 30,
-        initialDelay: 250,
+        maxAttempts: 200,
+        initialDelay: 100,
       });
 
       const user =
