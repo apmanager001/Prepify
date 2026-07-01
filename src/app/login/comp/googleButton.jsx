@@ -127,7 +127,6 @@ const GoogleButton = ({ onSuccess } = {}) => {
               return;
             }
 
-            // eslint-disable-next-line no-await-in-loop
             await wait(delay);
             delay = Math.min(1500, Math.floor(delay * 1.35));
           }

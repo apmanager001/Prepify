@@ -6,19 +6,6 @@ import toast from "react-hot-toast";
 const EventModal = ({ selectedEvent, onClose }) => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const deleteMutation = useDeleteCalendarEvent();
-  function DeleteButtonLinear({ selectedEvent, onClose }) {
-    return (
-      <button
-        onClick={() => setShowConfirmDelete(true)}
-        className={`btn btn-error btn-soft rounded-3xl text-error hover:text-white ${
-          deleteMutation.isLoading ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        disabled={deleteMutation.isLoading}
-      >
-        <Trash2 size={18} />
-      </button>
-    );
-  }
   return (
     <>
       <div className="modal modal-open">
@@ -95,10 +82,15 @@ const EventModal = ({ selectedEvent, onClose }) => {
           </div>
 
           <div className="modal-action">
-            <DeleteButtonLinear
-              selectedEvent={selectedEvent}
-              onClose={onClose}
-            />
+            <button
+              onClick={() => setShowConfirmDelete(true)}
+              className={`btn btn-error btn-soft rounded-3xl text-error hover:text-white ${
+                deleteMutation.isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={deleteMutation.isLoading}
+            >
+              <Trash2 size={18} />
+            </button>
           </div>
         </div>
       </div>

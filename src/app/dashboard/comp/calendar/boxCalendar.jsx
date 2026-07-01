@@ -1,16 +1,71 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import EventModal from "./eventModal";
 import { useCalendarEvents } from "./lib/calendar";
 import LoadingComp from "@/lib/loading";
+
+// helper to pick the best date-like field from the event object
+const pickDateField = (ev) => {
+  // prefer explicit scheduled/event fields, then generic ones, and only as a last resort use created timestamps
+  return (
+    ev.eventDate ||
+    ev.event_date ||
+    ev.scheduledDate ||
+    ev.scheduled_date ||
+    ev.startDate ||
+    ev.start_date ||
+    ev.date ||
+    ev.datetime ||
+    ev.dateTime ||
+    ev.start ||
+    ev.scheduledAt ||
+    ev.scheduled_at ||
+    ev.createdAt ||
+    ev.created_at ||
+    ev.created ||
+    null
+  );
+};
+
+const normalizeDate = (raw, ev) => {
+  if (!raw) return null;
+  const time = ev.eventTime || ev.time || ev.timeOfDay || null;
+  const rawStr = String(raw);
+
+  // If the backend sent a plain YYYY-MM-DD string, treat it as a date-only value
+  // and construct a local Date at midnight for that calendar day.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(rawStr)) {
+    if (time) {
+      // combine date-only with explicit time if provided
+      const combined = `${rawStr}T${time}`;
+      const d = new Date(combined);
+      if (isNaN(d)) return null;
+      return d;
+    }
+    const [y, m, d] = rawStr.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  // If the backend sent an ISO that is midnight UTC (e.g. 2025-11-19T00:00:00.000Z)
+  // treat it as date-only to avoid timezone shifts that move it to the previous day
+  if (/^\d{4}-\d{2}-\d{2}T00:00:00(?:\.000)?Z?$/.test(rawStr)) {
+    const datePart = rawStr.split("T")[0];
+    const [y, m, d] = datePart.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  // Fallback: parse as a normal datetime (keeps timezone behaviour for events with explicit times)
+  const d = new Date(rawStr);
+  if (isNaN(d)) return null;
+  return d;
+};
 
 const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   // localEvents keeps transient client-side additions/deletes until backend sync
   const [events, setEvents] = useState({});
-  const [fetchedEventsMap, setFetchedEventsMap] = useState({});
   const [showEventModal, setShowEventModal] = useState(false);
   const [showViewEventModal, setShowViewEventModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -124,8 +179,12 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
     to: endOfMonthIso,
   });
 
-  useEffect(() => {
-    if (!fetchedData) return;
+  // React Compiler can't statically verify this multi-branch normalization
+  // preserves the manual memoization; the compiler isn't enabled for this
+  // build (see next.config.ts), so this is a lint-only static-analysis note.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
+  const fetchedEventsMap = useMemo(() => {
+    if (!fetchedData) return {};
     // normalize fetchedData to an array of events
     let items = [];
     if (Array.isArray(fetchedData)) items = fetchedData;
@@ -142,62 +201,6 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
     }
 
     const map = {};
-    // helper to pick the best date-like field from the event object
-    const pickDateField = (ev) => {
-      // prefer explicit scheduled/event fields, then generic ones, and only as a last resort use created timestamps
-      return (
-        ev.eventDate ||
-        ev.event_date ||
-        ev.scheduledDate ||
-        ev.scheduled_date ||
-        ev.startDate ||
-        ev.start_date ||
-        ev.date ||
-        ev.datetime ||
-        ev.dateTime ||
-        ev.start ||
-        ev.scheduledAt ||
-        ev.scheduled_at ||
-        ev.createdAt ||
-        ev.created_at ||
-        ev.created ||
-        null
-      );
-    };
-
-    const normalizeDate = (raw, ev) => {
-      if (!raw) return null;
-      const time = ev.eventTime || ev.time || ev.timeOfDay || null;
-      const rawStr = String(raw);
-
-      // If the backend sent a plain YYYY-MM-DD string, treat it as a date-only value
-      // and construct a local Date at midnight for that calendar day.
-      if (/^\d{4}-\d{2}-\d{2}$/.test(rawStr)) {
-        if (time) {
-          // combine date-only with explicit time if provided
-          const combined = `${rawStr}T${time}`;
-          const d = new Date(combined);
-          if (isNaN(d)) return null;
-          return d;
-        }
-        const [y, m, d] = rawStr.split("-").map(Number);
-        return new Date(y, m - 1, d);
-      }
-
-      // If the backend sent an ISO that is midnight UTC (e.g. 2025-11-19T00:00:00.000Z)
-      // treat it as date-only to avoid timezone shifts that move it to the previous day
-      if (/^\d{4}-\d{2}-\d{2}T00:00:00(?:\.000)?Z?$/.test(rawStr)) {
-        const datePart = rawStr.split("T")[0];
-        const [y, m, d] = datePart.split("-").map(Number);
-        return new Date(y, m - 1, d);
-      }
-
-      // Fallback: parse as a normal datetime (keeps timezone behaviour for events with explicit times)
-      const d = new Date(rawStr);
-      if (isNaN(d)) return null;
-      return d;
-    };
-
     items.forEach((ev) => {
       const rawDate = pickDateField(ev);
       const dateObj = normalizeDate(rawDate, ev);
@@ -224,7 +227,7 @@ const BoxCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
       map[key] = map[key] || [];
       map[key].push(item);
     });
-    setFetchedEventsMap(map);
+    return map;
   }, [fetchedData]);
 
   if (isLoading) {

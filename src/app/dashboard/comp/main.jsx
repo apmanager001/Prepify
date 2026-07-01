@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
@@ -12,8 +12,6 @@ const Main = () => {
     email: "",
     userId: "",
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
 
   // Fetch user data from API to validate session
   const {
@@ -28,17 +26,10 @@ const Main = () => {
     },
   });
 
-
-  // Handle loading and error states
-  useEffect(() => {
-    if (profileError) {
-      setError(profileError.message);
-      setIsLoading(false);
-    }
-  }, [profileError]);
+  const error = profileError?.message ?? "";
 
   // Show loading state
-  if (isLoading || profileLoading) {
+  if (profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

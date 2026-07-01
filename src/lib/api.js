@@ -174,7 +174,6 @@ export const api = {
           return null;
         }
 
-        // eslint-disable-next-line no-await-in-loop
         await wait(delay);
         delay = Math.min(maxDelay, Math.floor(delay * backoffMultiplier));
       }
