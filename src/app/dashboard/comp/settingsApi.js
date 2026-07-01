@@ -50,7 +50,7 @@ export async function updateStudyGoals({ studyGoals, percentComplete }) {
   if (percentComplete === 100) {
     const { status } = await addScoreAndInvalidate("completeStudyGoal");
     if (status === 201 || status === 214) {
-      toast.success("You have earned points for completing your study goals!");
+      toast.success("You have earned coins for completing your study goals!");
     }
   }
   toast.success("Study goals saved");

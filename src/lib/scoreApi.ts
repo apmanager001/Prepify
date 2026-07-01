@@ -4,7 +4,7 @@ import { API_BASE_URL } from "./backendAPI";
 
 type ScoreRule = {
   type: string;
-  points: number;
+  coins: number;
   dailyCap: number;
   note?: string;
 };
@@ -16,7 +16,7 @@ type AddScorePayload = {
 
 type AddScoreResponse = {
   success: boolean;
-  newPoints: number;
+  newCoins: number;
 };
 
 // Fetch score rules (optional, for UI display)
@@ -45,7 +45,7 @@ export const useAddScore = () => {
         method: "POST",
         credentials: "include",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });

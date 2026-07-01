@@ -3,9 +3,9 @@
 import React from "react";
 import useTotalScore from "./useTotalScore";
 
-// Placeholder daily goal and points. Backend API will replace this.
+// Placeholder daily goal and coins. Backend API will replace this.
 const DAILY_GOAL = 50;
-const DAILY_POINTS_PLACEHOLDER = 23;
+const DAILY_COINS_PLACEHOLDER = 23;
 
 export default function StatusBar() {
   const { data, isLoading, isError } = useTotalScore();
@@ -13,7 +13,7 @@ export default function StatusBar() {
   // compute percent for radial progress
   const percent = Math.min(
     100,
-    Math.round((DAILY_POINTS_PLACEHOLDER / Math.max(1, DAILY_GOAL)) * 100)
+    Math.round((DAILY_COINS_PLACEHOLDER / Math.max(1, DAILY_GOAL)) * 100),
   );
 
   // pick a color class for progress: red if low, amber if mid, green if high
@@ -25,10 +25,10 @@ export default function StatusBar() {
     const raw = data;
     const total =
       raw && typeof raw === "object"
-        ? raw.totalScore ?? raw.total ?? raw.score ?? null
+        ? (raw.totalScore ?? raw.total ?? raw.score ?? null)
         : typeof raw === "number"
-        ? raw
-        : null;
+          ? raw
+          : null;
     return total ?? null;
   })();
 
@@ -50,7 +50,7 @@ export default function StatusBar() {
         )}
       </div>
 
-      {/* radial progress for daily points only (styled & color-coded) */}
+      {/* radial progress for daily coins only (styled & color-coded) */}
       <div className="flex flex-col items-center justify-center">
         <div
           className={`radial-progress ${progressColor} bg-indigo-50 font-extrabold text-3xl shadow-lg`}
@@ -66,15 +66,13 @@ export default function StatusBar() {
           aria-valuemin={0}
           aria-valuemax={100}
         >
-          {DAILY_POINTS_PLACEHOLDER}
+          {DAILY_COINS_PLACEHOLDER}
         </div>
 
         <div className="mt-2 text-center">
-          <div className="text-sm font-semibold text-gray-700">
-            Daily Points
-          </div>
+          <div className="text-sm font-semibold text-gray-700">Daily Coins</div>
           <div className="text-xs text-gray-500">
-            {DAILY_POINTS_PLACEHOLDER} / {DAILY_GOAL} pts
+            {DAILY_COINS_PLACEHOLDER} / {DAILY_GOAL} coins
           </div>
           <div className="text-xs text-gray-400">
             (placeholder — will fetch from API)

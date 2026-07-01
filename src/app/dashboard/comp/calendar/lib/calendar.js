@@ -59,7 +59,22 @@ export async function postCalendarEvent(eventPayload) {
     throw new Error(`Failed to add calendar event: ${res.status} ${txt}`);
   }
   const body = await res.json();
-  toast.success("Calendar Event created");
+
+  const { status } = await addScoreAndInvalidate("addCalendarEvent");
+  if (status === 206) {
+    toast.success(
+      "Calendar Event created, but you have reached your daily coin cap for calendar events today",
+    );
+  } else if (status === 207) {
+    toast.success(
+      "Calendar Event created, but you have reached your daily coin cap for calendar events today",
+    );
+  } else if (status === 201 || status === 214) {
+    toast.success("Calendar Event created");
+  } else {
+    console.error("Failed to award Calendar Award coins");
+  }
+
   return body;
 }
 

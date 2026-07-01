@@ -12,9 +12,6 @@ import {
   Calendar as CalendarIcon,
   UsersRound,
   Settings,
-  Fullscreen,
-  Notebook,
-  FlaskConical,
 } from "lucide-react";
 import Stats from "./comp/dashboardComps/sidebarStats/stats";
 import { useMutation } from "@tanstack/react-query";
@@ -24,11 +21,9 @@ import StudyGuides from "./comp/studyGuides/studyGuides";
 import Notes from "./comp/notes/notes";
 import Todo from "./comp/todo/todo";
 import { useProfileQuery } from "./comp/useProfileQuery";
-import Overview from "./comp/dashboardComps/overview2";
+import Overview from "./comp/dashboardComps/overview";
 import SettingsPage from "./comp/settings";
 import AdminPage from "./comp/adminPage";
-import Planner from "./comp/planner/planner";
-import Tools from "./comp/tools";
 import Community from "./comp/community.jsx/community";
 import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
