@@ -29,6 +29,18 @@ const parseTimerString = (time) => {
   return parts[0] * 60 + parts[1];
 };
 
+// Runs `fn` during render whenever any value in `deps` changes since the
+// last render — the React-recommended alternative to putting a setState
+// call directly in a useEffect body to react to a dependency change.
+function useSyncOnChange(deps, fn) {
+  const [prevDeps, setPrevDeps] = useState(deps);
+  const changed = deps.some((dep, i) => dep !== prevDeps[i]);
+  if (changed) {
+    setPrevDeps(deps);
+    fn();
+  }
+}
+
 const FocusTimer = () => {
   const [customPreset, setCustomPreset] = useState(null);
   const [customLabel, setCustomLabel] = useState("");
@@ -91,11 +103,11 @@ const FocusTimer = () => {
     hasActiveTimer,
   ]);
 
-  useEffect(() => {
+  useSyncOnChange([selectedPreset, isRunning, isPaused], () => {
     if (!isRunning && !isPaused) {
       setRemainingSeconds(selectedPreset.minutes * 60);
     }
-  }, [selectedPreset, isRunning, isPaused]);
+  });
 
   useEffect(() => {
     const stored = window.localStorage.getItem("focusTimerCustomPreset");
@@ -109,6 +121,10 @@ const FocusTimer = () => {
         Number.isFinite(parsed.minutes) &&
         parsed.minutes > 0
       ) {
+        // One-time hydration from localStorage after mount; this must run
+        // client-side only, so it can't be a lazy useState initializer
+        // (that would cause an SSR/hydration mismatch).
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCustomPreset(parsed);
         setSelectedPresetId(CUSTOM_OPTION_ID);
         setCustomLabel(parsed.name);
@@ -130,42 +146,39 @@ const FocusTimer = () => {
     }
   }, [customPreset]);
 
-  useEffect(() => {
+  useSyncOnChange([selectedPresetId, customPreset], () => {
     if (selectedPresetId === CUSTOM_OPTION_ID && customPreset) {
       setCustomLabel(customPreset.name);
       setCustomMinutes(customPreset.minutes);
     }
-  }, [selectedPresetId, customPreset]);
+  });
 
-  useEffect(() => {
-    if (hasActiveTimer) {
-      const totalSeconds = parseTimerString(activeTimerData.time);
-      const createdAtMs = activeTimerData.createdAt
-        ? new Date(activeTimerData.createdAt).getTime()
-        : null;
-      const elapsedSeconds = createdAtMs
-        ? Math.round((Date.now() - createdAtMs) / 1000)
-        : 0;
-      const remaining = Math.max(totalSeconds - elapsedSeconds, 0);
+  useSyncOnChange(
+    [hasActiveTimer, activeTimerData, selectedPresetId],
+    () => {
+      if (hasActiveTimer) {
+        const totalSeconds = parseTimerString(activeTimerData.time);
+        const createdAtMs = activeTimerData.createdAt
+          ? new Date(activeTimerData.createdAt).getTime()
+          : null;
+        const elapsedSeconds = createdAtMs
+          ? Math.round((Date.now() - createdAtMs) / 1000)
+          : 0;
+        const remaining = Math.max(totalSeconds - elapsedSeconds, 0);
 
-      if (remaining <= 0) return;
+        if (remaining <= 0) return;
 
-      // setSelectedPresetId(ACTIVE_OPTION_ID);
-      setIsRunning(true);
-      setIsPaused(false);
-      setRemainingSeconds(remaining);
-      return;
-    }
+        setIsRunning(true);
+        setIsPaused(false);
+        setRemainingSeconds(remaining);
+        return;
+      }
 
-    if (!hasActiveTimer && selectedPresetId === ACTIVE_OPTION_ID) {
-      setSelectedPresetId(INITIAL_PRESETS[0].id);
-    }
-  }, [hasActiveTimer, activeTimerData, selectedPresetId]);
-
-  useEffect(() => {
-    if (isRunning || isPaused) return;
-    setRemainingSeconds(selectedPreset.minutes * 60);
-  }, [selectedPreset, isRunning, isPaused]);
+      if (!hasActiveTimer && selectedPresetId === ACTIVE_OPTION_ID) {
+        setSelectedPresetId(INITIAL_PRESETS[0].id);
+      }
+    },
+  );
 
   useEffect(() => {
     if (!isRunning || isPaused) return;

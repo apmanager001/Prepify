@@ -6,6 +6,8 @@ import {
   Menu,
   X,
   Shield,
+  Notebook,
+  FlaskConical,
   NotebookPen,
   CheckSquare,
   ChartNoAxesColumn,
@@ -29,6 +31,7 @@ import Calendar from "./comp/calendar/calendar";
 import LoadingComp from "@/lib/loading";
 import CornerWidgets from "./cornerTools/cornerWidgets";
 import Lab from "./comp/lab/lab";
+import Planner from './comp/planner/planner'
 
 const Dashboard = () => {
   const router = useRouter();

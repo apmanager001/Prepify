@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import { Roboto } from "next/font/google";
 import { FlaskConical, Clock, Flame, NotebookText, Trophy } from "lucide-react";
@@ -31,7 +31,7 @@ const Lab = () => {
   } = useNotes({
     select: (v) => (Array.isArray(v) ? v : (v.notes ?? [])),
   });
-  const notes = notesData ?? [];
+  const notes = useMemo(() => notesData ?? [], [notesData]);
   const sortedNotes = useMemo(
     () =>
       [...notes].sort(
@@ -49,21 +49,19 @@ const Lab = () => {
   const updateMutation = useUpdateNote();
   const deleteMutation = useDeleteNote();
 
-  const selectedNote = useMemo(
-    () => sortedNotes.find((n) => n._id === selectedId) ?? null,
-    [sortedNotes, selectedId],
-  );
-
-  useEffect(() => {
-    if (!selectedId && sortedNotes.length > 0) {
-      setSelectedId(sortedNotes[0]._id);
-      return;
+  // Fall back to the first note whenever the selected id is unset or no
+  // longer present in the list, without needing an effect to sync it.
+  const effectiveSelectedId = useMemo(() => {
+    if (selectedId && sortedNotes.some((n) => n._id === selectedId)) {
+      return selectedId;
     }
-
-    if (selectedId && !sortedNotes.some((n) => n._id === selectedId)) {
-      setSelectedId(sortedNotes[0]?._id ?? null);
-    }
+    return sortedNotes[0]?._id ?? null;
   }, [sortedNotes, selectedId]);
+
+  const selectedNote = useMemo(
+    () => sortedNotes.find((n) => n._id === effectiveSelectedId) ?? null,
+    [sortedNotes, effectiveSelectedId],
+  );
 
   const handleOpenAdd = () => {
     if (notes.length >= MAX_NOTES) {
@@ -217,7 +215,7 @@ const Lab = () => {
           <div className="lg:col-span-3 min-[1201px]:col-span-3">
             <MyNotesLab
               notes={sortedNotes}
-              selectedId={selectedId}
+              selectedId={effectiveSelectedId}
               onSelectNote={setSelectedId}
               onOpenAddNote={handleOpenAdd}
             />

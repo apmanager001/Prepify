@@ -26,8 +26,9 @@ const NotFound = () => {
         </h2>
 
         <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-          Looks like this study material got lost in the library. Don't worry,
-          we'll help you find your way back to ace your prep!
+          Looks like this study material got lost in the library.
+          Don&apos;t worry, we&apos;ll help you find your way back to ace your
+          prep!
         </p>
 
         {/* Action Buttons */}

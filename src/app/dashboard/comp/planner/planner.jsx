@@ -240,6 +240,10 @@ const Planner = () => {
     try {
       const stored = window.localStorage.getItem(PLANNER_META_STORAGE_KEY);
       if (!stored) return;
+      // One-time hydration from localStorage after mount; this must run
+      // client-side only, so it can't be a lazy useState initializer
+      // (that would cause an SSR/hydration mismatch).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPlannerMeta(JSON.parse(stored));
     } catch (error) {
       console.error("Failed to load planner metadata", error);
@@ -257,12 +261,15 @@ const Planner = () => {
     }
   }, [plannerMeta]);
 
-  useEffect(() => {
+  // Keep the draft's date in sync with the selected day, without an effect.
+  const [prevSelectedDayKey, setPrevSelectedDayKey] = useState(selectedDayKey);
+  if (selectedDayKey !== prevSelectedDayKey) {
+    setPrevSelectedDayKey(selectedDayKey);
     setDraft((currentDraft) => ({
       ...currentDraft,
       date: selectedDayKey,
     }));
-  }, [selectedDayKey]);
+  }
 
   const plannerItems = useMemo(() => {
     return extractCalendarItems(data)

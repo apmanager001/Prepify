@@ -1,5 +1,6 @@
 import { Instagram } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
@@ -72,12 +73,12 @@ const Footer = () => {
               </h3>
               <ul className="space-y-2">
                 <li>
-                  <a
+                  <Link
                     href="/"
                     className="text-gray-300 hover:text-white transition-colors duration-200"
                   >
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a

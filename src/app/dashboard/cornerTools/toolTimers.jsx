@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Play, Pause, Trash2, RotateCcw, Plus } from "lucide-react";
 import { useTimerStore } from "@/store/useTimerStore";
@@ -84,20 +84,17 @@ const IndTimer = ({ index, onEdit }) => {
   // UI-only rounded display value
   const displaySeconds = Math.floor(remainingSeconds);
 
-  // Reference to the portal root element
-  const modalRootRef = useRef(null);
-
-  // Create portal container div once on the client
-  if (typeof document !== "undefined" && !modalRootRef.current) {
-    modalRootRef.current = document.createElement("div");
-  }
+  // Portal container div, created once on the client
+  const [modalRoot] = useState(() =>
+    typeof document !== "undefined" ? document.createElement("div") : null,
+  );
 
   // Attach portal root to body when mounted
   useEffect(() => {
-    if (!modalRootRef.current) return;
-    document.body.appendChild(modalRootRef.current);
-    return () => document.body.removeChild(modalRootRef.current);
-  }, []);
+    if (!modalRoot) return;
+    document.body.appendChild(modalRoot);
+    return () => document.body.removeChild(modalRoot);
+  }, [modalRoot]);
 
   // Format seconds → mm:ss
   const formatTime = (sec) => {
@@ -148,7 +145,7 @@ const IndTimer = ({ index, onEdit }) => {
       </div>
 
       {showDeletePopup &&
-        modalRootRef.current &&
+        modalRoot &&
         createPortal(
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
             <div className="bg-base-200 p-6 rounded-lg shadow-lg space-y-4">
@@ -175,7 +172,7 @@ const IndTimer = ({ index, onEdit }) => {
               </div>
             </div>
           </div>,
-          modalRootRef.current
+          modalRoot
         )}
     </>
   );

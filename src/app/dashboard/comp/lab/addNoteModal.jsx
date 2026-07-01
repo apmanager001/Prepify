@@ -1,17 +1,21 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NotebookPen } from "lucide-react";
 
 const AddNoteModal = ({ open, onClose, onSave, saving }) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
-  useEffect(() => {
+  // Clear the form as soon as the modal transitions from open to closed,
+  // without needing an effect to sync it.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (!open) {
       setTitle("");
       setBody("");
     }
-  }, [open]);
+  }
 
   if (!open) return null;
 

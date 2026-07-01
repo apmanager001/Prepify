@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Edit,
   Clock,
@@ -34,11 +34,17 @@ const IndividualNote = ({
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
 
-  useEffect(() => {
-    if (!selectedNote || !isEditOpen) return;
-    setEditTitle(selectedNote.title ?? "");
-    setEditBody(selectedNote.body ?? selectedNote.text ?? "");
-  }, [selectedNote, isEditOpen]);
+  // Keep the edit fields in sync with the note/open-state pair without an
+  // effect: re-sync during render whenever that pair changes.
+  const editSyncKey = `${selectedNote?._id ?? ""}|${isEditOpen}`;
+  const [prevEditSyncKey, setPrevEditSyncKey] = useState(editSyncKey);
+  if (editSyncKey !== prevEditSyncKey) {
+    setPrevEditSyncKey(editSyncKey);
+    if (selectedNote && isEditOpen) {
+      setEditTitle(selectedNote.title ?? "");
+      setEditBody(selectedNote.body ?? selectedNote.text ?? "");
+    }
+  }
 
   const openEdit = () => {
     if (!selectedNote) return;
@@ -63,9 +69,14 @@ const IndividualNote = ({
     setIsDeleteOpen(false);
   };
 
-  useEffect(() => {
+  // Close the actions dropdown whenever the selected note changes.
+  const [prevSelectedNoteId, setPrevSelectedNoteId] = useState(
+    selectedNote?._id ?? null,
+  );
+  if ((selectedNote?._id ?? null) !== prevSelectedNoteId) {
+    setPrevSelectedNoteId(selectedNote?._id ?? null);
     setIsActionsOpen(false);
-  }, [selectedNote?._id]);
+  }
 
   return (
     <div

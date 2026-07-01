@@ -22,6 +22,22 @@ import {
   X,
 } from "lucide-react";
 
+// Timer configurations
+const timerConfigs = {
+  work: { time: 25 * 60, label: "Work" },
+  shortBreak: { time: 5 * 60, label: "Short Break" },
+  longBreak: { time: 15 * 60, label: "Long Break" },
+};
+
+// Music tracks
+const musicTracks = [
+  { name: "Classical Focus", genre: "Classical", duration: "2:45" },
+  { name: "Lo-Fi Beats", genre: "Lo-Fi", duration: "3:12" },
+  { name: "Nature Sounds", genre: "Ambient", duration: "4:20" },
+  { name: "Jazz Study", genre: "Jazz", duration: "3:45" },
+  { name: "White Noise", genre: "Ambient", duration: "5:00" },
+];
+
 const Tools = () => {
   const audioRefs = useRef({});
 
@@ -93,22 +109,6 @@ const Tools = () => {
     { id: 3, text: "Practice flashcards for 30 minutes", completed: false },
   ]);
 
-  // Timer configurations
-  const timerConfigs = {
-    work: { time: 25 * 60, label: "Work" },
-    shortBreak: { time: 5 * 60, label: "Short Break" },
-    longBreak: { time: 15 * 60, label: "Long Break" },
-  };
-
-  // Music tracks
-  const musicTracks = [
-    { name: "Classical Focus", genre: "Classical", duration: "2:45" },
-    { name: "Lo-Fi Beats", genre: "Lo-Fi", duration: "3:12" },
-    { name: "Nature Sounds", genre: "Ambient", duration: "4:20" },
-    { name: "Jazz Study", genre: "Jazz", duration: "3:45" },
-    { name: "White Noise", genre: "Ambient", duration: "5:00" },
-  ];
-
   // Toggle tool visibility
   const toggleTool = (toolName) => {
     setVisibleTools((prev) => ({
@@ -117,26 +117,30 @@ const Tools = () => {
     }));
   };
 
-  // Pomodoro timer functions
+  // Pomodoro timer functions. The completion transition (switching modes,
+  // tallying a completed pomodoro) runs inside the interval tick itself,
+  // since that's the callback invoked by the external timer.
   useEffect(() => {
-    let interval = null;
-    if (timerRunning && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      setTimerRunning(false);
-      if (timerMode === "work") {
-        setCompletedPomodoros((prev) => prev + 1);
-        setTimerMode("shortBreak");
-        setTimeLeft(timerConfigs.shortBreak.time);
-      } else {
-        setTimerMode("work");
-        setTimeLeft(timerConfigs.work.time);
-      }
-    }
+    if (!timerRunning) return undefined;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          setTimerRunning(false);
+          if (timerMode === "work") {
+            setCompletedPomodoros((count) => count + 1);
+            setTimerMode("shortBreak");
+            return timerConfigs.shortBreak.time;
+          }
+          setTimerMode("work");
+          return timerConfigs.work.time;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [timerRunning, timeLeft, timerMode]);
+  }, [timerRunning, timerMode]);
 
   const startTimer = () => setTimerRunning(true);
   const pauseTimer = () => setTimerRunning(false);
@@ -498,8 +502,8 @@ const Tools = () => {
                 </span>
               </div>
               <p className="text-green-700 text-sm">
-                You're in a {focusDuration}-minute focus session. Stay focused
-                and avoid distractions!
+                You&apos;re in a {focusDuration}-minute focus session. Stay
+                focused and avoid distractions!
               </p>
             </div>
           )}
