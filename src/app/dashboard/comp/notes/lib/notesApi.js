@@ -36,13 +36,17 @@ export async function createNote(payload) {
   // use the shared helper that also invalidates query cache
   const { status } = await addScoreAndInvalidate("addNotesItem");
   if (status === 206) {
-    toast.success("Note created, but you have reached your daily score cap for notes today");
+    toast.success(
+      "Note created, but you have reached your daily score cap for notes today",
+    );
   } else if (status === 207) {
-    toast.success("Note created, but you have reached your cap for daily points");
-  } else if(status === 201 || status === 214) {
+    toast.success(
+      "Note created, but you have reached your cap for daily coins",
+    );
+  } else if (status === 201 || status === 214) {
     toast.success("Note created");
   } else {
-    console.error("Failed to award Note points:", err);
+    console.error("Failed to award Note coins:", err);
   }
 
   return safeParse(res);
@@ -56,7 +60,7 @@ export async function updateNote(noteId, payload) {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(payload),
-    }
+    },
   );
   if (!res.ok) {
     const body = await safeParse(res);
@@ -71,7 +75,7 @@ export async function deleteNoteReq(noteId) {
     {
       method: "DELETE",
       credentials: "include",
-    }
+    },
   );
   if (!res.ok) {
     const body = await safeParse(res);

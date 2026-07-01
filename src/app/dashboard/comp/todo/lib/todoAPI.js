@@ -21,12 +21,12 @@ async function fetchTodos() {
   const items = Array.isArray(data)
     ? data
     : Array.isArray(data.items)
-    ? data.items
-    : Array.isArray(data.data)
-    ? data.data
-    : Array.isArray(data.todos)
-    ? data.todos
-    : [];
+      ? data.items
+      : Array.isArray(data.data)
+        ? data.data
+        : Array.isArray(data.todos)
+          ? data.todos
+          : [];
 
   // normalize server _id to id for easier client consumption
   return items.map((t) => ({ ...t, id: t._id ?? t.id }));
@@ -46,22 +46,20 @@ async function createTodoApi(payload) {
   }
   const todo = await res.json();
 
-
   const { status } = await addScoreAndInvalidate("addToDoItem");
   if (status === 206) {
     toast.success(
-      "To Do item created, but you have reached your daily score cap for to do items today"
+      "To Do item created, but you have reached your daily coin cap for to do items today",
     );
   } else if (status === 207) {
     toast.success(
-      "To Do item created, but you have reached your cap for daily points"
+      "To Do item created, but you have reached your daily coin cap for to do items today",
     );
   } else if (status === 201 || status === 214) {
     toast.success("To Do item created");
   } else {
-    console.error("Failed to award To Do points:", err);
+    console.error("Failed to award To Do coins:", err);
   }
-
 
   return { ...todo, id: todo._id ?? todo.id };
 }
