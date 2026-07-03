@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { User, Check, X, Save, AtSign, Mail, FileText } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { updateProfile } from "../../settingsApi";
@@ -96,7 +97,7 @@ const RenderProfileTab = () => {
           <div className="relative">
             <div className="w-24 h-24 bg-linear-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
               {userData.profile.avatar ? (
-                <img
+                <Image
                   src={userData.profile.avatar}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover"

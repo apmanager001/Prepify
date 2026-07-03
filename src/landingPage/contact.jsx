@@ -77,7 +77,7 @@ const Contact = () => {
                     />
                   </svg>
                   <p className="text-green-800 font-medium">
-                    Message sent successfully! We'll get back to you soon.
+                    Message sent successfully! We&apos;ll get back to you soon.
                   </p>
                 </div>
               </div>

@@ -95,7 +95,7 @@ const SettingsPage = () => {
     { id: "profile", label: "Profile", icon: User },
     { id: "scoreboard", label: "Scoreboard", icon: Trophy },
     { id: "studyGoals", label: "Study Goals", icon: GraduationCap },
-    // { id: "badges", label: "Badges", icon: Trophy },
+    { id: "badges", label: "Badges", icon: Trophy },
     // { id: "notifications", label: "Notifications", icon: Bell },
     // { id: "privacy", label: "Privacy", icon: Shield },
     // { id: "appearance", label: "Appearance", icon: Palette },
@@ -302,8 +302,8 @@ const SettingsPage = () => {
         return <Scoreboard />;
       case "studyGoals":
         return <StudyGoalsTab />;
-      // case "badges":
-      //   return <RenderBadgesTab />;
+      case "badges":
+        return <RenderBadgesTab />;
       case "notifications":
         return renderNotificationsTab();
       case "privacy":
@@ -329,7 +329,7 @@ const SettingsPage = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-base-200 rounded-2xl shadow-lg border border-gray-100">
+      <div className="bg-base-100 rounded-lg shadow-sm border border-base-content/20 p-2 h-full w-full">
         <div>
           <nav
             className="flex flex-col md:flex-row space-x-8 px-6"
@@ -343,8 +343,8 @@ const SettingsPage = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`cursor-pointer py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
                     activeTab === tab.id
-                      ? "border-black text-black"
-                      : "border-black/30 text-gray-500 hover:text-black hover:border-black"
+                      ? "border-slate-500 text-slate-500"
+                      : "border-slate-400/30 hover:text-slate-400 hover:border-slate-400"
                   }`}
                 >
                   <Icon size={18} />

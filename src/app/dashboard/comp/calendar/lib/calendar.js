@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "@/lib/backendAPI";
-import { addScoreAndInvalidate } from "@/app/dashboard/comp/dashboardComps/useTotalScore";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 // Low-level fetcher for calendar events.
 // Accepts an options object and forwards supported query params to the backend:
@@ -27,7 +26,7 @@ export async function fetchCalendarEvents({
   if (sort) params.set("sort", sort);
   if (fields) params.set("fields", fields);
 
-  const url = `${API_BASE_URL}/calendar${
+  const url = `${API_BASE_URL}/planner${
     params.toString() ? "?" + params.toString() : ""
   }`;
 
@@ -49,7 +48,7 @@ export async function fetchCalendarEvents({
 // Low-level POST to create a calendar event. Controller expects:
 // { eventTitle, eventDescription, eventDate, eventType, eventColor }
 export async function postCalendarEvent(eventPayload) {
-  const res = await fetch(`${API_BASE_URL}/calendar`, {
+  const res = await fetch(`${API_BASE_URL}/planner`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -83,7 +82,7 @@ export async function postCalendarEvent(eventPayload) {
 export async function deleteCalendarEvent(eventId) {
   if (!eventId) throw new Error("deleteCalendarEvent requires an eventId");
   const res = await fetch(
-    `${API_BASE_URL}/calendar/${encodeURIComponent(eventId)}`,
+    `${API_BASE_URL}/planner/${encodeURIComponent(eventId)}`,
     {
       method: "DELETE",
       credentials: "include",
@@ -99,6 +98,25 @@ export async function deleteCalendarEvent(eventId) {
   } catch {
     return true;
   }
+}
+
+// Low-level PATCH to update a calendar event by id.
+export async function updateCalendarEvent(eventId, eventPayload) {
+  if (!eventId) throw new Error("updateCalendarEvent requires an eventId");
+  const res = await fetch(
+    `${API_BASE_URL}/planner/${encodeURIComponent(eventId)}`,
+    {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eventPayload),
+    },
+  );
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`Failed to update calendar event: ${res.status} ${txt}`);
+  }
+  return res.json();
 }
 
 // React Query hook to get calendar events. Use object form (v5).
@@ -166,6 +184,20 @@ export function useDeleteCalendarEvent() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (eventId) => deleteCalendarEvent(eventId),
+    onSuccess: () => {
+      qc.invalidateQueries({
+        predicate: (query) =>
+          Array.isArray(query.queryKey) && query.queryKey[0] === "calendar",
+      });
+    },
+  });
+}
+
+// React Query mutation hook to update an event and invalidate calendar cache.
+export function useUpdateCalendarEvent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, eventPayload }) => updateCalendarEvent(id, eventPayload),
     onSuccess: () => {
       qc.invalidateQueries({
         predicate: (query) =>

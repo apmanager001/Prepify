@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Clock } from "lucide-react";
 import { useCalendarEvents } from "./lib/calendar";
 import EventModal from "./eventModal";
@@ -46,7 +46,6 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   };
 
   const [currentWeek, setCurrentWeek] = useState(getWeekDays(new Date()));
-  const [fetchedMap, setFetchedMap] = useState({});
   const [showViewEventModal, setShowViewEventModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   // use React Query to fetch events for the current week (from/to)
@@ -54,8 +53,8 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
   const to = currentWeek[6].toISOString().split("T")[0];
   const { data: fetchedData, isLoading } = useCalendarEvents({ from, to });
 
-  useEffect(() => {
-    if (!fetchedData) return;
+  const fetchedMap = useMemo(() => {
+    if (!fetchedData) return {};
     let items = [];
     if (Array.isArray(fetchedData)) items = fetchedData;
     else if (Array.isArray(fetchedData.items)) items = fetchedData.items;
@@ -144,7 +143,7 @@ const LinearCalendar = ({ eventTypes, colorClasses, onAddEvent }) => {
       });
     });
 
-    setFetchedMap(map);
+    return map;
   }, [fetchedData]);
 
   const changeWeek = (direction) => {

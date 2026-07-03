@@ -93,7 +93,7 @@ const Scoreboard = () => {
             setFilter(e.target.value);
             setPage(1);
           }}
-          className="input input-sm input-bordered"
+          className="input input-neutral input-sm text-central"
         />
 
         <select
@@ -102,7 +102,7 @@ const Scoreboard = () => {
             setSort(e.target.value);
             setPage(1);
           }}
-          className="select select-sm select-bordered"
+          className="select select-neutral text-black select-sm select-bordered"
         >
           <option value="createdAt:desc">Newest</option>
           <option value="createdAt:asc">Oldest</option>
@@ -127,7 +127,7 @@ const Scoreboard = () => {
       <div className="overflow-x-auto">
         <table className="table w-full">
           <thead>
-            <tr className="text-center">
+            <tr className="text-center text-neutral-content/80">
               <th>Type</th>
               <th>Amount</th>
               <th>Created At</th>

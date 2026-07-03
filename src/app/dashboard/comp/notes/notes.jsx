@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { Plus, Trash, ArrowLeft, Edit, Clock, Pencil } from "lucide-react";
 import {
   useNotes,
@@ -21,23 +21,25 @@ export default function Notes() {
     select: (v) => (Array.isArray(v) ? v : v.notes ?? []),
   });
 
-  const notes = notesData ?? [];
+  const notes = useMemo(() => notesData ?? [], [notesData]);
   const [selectedId, setSelectedId] = useState(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [showDetailsOnMobile, setShowDetailsOnMobile] = useState(false);
 
-  const selectedNote = useMemo(
-    () => notes.find((n) => n._id === selectedId) ?? null,
-    [notes, selectedId]
-  );
-
-  // set initial selected when notes load
-  useEffect(() => {
-    if (!selectedId && notes && notes.length) {
-      setSelectedId(notes[0]._id);
+  // Fall back to the first note whenever nothing (or a stale id) is
+  // selected, without needing an effect to sync it.
+  const effectiveSelectedId = useMemo(() => {
+    if (selectedId && notes.some((n) => n._id === selectedId)) {
+      return selectedId;
     }
-  }, [notes]);
+    return notes[0]?._id ?? null;
+  }, [notes, selectedId]);
+
+  const selectedNote = useMemo(
+    () => notes.find((n) => n._id === effectiveSelectedId) ?? null,
+    [notes, effectiveSelectedId]
+  );
 
   // Ensure mutation hooks are called on every render (fixes hooks order issues)
   const createMutation = useCreateNote();
@@ -93,7 +95,7 @@ export default function Notes() {
   async function deleteNote(id) {
     try {
       await deleteMutation.mutateAsync(id);
-      if (selectedId === id) {
+      if (effectiveSelectedId === id) {
         setSelectedId((prev) => {
           const remaining = notes.filter((n) => n._id !== id);
           return remaining[0]?._id ?? null;
@@ -210,7 +212,7 @@ export default function Notes() {
                 <li
                   key={n._id}
                   className={`p-3 cursor-pointer flex justify-between items-center hover:bg-base-300 w-full ${
-                    n._id === selectedId ? "bg-primary/5" : ""
+                    n._id === effectiveSelectedId ? "bg-primary/5" : ""
                   }`}
                 >
                   <div
