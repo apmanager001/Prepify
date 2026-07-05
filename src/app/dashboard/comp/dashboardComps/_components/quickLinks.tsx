@@ -1,62 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import {
-  CheckSquare,
-  NotebookPen,
-  Calendar,
-  UsersRound,
-  Settings,
-  ArrowRight,
-  Crown,
-} from "lucide-react";
-import { TASK_STYLES } from "./taskStyles";
+import { DASHBOARD_TABS } from "./tabStyles";
+import { ArrowRight, Crown } from "lucide-react";
 
 const quickLinks = [
-  {
-    title: "Notes",
-    description: "Notes",
-    href: "/dashboard?tab=notes",
-    icon: NotebookPen,
-    ...TASK_STYLES.notes,
-  },
-
-  {
-    title: "To-Do",
-    description: "Tasks",
-    href: "/dashboard?tab=todo",
-    icon: CheckSquare,
-    ...TASK_STYLES.todo,
-  },
-
-  {
-    title: "Calendar",
-    description: "Schedule",
-    href: "/dashboard?tab=calendar",
-    icon: Calendar,
-    ...TASK_STYLES.event,
-  },
-
-  {
-    title: "Community",
-    description: "Social",
-    href: "/dashboard?tab=community",
-    icon: UsersRound,
-    bg: "bg-cyan-500/15",
-    color: "text-cyan-500",
-  },
-
-  {
-    title: "Settings",
-    description: "Settings",
-    href: "/dashboard?tab=settings",
-    icon: Settings,
-    bg: "bg-gray-500/15",
-    color: "text-gray-500",
-  },
+  DASHBOARD_TABS.planner,
+  DASHBOARD_TABS.lab,
+  DASHBOARD_TABS.settings,
+  DASHBOARD_TABS.admin,
 ];
 
-const QuickLinks = () => {
+type Props = {
+  isAdmin: boolean;
+};
+
+
+const QuickLinks = ({ isAdmin} : Props) => {
   return (
     <div className="h-full p-4 flex flex-col gap-4 bg-base-100 rounded-lg shadow-sm w-full border border-base-content/20  duration-200 hover:shadow-md transition-shadow">
       <div className="border-b border-base-content/20 p-2">
@@ -67,12 +27,16 @@ const QuickLinks = () => {
       </div>
 
       <div className="flex flex-col gap-2 border-b border-base-content/20 p-2">
-        {quickLinks.map((link) => {
-          const Icon = link.icon;
+      {quickLinks.map((link) => {
+        if (!isAdmin && link === DASHBOARD_TABS.admin) {
+          return null;
+        }
 
-          return (
+        const Icon = link.icon;
+
+        return (
             <Link
-              key={link.title}
+              key={link.label}
               href={link.href}
               className={`group flex items-center justify-between rounded-xl px-2 py-2 border border-base-300 hover:border-neutral-content/30 hover:shadow-sm transition-all duration-200 ${link.bg}`}
             >
@@ -82,7 +46,7 @@ const QuickLinks = () => {
                 </div>
 
                 <div className="leading-tight">
-                  <h3 className="text-sm font-semibold">{link.title}</h3>
+                  <h3 className="text-sm font-semibold">{link.label}</h3>
                   <p className="text-xs text-gray-500">{link.description}</p>
                 </div>
               </div>

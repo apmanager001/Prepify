@@ -5,12 +5,12 @@ export type StatsBadgeTrend = "positive" | "negative" | "neutral";
 
 export type StatsBadgeItem = {
   id: number | string;
-  icon?: React.ReactNode;
+  icon: React.ReactNode;
   label: string;
   value: string | number;
+
   subValue?: string;
   trend?: StatsBadgeTrend;
-
   iconClassName?: string;
   iconContainerClassName?: string;
   divClassName?: string;
@@ -19,8 +19,8 @@ export type StatsBadgeItem = {
   subValueClassName?: string;
 };
 
-type StatsBadgeProps = {
-  stats?: StatsBadgeItem[];
+type Props = {
+  stats: StatsBadgeItem[];
 };
 
 const trendStyles: Record<StatsBadgeTrend, string> = {
@@ -29,7 +29,7 @@ const trendStyles: Record<StatsBadgeTrend, string> = {
   neutral: "text-white",
 };
 
-const StatsBadge = ({ stats = [] }: StatsBadgeProps) => {
+const StatsBadge = ({ stats = [] }: Props) => {
   const safeStats = Array.isArray(stats) ? stats : [];
 
   return (

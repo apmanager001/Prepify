@@ -34,8 +34,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "src/app/dashboard/comp/dashboardComps/_components/dashboardThirdRow.jsx"  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
   ]
 }
