@@ -17,7 +17,7 @@
   --color-secondary-content: #1a1a1a;
   --color-accent: #fdb50d;
   --color-accent-content: #1a1a1a;
-  --color-neutral: #25272d;
+  --color-neutral: #23272c;
   --color-neutral-content: #fee6ae;
   --color-neutral-border: #ffe5ad;
   --color-info: #432dd7;
@@ -214,4 +214,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
   opacity: 0.7;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }
