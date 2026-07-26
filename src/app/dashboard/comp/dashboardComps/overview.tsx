@@ -9,7 +9,7 @@ import {
   getTodaysCoins,
   getTodaysCoinTotal,
 } from "./_utils/getTodaysCoins";
-import { DailyTasks } from "./_components/taskStyles";
+import { useMemo } from "react";
 
 const Overview = ({ isAdmin }: { isAdmin: boolean }) => {
   const {
@@ -33,6 +33,15 @@ const Overview = ({ isAdmin }: { isAdmin: boolean }) => {
 
     return Number(raw);
   })();
+
+  // Daily Events
+  const DAILY_EVENTS = useMemo(() => {
+    if (!coinsData) {
+      return null;
+    }
+    const raw = getTodaysCoins(coinsData.coins);
+    return Array.isArray(raw) ? raw : null;
+  }, [coinsData]);
 
   // Lifetime coins
   const lifetimeCoins = (() => {
@@ -94,83 +103,6 @@ const Overview = ({ isAdmin }: { isAdmin: boolean }) => {
     },
   ];
 
-  const dailyTasks: DailyTasks = [
-    {
-      id: "plan-day",
-      type: "planner",
-      label: "Plan Your Day",
-      completed: false,
-      coins: 5,
-      progress: {
-        current: 0,
-        target: 3,
-        label: "3 priority tasks added",
-      },
-    },
-    {
-      id: "pomodoro",
-      type: "timer",
-      label: "Complete One Pomodoro",
-      completed: false,
-      coins: 30,
-      progress: {
-        current: 0,
-        target: 1,
-        label: "1 Pomodoro completed",
-        note: "+5 bonus on first completion",
-      },
-    },
-    {
-      id: "review-note",
-      type: "notes",
-      label: "Review One Old Note",
-      completed: false,
-      coins: 10,
-      progress: {
-        current: 0,
-        target: 1,
-        label: "1 old note reviewed (5+ words recall)",
-      },
-    },
-    {
-      id: "double-down",
-      type: "timer",
-      label: "Double Down",
-      completed: false,
-      coins: 15,
-      progress: {
-        current: 0,
-        target: 2,
-        label: "2 Pomodoros today",
-        note: "Only rewards on second completion",
-      },
-    },
-    {
-      id: "deadline",
-      type: "planner",
-      label: "Set a Deadline",
-      completed: false,
-      coins: 5,
-      progress: {
-        current: 0,
-        target: 1,
-        label: "1 task with due date set",
-      },
-    },
-    {
-      id: "clear-board",
-      type: "all",
-      label: "Clear the Board",
-      completed: false,
-      coins: 10,
-      progress: {
-        current: 0,
-        target: 1,
-        label: "All priority tasks completed today",
-      },
-    },
-  ];
-
   return (
     <div className="flex flex-col gap-4 mb-24 xl:mb-10">
       {/* Header */}
@@ -193,9 +125,7 @@ const Overview = ({ isAdmin }: { isAdmin: boolean }) => {
         </div>
 
         <div className="h-full">
-          <DailyTasksCard
-            dailyTasks={dailyTasks}
-          />
+          <DailyTasksCard DAILY_EVENTS={DAILY_EVENTS} />
         </div>
         <QuickLinks isAdmin={isAdmin}/>
       </div>

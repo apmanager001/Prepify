@@ -2,6 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 
 import { API_BASE_URL } from "@/lib/backendAPI";
 
+export interface CoinDetailsParams {
+  page?: number;
+  pageSize?: number;
+  sort?: string;
+  fields?: string[];
+}
+
 async function fetchJson(url: string) {
   const res = await fetch(url, {
     method: "GET",
@@ -30,13 +37,6 @@ export function useTotalCoins() {
     staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
   });
-}
-
-export interface CoinDetailsParams {
-  page?: number;
-  pageSize?: number;
-  sort?: string;
-  fields?: string[];
 }
 
 export async function fetchCoinDetails(params: CoinDetailsParams = {}) {
@@ -68,6 +68,6 @@ export function useCoinDetails(params: CoinDetailsParams = {}) {
     queryKey: ["coinDetails", params],
     queryFn: () => fetchCoinDetails(params),
     staleTime: 30 * 1000,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 }

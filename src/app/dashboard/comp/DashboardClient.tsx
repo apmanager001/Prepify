@@ -246,10 +246,6 @@ const DashboardClient = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const goToTab = (tab: Tab) => {
-    router.push(`/dashboard?tab=${tab}`);
-  };
-
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
